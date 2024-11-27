@@ -1,0 +1,5054 @@
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"fixedpoint.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.FIX_INT,"ax",%progbits
+  19              		.align	2
+  20              		.global	FIX_INT
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	FIX_INT, %function
+  24              	FIX_INT:
+  25              	.LFB63:
+  26              		.file 1 "..\\API\\fixedpoint.c"
+   1:..\API/fixedpoint.c **** //=========================================================
+   2:..\API/fixedpoint.c **** // PSoC5LP Project
+   3:..\API/fixedpoint.c **** //=========================================================
+   4:..\API/fixedpoint.c **** // File Name : fixedpoint.c
+   5:..\API/fixedpoint.c **** // Function  : Fixed Point Library Routine
+   6:..\API/fixedpoint.c **** //---------------------------------------------------------
+   7:..\API/fixedpoint.c **** // Rev.01 2012.09.01 Munetomo Maruyama
+   8:..\API/fixedpoint.c **** //---------------------------------------------------------
+   9:..\API/fixedpoint.c **** // Copyright (C) 2012-2013 Munetomo Maruyama
+  10:..\API/fixedpoint.c **** //=========================================================
+  11:..\API/fixedpoint.c **** // ---- License Information -------------------------------
+  12:..\API/fixedpoint.c **** // Anyone can FREELY use this code fully or partially
+  13:..\API/fixedpoint.c **** // under conditions shown below.
+  14:..\API/fixedpoint.c **** // 1. You may use this code only for individual purpose,
+  15:..\API/fixedpoint.c **** //    and educational purpose.
+  16:..\API/fixedpoint.c **** //    Do not use this code for business even if partially.
+  17:..\API/fixedpoint.c **** // 2. You can copy, modify and distribute this code.
+  18:..\API/fixedpoint.c **** // 3. You should remain this header text in your codes
+  19:..\API/fixedpoint.c **** //   including Copyright credit and License Information.
+  20:..\API/fixedpoint.c **** // 4. Your codes should inherit this license information.
+  21:..\API/fixedpoint.c **** //=========================================================
+  22:..\API/fixedpoint.c **** // ---- Patent Notice -------------------------------------
+  23:..\API/fixedpoint.c **** // I have not cared whether this system (hw + sw) causes
+  24:..\API/fixedpoint.c **** // infringement on the patent, copyright, trademark,
+  25:..\API/fixedpoint.c **** // or trade secret rights of others. You have all
+  26:..\API/fixedpoint.c **** // responsibilities for determining if your designs
+  27:..\API/fixedpoint.c **** // and products infringe on the intellectual property
+  28:..\API/fixedpoint.c **** // rights of others, when you use technical information
+  29:..\API/fixedpoint.c **** // included in this system for your business.
+  30:..\API/fixedpoint.c **** //=========================================================
+  31:..\API/fixedpoint.c **** // ---- Disclaimers ---------------------------------------
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 2
+
+
+  32:..\API/fixedpoint.c **** // The function and reliability of this system are not
+  33:..\API/fixedpoint.c **** // guaranteed. They may cause any damages to loss of
+  34:..\API/fixedpoint.c **** // properties, data, money, profits, life, or business.
+  35:..\API/fixedpoint.c **** // By adopting this system even partially, you assume
+  36:..\API/fixedpoint.c **** // all responsibility for its use.
+  37:..\API/fixedpoint.c **** //=========================================================
+  38:..\API/fixedpoint.c **** 
+  39:..\API/fixedpoint.c **** #include "fixedpoint.h"
+  40:..\API/fixedpoint.c **** 
+  41:..\API/fixedpoint.c **** //=====================
+  42:..\API/fixedpoint.c **** // Table for sin, tan
+  43:..\API/fixedpoint.c **** //=====================
+  44:..\API/fixedpoint.c **** static const uint32 TBL_SIN[90] =
+  45:..\API/fixedpoint.c **** {
+  46:..\API/fixedpoint.c ****     0x00000000, 0x0477c2cb, 0x08ef2c65, 0x0d65e3a4, 0x11db8f6d,
+  47:..\API/fixedpoint.c ****     0x164fd6b9, 0x1ac2609b, 0x1f32d44c, 0x23a0d92d, 0x280c16cf,
+  48:..\API/fixedpoint.c ****     0x2c7434fc, 0x30d8dbbb, 0x3539b359, 0x3996646e, 0x3dee97e6,
+  49:..\API/fixedpoint.c ****     0x4241f706, 0x46902b75, 0x4ad8df3e, 0x4f1bbcdd, 0x53586f40,
+  50:..\API/fixedpoint.c ****     0x578ea1d2, 0x5bbe007f, 0x5fe637bc, 0x6406f48a, 0x681fe484,
+  51:..\API/fixedpoint.c ****     0x6c30b5dd, 0x7039176b, 0x7438b8ad, 0x782f49d1, 0x7c1c7bb8,
+  52:..\API/fixedpoint.c ****     0x80000000, 0x83d98908, 0x87a8c9f5, 0x8b6d76bc, 0x8f274421,
+  53:..\API/fixedpoint.c ****     0x92d5e7c4, 0x96791824, 0x9a108ca3, 0x9d9bfd8e, 0xa11b2422,
+  54:..\API/fixedpoint.c ****     0xa48dba92, 0xa7f37c0a, 0xab4c24b7, 0xae9771cc, 0xb1d52187,
+  55:..\API/fixedpoint.c ****     0xb504f334, 0xb826a735, 0xbb39ff06, 0xbe3ebd42, 0xc134a5a5,
+  56:..\API/fixedpoint.c ****     0xc41b7d16, 0xc6f309a9, 0xc9bb12a0, 0xcc736075, 0xcf1bbcdd,
+  57:..\API/fixedpoint.c ****     0xd1b3f2c9, 0xd43bce6d, 0xd6b31d45, 0xd919ae16, 0xdb6f50f4,
+  58:..\API/fixedpoint.c ****     0xddb3d743, 0xdfe713bf, 0xe208da7b, 0xe41900ea, 0xe6175ddb,
+  59:..\API/fixedpoint.c ****     0xe803c981, 0xe9de1d78, 0xeba634c1, 0xed5bebcd, 0xeeff2078,
+  60:..\API/fixedpoint.c ****     0xf08fb213, 0xf20d8160, 0xf378709a, 0xf4d06374, 0xf6153f1b,
+  61:..\API/fixedpoint.c ****     0xf746ea3a, 0xf8654cfc, 0xf970510a, 0xfa67e194, 0xfb4beb4a,
+  62:..\API/fixedpoint.c ****     0xfc1c5c64, 0xfcd924a1, 0xfd82354a, 0xfe17812d, 0xfe98fca8,
+  63:..\API/fixedpoint.c ****     0xff069da1, 0xff605b8c, 0xffa62f69, 0xffd813c6, 0xfff604c0
+  64:..\API/fixedpoint.c **** };
+  65:..\API/fixedpoint.c **** static const uint32 TBL_TAN[45] =
+  66:..\API/fixedpoint.c **** {
+  67:..\API/fixedpoint.c ****     0x00000000, 0x0477ef65, 0x08f0914b, 0x0d6a98a2, 0x11e6b93a, 
+  68:..\API/fixedpoint.c ****     0x1665a835, 0x1ae81c75, 0x1f6ecf1a, 0x23fa7bf1, 0x288be1f7, 
+  69:..\API/fixedpoint.c ****     0x2d23c3d8, 0x31c2e86f, 0x366a1b59, 0x3b1a2d83, 0x3fd3f5c2, 
+  70:..\API/fixedpoint.c ****     0x4498517a, 0x49682546, 0x4e445dae, 0x532defed, 0x5825dabe, 
+  71:..\API/fixedpoint.c ****     0x5d2d273d, 0x6244e9d5, 0x676e4343, 0x6caa61ae, 0x71fa81d3, 
+  72:..\API/fixedpoint.c ****     0x775ff04e, 0x7cdc0afd, 0x82704286, 0x881e1bfc, 0x8de732b0, 
+  73:..\API/fixedpoint.c ****     0x93cd3a2d, 0x99d20064, 0x9ff77017, 0xa63f9377, 0xacac9715, 
+  74:..\API/fixedpoint.c ****     0xb340cd1d, 0xb9feb0ed, 0xc0e8eb11, 0xc80255b7, 0xcf4e01a3, 
+  75:..\API/fixedpoint.c ****     0xd6cf3bc2, 0xde89935e, 0xe680e123, 0xeeb94f06, 0xf737612a
+  76:..\API/fixedpoint.c **** };
+  77:..\API/fixedpoint.c **** 
+  78:..\API/fixedpoint.c **** //==============================
+  79:..\API/fixedpoint.c **** // Make Fixed Point from Integer
+  80:..\API/fixedpoint.c **** //==============================
+  81:..\API/fixedpoint.c **** // [Note] Take care Overflow
+  82:..\API/fixedpoint.c **** fix32 FIX_INT(int32 ia)
+  83:..\API/fixedpoint.c **** {
+  27              		.loc 1 83 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 3
+
+
+  32              	.LVL0:
+  84:..\API/fixedpoint.c ****     fix32 fa;
+  85:..\API/fixedpoint.c ****     fa = (fix32) (ia << FIXQ);
+  86:..\API/fixedpoint.c ****     return fa;
+  87:..\API/fixedpoint.c **** }
+  33              		.loc 1 87 0
+  34 0000 0004     		lsls	r0, r0, #16
+  35              	.LVL1:
+  36 0002 7047     		bx	lr
+  37              		.cfi_endproc
+  38              	.LFE63:
+  39              		.size	FIX_INT, .-FIX_INT
+  40              		.section	.text.INT_FIX,"ax",%progbits
+  41              		.align	2
+  42              		.global	INT_FIX
+  43              		.thumb
+  44              		.thumb_func
+  45              		.type	INT_FIX, %function
+  46              	INT_FIX:
+  47              	.LFB64:
+  88:..\API/fixedpoint.c **** 
+  89:..\API/fixedpoint.c **** //==============================
+  90:..\API/fixedpoint.c **** // Make Integer from Fixed Point
+  91:..\API/fixedpoint.c **** //==============================
+  92:..\API/fixedpoint.c **** int32 INT_FIX(fix32 fa)
+  93:..\API/fixedpoint.c **** {
+  48              		.loc 1 93 0
+  49              		.cfi_startproc
+  50              		@ args = 0, pretend = 0, frame = 0
+  51              		@ frame_needed = 0, uses_anonymous_args = 0
+  52              		@ link register save eliminated.
+  53              	.LVL2:
+  94:..\API/fixedpoint.c ****     int32 ia;
+  95:..\API/fixedpoint.c ****     ia = ((int32) fa) >> FIXQ;
+  96:..\API/fixedpoint.c ****     return ia;
+  97:..\API/fixedpoint.c **** }
+  54              		.loc 1 97 0
+  55 0000 0014     		asrs	r0, r0, #16
+  56              	.LVL3:
+  57 0002 7047     		bx	lr
+  58              		.cfi_endproc
+  59              	.LFE64:
+  60              		.size	INT_FIX, .-INT_FIX
+  61              		.global	__aeabi_dmul
+  62              		.global	__aeabi_d2iz
+  63              		.section	.text.FIX_DBL,"ax",%progbits
+  64              		.align	2
+  65              		.global	FIX_DBL
+  66              		.thumb
+  67              		.thumb_func
+  68              		.type	FIX_DBL, %function
+  69              	FIX_DBL:
+  70              	.LFB65:
+  98:..\API/fixedpoint.c **** 
+  99:..\API/fixedpoint.c **** //==============================
+ 100:..\API/fixedpoint.c **** // Make Fixed Point from Double
+ 101:..\API/fixedpoint.c **** //==============================
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 4
+
+
+ 102:..\API/fixedpoint.c **** fix32 FIX_DBL(double da)
+ 103:..\API/fixedpoint.c **** {
+  71              		.loc 1 103 0
+  72              		.cfi_startproc
+  73              		@ args = 0, pretend = 0, frame = 0
+  74              		@ frame_needed = 0, uses_anonymous_args = 0
+  75              	.LVL4:
+  76 0000 08B5     		push	{r3, lr}
+  77              		.cfi_def_cfa_offset 8
+  78              		.cfi_offset 3, -8
+  79              		.cfi_offset 14, -4
+ 104:..\API/fixedpoint.c ****     int32 ia;
+ 105:..\API/fixedpoint.c ****     fix32 fa;
+ 106:..\API/fixedpoint.c **** 
+ 107:..\API/fixedpoint.c ****     da = da * (double)(1 << FIXQ);
+  80              		.loc 1 107 0
+  81 0002 0022     		movs	r2, #0
+  82 0004 024B     		ldr	r3, .L5
+  83 0006 FFF7FEFF 		bl	__aeabi_dmul
+  84              	.LVL5:
+ 108:..\API/fixedpoint.c ****     ia = (int32) da;
+  85              		.loc 1 108 0
+  86 000a FFF7FEFF 		bl	__aeabi_d2iz
+  87              	.LVL6:
+ 109:..\API/fixedpoint.c ****     fa = (fix32) ia;
+ 110:..\API/fixedpoint.c ****     return fa;
+ 111:..\API/fixedpoint.c **** }
+  88              		.loc 1 111 0
+  89 000e 08BD     		pop	{r3, pc}
+  90              	.L6:
+  91              		.align	2
+  92              	.L5:
+  93 0010 0000F040 		.word	1089470464
+  94              		.cfi_endproc
+  95              	.LFE65:
+  96              		.size	FIX_DBL, .-FIX_DBL
+  97              		.global	__aeabi_i2d
+  98              		.section	.text.DBL_FIX,"ax",%progbits
+  99              		.align	2
+ 100              		.global	DBL_FIX
+ 101              		.thumb
+ 102              		.thumb_func
+ 103              		.type	DBL_FIX, %function
+ 104              	DBL_FIX:
+ 105              	.LFB66:
+ 112:..\API/fixedpoint.c **** 
+ 113:..\API/fixedpoint.c **** //=============================
+ 114:..\API/fixedpoint.c **** // Make Double from Fixed Point
+ 115:..\API/fixedpoint.c **** //=============================
+ 116:..\API/fixedpoint.c **** double DBL_FIX(fix32 fa)
+ 117:..\API/fixedpoint.c **** {
+ 106              		.loc 1 117 0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 0
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110              	.LVL7:
+ 111 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 5
+
+
+ 112              		.cfi_def_cfa_offset 8
+ 113              		.cfi_offset 3, -8
+ 114              		.cfi_offset 14, -4
+ 115              	.LVL8:
+ 118:..\API/fixedpoint.c ****     int32 ia;
+ 119:..\API/fixedpoint.c ****     double  da;
+ 120:..\API/fixedpoint.c **** 
+ 121:..\API/fixedpoint.c ****     ia = (fix32) fa;
+ 122:..\API/fixedpoint.c ****     da = (double) ia;
+ 116              		.loc 1 122 0
+ 117 0002 FFF7FEFF 		bl	__aeabi_i2d
+ 118              	.LVL9:
+ 123:..\API/fixedpoint.c ****     da = da / ((double) (1 << FIXQ));
+ 119              		.loc 1 123 0
+ 120 0006 0022     		movs	r2, #0
+ 121 0008 014B     		ldr	r3, .L9
+ 122 000a FFF7FEFF 		bl	__aeabi_dmul
+ 123              	.LVL10:
+ 124:..\API/fixedpoint.c ****     return da;
+ 125:..\API/fixedpoint.c **** }
+ 124              		.loc 1 125 0
+ 125 000e 08BD     		pop	{r3, pc}
+ 126              	.L10:
+ 127              		.align	2
+ 128              	.L9:
+ 129 0010 0000F03E 		.word	1055916032
+ 130              		.cfi_endproc
+ 131              	.LFE66:
+ 132              		.size	DBL_FIX, .-DBL_FIX
+ 133              		.section	.text.FIX_Add,"ax",%progbits
+ 134              		.align	2
+ 135              		.global	FIX_Add
+ 136              		.thumb
+ 137              		.thumb_func
+ 138              		.type	FIX_Add, %function
+ 139              	FIX_Add:
+ 140              	.LFB67:
+ 126:..\API/fixedpoint.c **** 
+ 127:..\API/fixedpoint.c **** //========================
+ 128:..\API/fixedpoint.c **** // Fixed Point Add
+ 129:..\API/fixedpoint.c **** //========================
+ 130:..\API/fixedpoint.c **** // [Note] Take care Overflow
+ 131:..\API/fixedpoint.c **** fix32 FIX_Add(fix32 fa, fix32 fb)
+ 132:..\API/fixedpoint.c **** {
+ 141              		.loc 1 132 0
+ 142              		.cfi_startproc
+ 143              		@ args = 0, pretend = 0, frame = 0
+ 144              		@ frame_needed = 0, uses_anonymous_args = 0
+ 145              		@ link register save eliminated.
+ 146              	.LVL11:
+ 133:..\API/fixedpoint.c ****     fix32 fc;
+ 134:..\API/fixedpoint.c ****     fc = fa + fb;
+ 135:..\API/fixedpoint.c ****     return fc;
+ 136:..\API/fixedpoint.c **** }
+ 147              		.loc 1 136 0
+ 148 0000 0844     		add	r0, r0, r1
+ 149              	.LVL12:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 6
+
+
+ 150 0002 7047     		bx	lr
+ 151              		.cfi_endproc
+ 152              	.LFE67:
+ 153              		.size	FIX_Add, .-FIX_Add
+ 154              		.section	.text.FIX_Sub,"ax",%progbits
+ 155              		.align	2
+ 156              		.global	FIX_Sub
+ 157              		.thumb
+ 158              		.thumb_func
+ 159              		.type	FIX_Sub, %function
+ 160              	FIX_Sub:
+ 161              	.LFB68:
+ 137:..\API/fixedpoint.c **** 
+ 138:..\API/fixedpoint.c **** //========================
+ 139:..\API/fixedpoint.c **** // Fixed Point Sub
+ 140:..\API/fixedpoint.c **** //========================
+ 141:..\API/fixedpoint.c **** // [Note] Take care Overflow
+ 142:..\API/fixedpoint.c **** fix32 FIX_Sub(fix32 fa, fix32 fb)
+ 143:..\API/fixedpoint.c **** {
+ 162              		.loc 1 143 0
+ 163              		.cfi_startproc
+ 164              		@ args = 0, pretend = 0, frame = 0
+ 165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 166              		@ link register save eliminated.
+ 167              	.LVL13:
+ 144:..\API/fixedpoint.c ****     fix32 fc;
+ 145:..\API/fixedpoint.c ****     fc = fa - fb;
+ 146:..\API/fixedpoint.c ****     return fc;
+ 147:..\API/fixedpoint.c **** }
+ 168              		.loc 1 147 0
+ 169 0000 401A     		subs	r0, r0, r1
+ 170              	.LVL14:
+ 171 0002 7047     		bx	lr
+ 172              		.cfi_endproc
+ 173              	.LFE68:
+ 174              		.size	FIX_Sub, .-FIX_Sub
+ 175              		.section	.text.FIX_Abs,"ax",%progbits
+ 176              		.align	2
+ 177              		.global	FIX_Abs
+ 178              		.thumb
+ 179              		.thumb_func
+ 180              		.type	FIX_Abs, %function
+ 181              	FIX_Abs:
+ 182              	.LFB69:
+ 148:..\API/fixedpoint.c **** 
+ 149:..\API/fixedpoint.c **** //=======================
+ 150:..\API/fixedpoint.c **** // Fixed Point Absolute
+ 151:..\API/fixedpoint.c **** //=======================
+ 152:..\API/fixedpoint.c **** fix32 FIX_Abs(fix32 fa)
+ 153:..\API/fixedpoint.c **** {
+ 183              		.loc 1 153 0
+ 184              		.cfi_startproc
+ 185              		@ args = 0, pretend = 0, frame = 0
+ 186              		@ frame_needed = 0, uses_anonymous_args = 0
+ 187              		@ link register save eliminated.
+ 188              	.LVL15:
+ 154:..\API/fixedpoint.c ****     fix32 fb;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 7
+
+
+ 155:..\API/fixedpoint.c ****     fb = (fa >= 0)? (+fa) : (-fa);
+ 156:..\API/fixedpoint.c ****     return fb;
+ 157:..\API/fixedpoint.c **** }
+ 189              		.loc 1 157 0
+ 190 0000 0028     		cmp	r0, #0
+ 191 0002 B8BF     		it	lt
+ 192 0004 4042     		rsblt	r0, r0, #0
+ 193              	.LVL16:
+ 194 0006 7047     		bx	lr
+ 195              		.cfi_endproc
+ 196              	.LFE69:
+ 197              		.size	FIX_Abs, .-FIX_Abs
+ 198              		.section	.text.FIX_Mul,"ax",%progbits
+ 199              		.align	2
+ 200              		.global	FIX_Mul
+ 201              		.thumb
+ 202              		.thumb_func
+ 203              		.type	FIX_Mul, %function
+ 204              	FIX_Mul:
+ 205              	.LFB70:
+ 158:..\API/fixedpoint.c **** 
+ 159:..\API/fixedpoint.c **** //=======================
+ 160:..\API/fixedpoint.c **** // Fixed Point Multiply
+ 161:..\API/fixedpoint.c **** //=======================
+ 162:..\API/fixedpoint.c **** // [Note] Take care Overflow
+ 163:..\API/fixedpoint.c **** fix32 FIX_Mul(fix32 fa, fix32 fb)
+ 164:..\API/fixedpoint.c **** {
+ 206              		.loc 1 164 0
+ 207              		.cfi_startproc
+ 208              		@ args = 0, pretend = 0, frame = 0
+ 209              		@ frame_needed = 0, uses_anonymous_args = 0
+ 210              		@ link register save eliminated.
+ 211              	.LVL17:
+ 212 0000 30B4     		push	{r4, r5}
+ 213              		.cfi_def_cfa_offset 8
+ 214              		.cfi_offset 4, -8
+ 215              		.cfi_offset 5, -4
+ 165:..\API/fixedpoint.c ****     int64 ia64, ib64;
+ 166:..\API/fixedpoint.c ****     int64 iab64;
+ 167:..\API/fixedpoint.c ****     int32 iab32;
+ 168:..\API/fixedpoint.c ****     fix32 fc;
+ 169:..\API/fixedpoint.c **** 
+ 170:..\API/fixedpoint.c ****     ia64 = (int64) ((int32) fa);
+ 216              		.loc 1 170 0
+ 217 0002 C317     		asrs	r3, r0, #31
+ 171:..\API/fixedpoint.c ****     ib64 = (int64) ((int32) fb);
+ 218              		.loc 1 171 0
+ 219 0004 CD17     		asrs	r5, r1, #31
+ 172:..\API/fixedpoint.c ****     iab64 = ia64 * ib64;    
+ 220              		.loc 1 172 0
+ 221 0006 00FB05F4 		mul	r4, r0, r5
+ 222 000a 01FB0344 		mla	r4, r1, r3, r4
+ 223 000e A0FB0123 		umull	r2, r3, r0, r1
+ 224 0012 2344     		add	r3, r3, r4
+ 225              	.LVL18:
+ 173:..\API/fixedpoint.c ****     iab32 = (int32) (iab64 >> FIXQ);
+ 226              		.loc 1 173 0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 8
+
+
+ 227 0014 100C     		lsrs	r0, r2, #16
+ 228              	.LVL19:
+ 174:..\API/fixedpoint.c ****     fc = (fix32) iab32;
+ 175:..\API/fixedpoint.c ****     return fc;
+ 176:..\API/fixedpoint.c **** }
+ 229              		.loc 1 176 0
+ 230 0016 40EA0340 		orr	r0, r0, r3, lsl #16
+ 231              	.LVL20:
+ 232 001a 30BC     		pop	{r4, r5}
+ 233              		.cfi_restore 5
+ 234              		.cfi_restore 4
+ 235              		.cfi_def_cfa_offset 0
+ 236 001c 7047     		bx	lr
+ 237              		.cfi_endproc
+ 238              	.LFE70:
+ 239              		.size	FIX_Mul, .-FIX_Mul
+ 240              		.global	__aeabi_ldivmod
+ 241 001e 00BF     		.section	.text.FIX_Div,"ax",%progbits
+ 242              		.align	2
+ 243              		.global	FIX_Div
+ 244              		.thumb
+ 245              		.thumb_func
+ 246              		.type	FIX_Div, %function
+ 247              	FIX_Div:
+ 248              	.LFB71:
+ 177:..\API/fixedpoint.c **** 
+ 178:..\API/fixedpoint.c **** //======================
+ 179:..\API/fixedpoint.c **** // Fixed Point Divide
+ 180:..\API/fixedpoint.c **** //======================
+ 181:..\API/fixedpoint.c **** fix32 FIX_Div(fix32 fa, fix32 fb)
+ 182:..\API/fixedpoint.c **** {
+ 249              		.loc 1 182 0
+ 250              		.cfi_startproc
+ 251              		@ args = 0, pretend = 0, frame = 0
+ 252              		@ frame_needed = 0, uses_anonymous_args = 0
+ 253              	.LVL21:
+ 183:..\API/fixedpoint.c ****     int64 ia64, ib64;
+ 184:..\API/fixedpoint.c ****     int64 iab64;
+ 185:..\API/fixedpoint.c ****     int32 iab32;
+ 186:..\API/fixedpoint.c ****     fix32 fc;
+ 187:..\API/fixedpoint.c **** 
+ 188:..\API/fixedpoint.c ****     if (fb == 0) return 0; // div by zero
+ 254              		.loc 1 188 0
+ 255 0000 59B1     		cbz	r1, .L18
+ 182:..\API/fixedpoint.c ****     int64 ia64, ib64;
+ 256              		.loc 1 182 0
+ 257 0002 08B5     		push	{r3, lr}
+ 258              		.cfi_def_cfa_offset 8
+ 259              		.cfi_offset 3, -8
+ 260              		.cfi_offset 14, -4
+ 261 0004 0A46     		mov	r2, r1
+ 262 0006 0346     		mov	r3, r0
+ 189:..\API/fixedpoint.c **** 
+ 190:..\API/fixedpoint.c ****     ia64 = ((int64) ((int32) fa)) << FIXQ;
+ 263              		.loc 1 190 0
+ 264 0008 D917     		asrs	r1, r3, #31
+ 265              	.LVL22:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 9
+
+
+ 266 000a 0904     		lsls	r1, r1, #16
+ 267              	.LVL23:
+ 191:..\API/fixedpoint.c ****     ib64 = (int64) ((int32) fb);
+ 192:..\API/fixedpoint.c ****     iab64 = ia64 / ib64;
+ 268              		.loc 1 192 0
+ 269 000c 1804     		lsls	r0, r3, #16
+ 270              	.LVL24:
+ 271 000e 41EA1341 		orr	r1, r1, r3, lsr #16
+ 272              	.LVL25:
+ 273 0012 D317     		asrs	r3, r2, #31
+ 274              	.LVL26:
+ 275 0014 FFF7FEFF 		bl	__aeabi_ldivmod
+ 276              	.LVL27:
+ 193:..\API/fixedpoint.c ****     iab32 = (int32) iab64;
+ 194:..\API/fixedpoint.c ****     fc = (fix32) iab32;
+ 195:..\API/fixedpoint.c ****     return fc;
+ 277              		.loc 1 195 0
+ 278 0018 08BD     		pop	{r3, pc}
+ 279              	.LVL28:
+ 280              	.L18:
+ 281              		.cfi_def_cfa_offset 0
+ 282              		.cfi_restore 3
+ 283              		.cfi_restore 14
+ 188:..\API/fixedpoint.c **** 
+ 284              		.loc 1 188 0
+ 285 001a 0020     		movs	r0, #0
+ 286              	.LVL29:
+ 287 001c 7047     		bx	lr
+ 288              		.cfi_endproc
+ 289              	.LFE71:
+ 290              		.size	FIX_Div, .-FIX_Div
+ 291              		.section	.text.INT_Sqrt,"ax",%progbits
+ 292              		.align	2
+ 293              		.global	INT_Sqrt
+ 294              		.thumb
+ 295              		.thumb_func
+ 296              		.type	INT_Sqrt, %function
+ 297              	INT_Sqrt:
+ 298              	.LFB72:
+ 196:..\API/fixedpoint.c **** }
+ 197:..\API/fixedpoint.c **** 
+ 198:..\API/fixedpoint.c **** //========================
+ 199:..\API/fixedpoint.c **** // Integer Square Root
+ 200:..\API/fixedpoint.c **** //========================
+ 201:..\API/fixedpoint.c **** int64 INT_Sqrt(int64 x)
+ 202:..\API/fixedpoint.c **** {
+ 299              		.loc 1 202 0
+ 300              		.cfi_startproc
+ 301              		@ args = 0, pretend = 0, frame = 0
+ 302              		@ frame_needed = 0, uses_anonymous_args = 0
+ 303              	.LVL30:
+ 304 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 305              		.cfi_def_cfa_offset 24
+ 306              		.cfi_offset 3, -24
+ 307              		.cfi_offset 4, -20
+ 308              		.cfi_offset 5, -16
+ 309              		.cfi_offset 6, -12
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 10
+
+
+ 310              		.cfi_offset 7, -8
+ 311              		.cfi_offset 14, -4
+ 203:..\API/fixedpoint.c ****     int64 s, t;
+ 204:..\API/fixedpoint.c **** 
+ 205:..\API/fixedpoint.c ****     if (x <= 0) return 0;
+ 312              		.loc 1 205 0
+ 313 0002 0128     		cmp	r0, #1
+ 314 0004 71F10003 		sbcs	r3, r1, #0
+ 315 0008 24DB     		blt	.L26
+ 316 000a 0246     		mov	r2, r0
+ 317 000c 0B46     		mov	r3, r1
+ 318 000e 0124     		movs	r4, #1
+ 319 0010 0025     		movs	r5, #0
+ 320 0012 04E0     		b	.L23
+ 321              	.LVL31:
+ 322              	.L24:
+ 206:..\API/fixedpoint.c **** 
+ 207:..\API/fixedpoint.c ****     s = 1;
+ 208:..\API/fixedpoint.c ****     t = x;
+ 209:..\API/fixedpoint.c ****     while (s < t)
+ 210:..\API/fixedpoint.c ****     {
+ 211:..\API/fixedpoint.c ****         s <<= 1;
+ 323              		.loc 1 211 0
+ 324 0014 2419     		adds	r4, r4, r4
+ 325              	.LVL32:
+ 326 0016 6D41     		adcs	r5, r5, r5
+ 212:..\API/fixedpoint.c ****         t >>= 1;
+ 327              		.loc 1 212 0
+ 328 0018 5B10     		movs	r3, r3, asr #1
+ 329 001a 4FEA3202 		mov	r2, r2, rrx
+ 330              	.LVL33:
+ 331              	.L23:
+ 209:..\API/fixedpoint.c ****     {
+ 332              		.loc 1 209 0
+ 333 001e 9442     		cmp	r4, r2
+ 334 0020 75EB0306 		sbcs	r6, r5, r3
+ 335 0024 F6DB     		blt	.L24
+ 336 0026 0646     		mov	r6, r0
+ 337 0028 0F46     		mov	r7, r1
+ 338 002a 01E0     		b	.L25
+ 339              	.LVL34:
+ 340              	.L27:
+ 213:..\API/fixedpoint.c ****     }
+ 214:..\API/fixedpoint.c ****     do
+ 215:..\API/fixedpoint.c ****     {
+ 216:..\API/fixedpoint.c ****         t = s;
+ 217:..\API/fixedpoint.c ****         s = (x / s + s) >> 1;
+ 341              		.loc 1 217 0
+ 342 002c 0446     		mov	r4, r0
+ 343              	.LVL35:
+ 344 002e 0D46     		mov	r5, r1
+ 345              	.LVL36:
+ 346              	.L25:
+ 347              		.loc 1 217 0 is_stmt 0 discriminator 1
+ 348 0030 3046     		mov	r0, r6
+ 349 0032 3946     		mov	r1, r7
+ 350 0034 2246     		mov	r2, r4
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 11
+
+
+ 351 0036 2B46     		mov	r3, r5
+ 352 0038 FFF7FEFF 		bl	__aeabi_ldivmod
+ 353              	.LVL37:
+ 354 003c 0019     		adds	r0, r0, r4
+ 355 003e 6941     		adcs	r1, r1, r5
+ 356 0040 4910     		movs	r1, r1, asr #1
+ 357 0042 4FEA3000 		mov	r0, r0, rrx
+ 358              	.LVL38:
+ 218:..\API/fixedpoint.c ****     }
+ 219:..\API/fixedpoint.c ****     while (s < t);
+ 359              		.loc 1 219 0 is_stmt 1 discriminator 1
+ 360 0046 A042     		cmp	r0, r4
+ 361 0048 71EB0503 		sbcs	r3, r1, r5
+ 362 004c EEDB     		blt	.L27
+ 220:..\API/fixedpoint.c **** 
+ 221:..\API/fixedpoint.c ****     return t;
+ 363              		.loc 1 221 0
+ 364 004e 2046     		mov	r0, r4
+ 365              	.LVL39:
+ 366 0050 2946     		mov	r1, r5
+ 367 0052 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 368              	.LVL40:
+ 369              	.L26:
+ 205:..\API/fixedpoint.c **** 
+ 370              		.loc 1 205 0
+ 371 0054 0020     		movs	r0, #0
+ 372              	.LVL41:
+ 373 0056 0146     		mov	r1, r0
+ 222:..\API/fixedpoint.c **** }
+ 374              		.loc 1 222 0
+ 375 0058 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 376              		.cfi_endproc
+ 377              	.LFE72:
+ 378              		.size	INT_Sqrt, .-INT_Sqrt
+ 379 005a 00BF     		.section	.text.FIX_Sqrt,"ax",%progbits
+ 380              		.align	2
+ 381              		.global	FIX_Sqrt
+ 382              		.thumb
+ 383              		.thumb_func
+ 384              		.type	FIX_Sqrt, %function
+ 385              	FIX_Sqrt:
+ 386              	.LFB73:
+ 223:..\API/fixedpoint.c **** 
+ 224:..\API/fixedpoint.c **** //=========================
+ 225:..\API/fixedpoint.c **** // Fixed Point Square Root
+ 226:..\API/fixedpoint.c **** //=========================
+ 227:..\API/fixedpoint.c **** fix32 FIX_Sqrt(fix32 fa)
+ 228:..\API/fixedpoint.c **** {
+ 387              		.loc 1 228 0
+ 388              		.cfi_startproc
+ 389              		@ args = 0, pretend = 0, frame = 0
+ 390              		@ frame_needed = 0, uses_anonymous_args = 0
+ 391              	.LVL42:
+ 392 0000 08B5     		push	{r3, lr}
+ 393              		.cfi_def_cfa_offset 8
+ 394              		.cfi_offset 3, -8
+ 395              		.cfi_offset 14, -4
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 12
+
+
+ 396 0002 0346     		mov	r3, r0
+ 229:..\API/fixedpoint.c ****     int64 ia64;
+ 230:..\API/fixedpoint.c ****     int64 ib64;
+ 231:..\API/fixedpoint.c ****     int32 ib32;
+ 232:..\API/fixedpoint.c ****     fix32 fb;
+ 233:..\API/fixedpoint.c **** 
+ 234:..\API/fixedpoint.c ****     ia64 = ((int64) ((int32) fa)) << FIXQ;
+ 397              		.loc 1 234 0
+ 398 0004 D917     		asrs	r1, r3, #31
+ 399 0006 0904     		lsls	r1, r1, #16
+ 400              	.LVL43:
+ 235:..\API/fixedpoint.c ****     ib64 = INT_Sqrt(ia64);
+ 401              		.loc 1 235 0
+ 402 0008 1804     		lsls	r0, r3, #16
+ 403              	.LVL44:
+ 404 000a 41EA1341 		orr	r1, r1, r3, lsr #16
+ 405              	.LVL45:
+ 406 000e FFF7FEFF 		bl	INT_Sqrt
+ 407              	.LVL46:
+ 236:..\API/fixedpoint.c ****     ib32 = (int32) ib64;
+ 237:..\API/fixedpoint.c ****     fb = (fix32) ib32;
+ 238:..\API/fixedpoint.c ****     return fb;
+ 239:..\API/fixedpoint.c **** }
+ 408              		.loc 1 239 0
+ 409 0012 08BD     		pop	{r3, pc}
+ 410              		.cfi_endproc
+ 411              	.LFE73:
+ 412              		.size	FIX_Sqrt, .-FIX_Sqrt
+ 413              		.section	.text.FIX_Deg_Rad,"ax",%progbits
+ 414              		.align	2
+ 415              		.global	FIX_Deg_Rad
+ 416              		.thumb
+ 417              		.thumb_func
+ 418              		.type	FIX_Deg_Rad, %function
+ 419              	FIX_Deg_Rad:
+ 420              	.LFB78:
+ 240:..\API/fixedpoint.c **** 
+ 241:..\API/fixedpoint.c **** //===========================
+ 242:..\API/fixedpoint.c **** // Fixed Point Sin in Radian
+ 243:..\API/fixedpoint.c **** //===========================
+ 244:..\API/fixedpoint.c **** fix32 FIX_Sin(fix32 frad)
+ 245:..\API/fixedpoint.c **** {
+ 246:..\API/fixedpoint.c ****     fix32 fdeg;
+ 247:..\API/fixedpoint.c ****     fix32 fsin;
+ 248:..\API/fixedpoint.c **** 
+ 249:..\API/fixedpoint.c ****     fdeg = FIX_Deg_Rad(frad);
+ 250:..\API/fixedpoint.c ****     fsin = FIX_Sin_Deg(fdeg);
+ 251:..\API/fixedpoint.c ****     return fsin;
+ 252:..\API/fixedpoint.c **** }
+ 253:..\API/fixedpoint.c **** 
+ 254:..\API/fixedpoint.c **** //===========================
+ 255:..\API/fixedpoint.c **** // Fixed Point Cos in Radian
+ 256:..\API/fixedpoint.c **** //===========================
+ 257:..\API/fixedpoint.c **** fix32 FIX_Cos(fix32 frad)
+ 258:..\API/fixedpoint.c **** {
+ 259:..\API/fixedpoint.c ****     fix32 fdeg;
+ 260:..\API/fixedpoint.c ****     fix32 fcos;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 13
+
+
+ 261:..\API/fixedpoint.c **** 
+ 262:..\API/fixedpoint.c ****     fdeg = FIX_Deg_Rad(frad);
+ 263:..\API/fixedpoint.c ****     fcos = FIX_Cos_Deg(fdeg);
+ 264:..\API/fixedpoint.c ****     return fcos;
+ 265:..\API/fixedpoint.c **** }
+ 266:..\API/fixedpoint.c **** 
+ 267:..\API/fixedpoint.c **** //============================
+ 268:..\API/fixedpoint.c **** // Fixed Point Atan in Radian
+ 269:..\API/fixedpoint.c **** //============================
+ 270:..\API/fixedpoint.c **** fix32 FIX_Atan(fix32 fval)
+ 271:..\API/fixedpoint.c **** {
+ 272:..\API/fixedpoint.c ****     fix32 fdeg;
+ 273:..\API/fixedpoint.c ****     fix32 frad;
+ 274:..\API/fixedpoint.c ****     
+ 275:..\API/fixedpoint.c ****     fdeg = FIX_Atan_Deg(fval);
+ 276:..\API/fixedpoint.c ****     frad = FIX_Rad_Deg(fdeg);
+ 277:..\API/fixedpoint.c ****     return frad;
+ 278:..\API/fixedpoint.c **** }
+ 279:..\API/fixedpoint.c **** 
+ 280:..\API/fixedpoint.c **** //============================
+ 281:..\API/fixedpoint.c **** // Fixed Point Atan2 in Radian
+ 282:..\API/fixedpoint.c **** //============================
+ 283:..\API/fixedpoint.c **** fix32 FIX_Atan2(fix32 fnum, fix32 fden)
+ 284:..\API/fixedpoint.c **** {
+ 285:..\API/fixedpoint.c ****     fix32 fdeg;
+ 286:..\API/fixedpoint.c ****     fix32 frad;
+ 287:..\API/fixedpoint.c ****     
+ 288:..\API/fixedpoint.c ****     fdeg = FIX_Atan2_Deg(fnum, fden);
+ 289:..\API/fixedpoint.c ****     frad = FIX_Rad_Deg(fdeg);
+ 290:..\API/fixedpoint.c ****     return frad;
+ 291:..\API/fixedpoint.c **** }
+ 292:..\API/fixedpoint.c **** 
+ 293:..\API/fixedpoint.c **** //===============================
+ 294:..\API/fixedpoint.c **** // Fixed Point Degree from Radian
+ 295:..\API/fixedpoint.c **** //===============================
+ 296:..\API/fixedpoint.c **** fix32 FIX_Deg_Rad(fix32 frad)
+ 297:..\API/fixedpoint.c **** {
+ 421              		.loc 1 297 0
+ 422              		.cfi_startproc
+ 423              		@ args = 0, pretend = 0, frame = 0
+ 424              		@ frame_needed = 0, uses_anonymous_args = 0
+ 425              	.LVL47:
+ 426 0000 08B5     		push	{r3, lr}
+ 427              		.cfi_def_cfa_offset 8
+ 428              		.cfi_offset 3, -8
+ 429              		.cfi_offset 14, -4
+ 298:..\API/fixedpoint.c ****     fix32 fdeg;
+ 299:..\API/fixedpoint.c ****     fdeg = FIX_Mul(180 << FIXQ, FIX_Div(frad, FIX_PI));
+ 430              		.loc 1 299 0
+ 431 0002 0449     		ldr	r1, .L33
+ 432 0004 FFF7FEFF 		bl	FIX_Div
+ 433              	.LVL48:
+ 434 0008 0146     		mov	r1, r0
+ 435 000a 4FF43400 		mov	r0, #11796480
+ 436 000e FFF7FEFF 		bl	FIX_Mul
+ 437              	.LVL49:
+ 300:..\API/fixedpoint.c ****     return fdeg;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 14
+
+
+ 301:..\API/fixedpoint.c **** }
+ 438              		.loc 1 301 0
+ 439 0012 08BD     		pop	{r3, pc}
+ 440              	.L34:
+ 441              		.align	2
+ 442              	.L33:
+ 443 0014 3F240300 		.word	205887
+ 444              		.cfi_endproc
+ 445              	.LFE78:
+ 446              		.size	FIX_Deg_Rad, .-FIX_Deg_Rad
+ 447              		.section	.text.FIX_Rad_Deg,"ax",%progbits
+ 448              		.align	2
+ 449              		.global	FIX_Rad_Deg
+ 450              		.thumb
+ 451              		.thumb_func
+ 452              		.type	FIX_Rad_Deg, %function
+ 453              	FIX_Rad_Deg:
+ 454              	.LFB79:
+ 302:..\API/fixedpoint.c **** 
+ 303:..\API/fixedpoint.c **** //===============================
+ 304:..\API/fixedpoint.c **** // Fixed Point Radian from Degree
+ 305:..\API/fixedpoint.c **** //===============================
+ 306:..\API/fixedpoint.c **** fix32 FIX_Rad_Deg(fix32 fdeg)
+ 307:..\API/fixedpoint.c **** {
+ 455              		.loc 1 307 0
+ 456              		.cfi_startproc
+ 457              		@ args = 0, pretend = 0, frame = 0
+ 458              		@ frame_needed = 0, uses_anonymous_args = 0
+ 459              	.LVL50:
+ 460 0000 08B5     		push	{r3, lr}
+ 461              		.cfi_def_cfa_offset 8
+ 462              		.cfi_offset 3, -8
+ 463              		.cfi_offset 14, -4
+ 308:..\API/fixedpoint.c ****     fix32 frad;
+ 309:..\API/fixedpoint.c ****     frad = FIX_Mul(FIX_PI, FIX_Div(fdeg, (180 << FIXQ)));
+ 464              		.loc 1 309 0
+ 465 0002 4FF43401 		mov	r1, #11796480
+ 466 0006 FFF7FEFF 		bl	FIX_Div
+ 467              	.LVL51:
+ 468 000a 0146     		mov	r1, r0
+ 469 000c 0148     		ldr	r0, .L37
+ 470 000e FFF7FEFF 		bl	FIX_Mul
+ 471              	.LVL52:
+ 310:..\API/fixedpoint.c ****     return frad;
+ 311:..\API/fixedpoint.c **** }
+ 472              		.loc 1 311 0
+ 473 0012 08BD     		pop	{r3, pc}
+ 474              	.L38:
+ 475              		.align	2
+ 476              	.L37:
+ 477 0014 3F240300 		.word	205887
+ 478              		.cfi_endproc
+ 479              	.LFE79:
+ 480              		.size	FIX_Rad_Deg, .-FIX_Rad_Deg
+ 481              		.section	.text.FIX_Sin_Deg,"ax",%progbits
+ 482              		.align	2
+ 483              		.global	FIX_Sin_Deg
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 15
+
+
+ 484              		.thumb
+ 485              		.thumb_func
+ 486              		.type	FIX_Sin_Deg, %function
+ 487              	FIX_Sin_Deg:
+ 488              	.LFB80:
+ 312:..\API/fixedpoint.c **** 
+ 313:..\API/fixedpoint.c **** //===========================
+ 314:..\API/fixedpoint.c **** // Fixed Point Sin in Degree
+ 315:..\API/fixedpoint.c **** //===========================
+ 316:..\API/fixedpoint.c **** fix32 FIX_Sin_Deg(fix32 fdeg)
+ 317:..\API/fixedpoint.c **** {
+ 489              		.loc 1 317 0
+ 490              		.cfi_startproc
+ 491              		@ args = 0, pretend = 0, frame = 0
+ 492              		@ frame_needed = 0, uses_anonymous_args = 0
+ 493              	.LVL53:
+ 494 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 495              		.cfi_def_cfa_offset 24
+ 496              		.cfi_offset 3, -24
+ 497              		.cfi_offset 4, -20
+ 498              		.cfi_offset 5, -16
+ 499              		.cfi_offset 6, -12
+ 500              		.cfi_offset 7, -8
+ 501              		.cfi_offset 14, -4
+ 318:..\API/fixedpoint.c ****     fix32  fdeg_0;
+ 319:..\API/fixedpoint.c ****     fix32  fsign;
+ 320:..\API/fixedpoint.c ****     uint32 quadrant;
+ 321:..\API/fixedpoint.c ****     fix32  fsin_0;
+ 322:..\API/fixedpoint.c ****     fix32  fdeg_A, fdeg_B;
+ 323:..\API/fixedpoint.c ****     int32  ideg_A, ideg_B;
+ 324:..\API/fixedpoint.c ****     fix32  fsin_A, fsin_B;
+ 325:..\API/fixedpoint.c ****     fix32  fsin;
+ 326:..\API/fixedpoint.c **** 
+ 327:..\API/fixedpoint.c ****     fsign = (fdeg >= 0)? (1 << FIXQ) : (0 - (1 << FIXQ));
+ 502              		.loc 1 327 0
+ 503 0002 0028     		cmp	r0, #0
+ 504 0004 02DB     		blt	.L48
+ 505 0006 4FF48037 		mov	r7, #65536
+ 506 000a 00E0     		b	.L40
+ 507              	.L48:
+ 508 000c 224F     		ldr	r7, .L52
+ 509              	.L40:
+ 510              	.LVL54:
+ 328:..\API/fixedpoint.c ****     fdeg_0 = FIX_Abs(fdeg);
+ 511              		.loc 1 328 0 discriminator 4
+ 512 000e FFF7FEFF 		bl	FIX_Abs
+ 513              	.LVL55:
+ 514 0012 0446     		mov	r4, r0
+ 515              	.LVL56:
+ 329:..\API/fixedpoint.c ****     //
+ 330:..\API/fixedpoint.c ****     quadrant = 0;
+ 516              		.loc 1 330 0 discriminator 4
+ 517 0014 0023     		movs	r3, #0
+ 331:..\API/fixedpoint.c ****     while(fdeg_0 >= (90 << FIXQ))
+ 518              		.loc 1 331 0 discriminator 4
+ 519 0016 02E0     		b	.L41
+ 520              	.LVL57:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 16
+
+
+ 521              	.L42:
+ 332:..\API/fixedpoint.c ****     {
+ 333:..\API/fixedpoint.c ****         fdeg_0 = fdeg_0 - (90 << FIXQ);
+ 522              		.loc 1 333 0
+ 523 0018 A4F5B404 		sub	r4, r4, #5898240
+ 524              	.LVL58:
+ 334:..\API/fixedpoint.c ****         quadrant++;
+ 525              		.loc 1 334 0
+ 526 001c 0133     		adds	r3, r3, #1
+ 527              	.LVL59:
+ 528              	.L41:
+ 331:..\API/fixedpoint.c ****     while(fdeg_0 >= (90 << FIXQ))
+ 529              		.loc 1 331 0
+ 530 001e B4F5B40F 		cmp	r4, #5898240
+ 531 0022 F9DA     		bge	.L42
+ 532              	.LVL60:
+ 335:..\API/fixedpoint.c ****     }
+ 336:..\API/fixedpoint.c ****     quadrant = quadrant & 0x03; // in 0~3 only
+ 337:..\API/fixedpoint.c ****     //
+ 338:..\API/fixedpoint.c ****     if (quadrant == 0)
+ 533              		.loc 1 338 0
+ 534 0024 13F00303 		ands	r3, r3, #3
+ 535              	.LVL61:
+ 536 0028 0BD0     		beq	.L43
+ 339:..\API/fixedpoint.c ****     {
+ 340:..\API/fixedpoint.c ****         // do nothing
+ 341:..\API/fixedpoint.c ****     }
+ 342:..\API/fixedpoint.c ****     else if (quadrant == 1)
+ 537              		.loc 1 342 0
+ 538 002a 012B     		cmp	r3, #1
+ 539 002c 02D1     		bne	.L44
+ 343:..\API/fixedpoint.c ****     {
+ 344:..\API/fixedpoint.c ****         fdeg_0 = (90 << FIXQ) - fdeg_0;
+ 540              		.loc 1 344 0
+ 541 002e C4F5B404 		rsb	r4, r4, #5898240
+ 542              	.LVL62:
+ 543 0032 06E0     		b	.L43
+ 544              	.L44:
+ 345:..\API/fixedpoint.c ****     }
+ 346:..\API/fixedpoint.c ****     else if (quadrant == 2)
+ 545              		.loc 1 346 0
+ 546 0034 022B     		cmp	r3, #2
+ 547 0036 01D1     		bne	.L45
+ 347:..\API/fixedpoint.c ****     {
+ 348:..\API/fixedpoint.c ****         fsign = -fsign;
+ 548              		.loc 1 348 0
+ 549 0038 7F42     		negs	r7, r7
+ 550              	.LVL63:
+ 551 003a 02E0     		b	.L43
+ 552              	.L45:
+ 349:..\API/fixedpoint.c ****     }
+ 350:..\API/fixedpoint.c ****     else // if (quadrant == 3)
+ 351:..\API/fixedpoint.c ****     {
+ 352:..\API/fixedpoint.c ****         fdeg_0 = (90 << FIXQ) - fdeg_0;
+ 553              		.loc 1 352 0
+ 554 003c C4F5B404 		rsb	r4, r4, #5898240
+ 555              	.LVL64:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 17
+
+
+ 353:..\API/fixedpoint.c ****         fsign = -fsign;
+ 556              		.loc 1 353 0
+ 557 0040 7F42     		negs	r7, r7
+ 558              	.LVL65:
+ 559              	.L43:
+ 354:..\API/fixedpoint.c ****     }
+ 355:..\API/fixedpoint.c ****     //
+ 356:..\API/fixedpoint.c ****     if (fdeg_0 >= (90 << FIXQ))
+ 560              		.loc 1 356 0
+ 561 0042 B4F5B40F 		cmp	r4, #5898240
+ 562 0046 20DA     		bge	.L49
+ 357:..\API/fixedpoint.c ****     {
+ 358:..\API/fixedpoint.c ****         fsin_0 = (1 << FIXQ);
+ 359:..\API/fixedpoint.c ****     }
+ 360:..\API/fixedpoint.c ****     else
+ 361:..\API/fixedpoint.c ****     {
+ 362:..\API/fixedpoint.c ****         fdeg_A = (fdeg_0 >> FIXQ) << FIXQ;
+ 563              		.loc 1 362 0
+ 564 0048 260C     		lsrs	r6, r4, #16
+ 565 004a 3604     		lsls	r6, r6, #16
+ 566              	.LVL66:
+ 363:..\API/fixedpoint.c ****         ideg_A = INT_FIX(fdeg_A);
+ 567              		.loc 1 363 0
+ 568 004c 3046     		mov	r0, r6
+ 569 004e FFF7FEFF 		bl	INT_FIX
+ 570              	.LVL67:
+ 364:..\API/fixedpoint.c ****         fsin_A = TBL_SIN[ideg_A] >> (32 - FIXQ);
+ 571              		.loc 1 364 0
+ 572 0052 124B     		ldr	r3, .L52+4
+ 573 0054 53F82000 		ldr	r0, [r3, r0, lsl #2]
+ 574              	.LVL68:
+ 575 0058 050C     		lsrs	r5, r0, #16
+ 576              	.LVL69:
+ 365:..\API/fixedpoint.c ****         //
+ 366:..\API/fixedpoint.c ****         fdeg_B = fdeg_A + (1 << FIXQ);
+ 367:..\API/fixedpoint.c ****         ideg_B = INT_FIX(fdeg_B);
+ 577              		.loc 1 367 0
+ 578 005a 06F58030 		add	r0, r6, #65536
+ 579              	.LVL70:
+ 580 005e FFF7FEFF 		bl	INT_FIX
+ 581              	.LVL71:
+ 368:..\API/fixedpoint.c ****         fsin_B = (fdeg_0 < (89 << FIXQ))? (TBL_SIN[ideg_B] >> (32 - FIXQ)) : (1 << FIXQ);
+ 582              		.loc 1 368 0
+ 583 0062 B4F5B20F 		cmp	r4, #5832704
+ 584 0066 04DA     		bge	.L50
+ 585              		.loc 1 368 0 is_stmt 0 discriminator 1
+ 586 0068 0C4B     		ldr	r3, .L52+4
+ 587 006a 53F82000 		ldr	r0, [r3, r0, lsl #2]
+ 588              	.LVL72:
+ 589 006e 000C     		lsrs	r0, r0, #16
+ 590 0070 01E0     		b	.L47
+ 591              	.LVL73:
+ 592              	.L50:
+ 593              		.loc 1 368 0
+ 594 0072 4FF48030 		mov	r0, #65536
+ 595              	.LVL74:
+ 596              	.L47:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 18
+
+
+ 369:..\API/fixedpoint.c ****         //
+ 370:..\API/fixedpoint.c ****         fsin_0 = fsin_A + FIX_Mul(FIX_Div(fsin_B - fsin_A, fdeg_B - fdeg_A), fdeg_0 - fdeg_A);
+ 597              		.loc 1 370 0 is_stmt 1 discriminator 4
+ 598 0076 401B     		subs	r0, r0, r5
+ 599              	.LVL75:
+ 600 0078 4FF48031 		mov	r1, #65536
+ 601 007c FFF7FEFF 		bl	FIX_Div
+ 602              	.LVL76:
+ 603 0080 A11B     		subs	r1, r4, r6
+ 604 0082 FFF7FEFF 		bl	FIX_Mul
+ 605              	.LVL77:
+ 606 0086 2844     		add	r0, r0, r5
+ 607              	.LVL78:
+ 608 0088 01E0     		b	.L46
+ 609              	.LVL79:
+ 610              	.L49:
+ 358:..\API/fixedpoint.c ****     }
+ 611              		.loc 1 358 0
+ 612 008a 4FF48030 		mov	r0, #65536
+ 613              	.LVL80:
+ 614              	.L46:
+ 371:..\API/fixedpoint.c ****     }
+ 372:..\API/fixedpoint.c ****     //
+ 373:..\API/fixedpoint.c ****     fsin = FIX_Mul(fsin_0, fsign);
+ 615              		.loc 1 373 0
+ 616 008e 3946     		mov	r1, r7
+ 617 0090 FFF7FEFF 		bl	FIX_Mul
+ 618              	.LVL81:
+ 374:..\API/fixedpoint.c ****     return fsin;
+ 375:..\API/fixedpoint.c **** }
+ 619              		.loc 1 375 0
+ 620 0094 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 621              	.LVL82:
+ 622              	.L53:
+ 623 0096 00BF     		.align	2
+ 624              	.L52:
+ 625 0098 0000FFFF 		.word	-65536
+ 626 009c 00000000 		.word	.LANCHOR0
+ 627              		.cfi_endproc
+ 628              	.LFE80:
+ 629              		.size	FIX_Sin_Deg, .-FIX_Sin_Deg
+ 630              		.section	.text.FIX_Sin,"ax",%progbits
+ 631              		.align	2
+ 632              		.global	FIX_Sin
+ 633              		.thumb
+ 634              		.thumb_func
+ 635              		.type	FIX_Sin, %function
+ 636              	FIX_Sin:
+ 637              	.LFB74:
+ 245:..\API/fixedpoint.c ****     fix32 fdeg;
+ 638              		.loc 1 245 0
+ 639              		.cfi_startproc
+ 640              		@ args = 0, pretend = 0, frame = 0
+ 641              		@ frame_needed = 0, uses_anonymous_args = 0
+ 642              	.LVL83:
+ 643 0000 08B5     		push	{r3, lr}
+ 644              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 19
+
+
+ 645              		.cfi_offset 3, -8
+ 646              		.cfi_offset 14, -4
+ 249:..\API/fixedpoint.c ****     fsin = FIX_Sin_Deg(fdeg);
+ 647              		.loc 1 249 0
+ 648 0002 FFF7FEFF 		bl	FIX_Deg_Rad
+ 649              	.LVL84:
+ 250:..\API/fixedpoint.c ****     return fsin;
+ 650              		.loc 1 250 0
+ 651 0006 FFF7FEFF 		bl	FIX_Sin_Deg
+ 652              	.LVL85:
+ 252:..\API/fixedpoint.c **** 
+ 653              		.loc 1 252 0
+ 654 000a 08BD     		pop	{r3, pc}
+ 655              		.cfi_endproc
+ 656              	.LFE74:
+ 657              		.size	FIX_Sin, .-FIX_Sin
+ 658              		.section	.text.FIX_Cos_Deg,"ax",%progbits
+ 659              		.align	2
+ 660              		.global	FIX_Cos_Deg
+ 661              		.thumb
+ 662              		.thumb_func
+ 663              		.type	FIX_Cos_Deg, %function
+ 664              	FIX_Cos_Deg:
+ 665              	.LFB81:
+ 376:..\API/fixedpoint.c **** 
+ 377:..\API/fixedpoint.c **** //===========================
+ 378:..\API/fixedpoint.c **** // Fixed Point Cos in Degree
+ 379:..\API/fixedpoint.c **** //===========================
+ 380:..\API/fixedpoint.c **** fix32 FIX_Cos_Deg(fix32 fdeg)
+ 381:..\API/fixedpoint.c **** {
+ 666              		.loc 1 381 0
+ 667              		.cfi_startproc
+ 668              		@ args = 0, pretend = 0, frame = 0
+ 669              		@ frame_needed = 0, uses_anonymous_args = 0
+ 670              	.LVL86:
+ 671 0000 08B5     		push	{r3, lr}
+ 672              		.cfi_def_cfa_offset 8
+ 673              		.cfi_offset 3, -8
+ 674              		.cfi_offset 14, -4
+ 382:..\API/fixedpoint.c ****     fix32  fcos;
+ 383:..\API/fixedpoint.c **** 
+ 384:..\API/fixedpoint.c ****     fcos = FIX_Sin_Deg(fdeg + (90 << FIXQ));
+ 675              		.loc 1 384 0
+ 676 0002 00F5B400 		add	r0, r0, #5898240
+ 677              	.LVL87:
+ 678 0006 FFF7FEFF 		bl	FIX_Sin_Deg
+ 679              	.LVL88:
+ 385:..\API/fixedpoint.c ****     return fcos;
+ 386:..\API/fixedpoint.c **** 
+ 387:..\API/fixedpoint.c **** }
+ 680              		.loc 1 387 0
+ 681 000a 08BD     		pop	{r3, pc}
+ 682              		.cfi_endproc
+ 683              	.LFE81:
+ 684              		.size	FIX_Cos_Deg, .-FIX_Cos_Deg
+ 685              		.section	.text.FIX_Cos,"ax",%progbits
+ 686              		.align	2
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 20
+
+
+ 687              		.global	FIX_Cos
+ 688              		.thumb
+ 689              		.thumb_func
+ 690              		.type	FIX_Cos, %function
+ 691              	FIX_Cos:
+ 692              	.LFB75:
+ 258:..\API/fixedpoint.c ****     fix32 fdeg;
+ 693              		.loc 1 258 0
+ 694              		.cfi_startproc
+ 695              		@ args = 0, pretend = 0, frame = 0
+ 696              		@ frame_needed = 0, uses_anonymous_args = 0
+ 697              	.LVL89:
+ 698 0000 08B5     		push	{r3, lr}
+ 699              		.cfi_def_cfa_offset 8
+ 700              		.cfi_offset 3, -8
+ 701              		.cfi_offset 14, -4
+ 262:..\API/fixedpoint.c ****     fcos = FIX_Cos_Deg(fdeg);
+ 702              		.loc 1 262 0
+ 703 0002 FFF7FEFF 		bl	FIX_Deg_Rad
+ 704              	.LVL90:
+ 263:..\API/fixedpoint.c ****     return fcos;
+ 705              		.loc 1 263 0
+ 706 0006 FFF7FEFF 		bl	FIX_Cos_Deg
+ 707              	.LVL91:
+ 265:..\API/fixedpoint.c **** 
+ 708              		.loc 1 265 0
+ 709 000a 08BD     		pop	{r3, pc}
+ 710              		.cfi_endproc
+ 711              	.LFE75:
+ 712              		.size	FIX_Cos, .-FIX_Cos
+ 713              		.section	.text.FIX_Atan_Deg,"ax",%progbits
+ 714              		.align	2
+ 715              		.global	FIX_Atan_Deg
+ 716              		.thumb
+ 717              		.thumb_func
+ 718              		.type	FIX_Atan_Deg, %function
+ 719              	FIX_Atan_Deg:
+ 720              	.LFB82:
+ 388:..\API/fixedpoint.c **** 
+ 389:..\API/fixedpoint.c **** //==============================
+ 390:..\API/fixedpoint.c **** // Fixed Point Atan in Degree
+ 391:..\API/fixedpoint.c **** //==============================
+ 392:..\API/fixedpoint.c **** // return -90~+90
+ 393:..\API/fixedpoint.c **** fix32 FIX_Atan_Deg(fix32 fval)
+ 394:..\API/fixedpoint.c **** {
+ 721              		.loc 1 394 0
+ 722              		.cfi_startproc
+ 723              		@ args = 0, pretend = 0, frame = 0
+ 724              		@ frame_needed = 0, uses_anonymous_args = 0
+ 725              	.LVL92:
+ 726 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 727              		.cfi_def_cfa_offset 32
+ 728              		.cfi_offset 4, -32
+ 729              		.cfi_offset 5, -28
+ 730              		.cfi_offset 6, -24
+ 731              		.cfi_offset 7, -20
+ 732              		.cfi_offset 8, -16
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 21
+
+
+ 733              		.cfi_offset 9, -12
+ 734              		.cfi_offset 10, -8
+ 735              		.cfi_offset 14, -4
+ 395:..\API/fixedpoint.c ****     fix32  fsign;
+ 396:..\API/fixedpoint.c ****     fix32  fval_0, fval_1;
+ 397:..\API/fixedpoint.c ****     uint32 over_one;
+ 398:..\API/fixedpoint.c ****     uint32 indexA, indexB, indexM;
+ 399:..\API/fixedpoint.c ****     fix32  ftanM0, ftanM1;
+ 400:..\API/fixedpoint.c ****     fix32  fdegM0, fdegM1, fdeg;
+ 401:..\API/fixedpoint.c ****     
+ 402:..\API/fixedpoint.c **** 
+ 403:..\API/fixedpoint.c ****     fsign = (fval >= 0)? (1 << FIXQ) : (0 - (1 << FIXQ));
+ 736              		.loc 1 403 0
+ 737 0004 0028     		cmp	r0, #0
+ 738 0006 02DB     		blt	.L69
+ 739 0008 4FF48037 		mov	r7, #65536
+ 740 000c 00E0     		b	.L61
+ 741              	.L69:
+ 742 000e 244F     		ldr	r7, .L73
+ 743              	.L61:
+ 744              	.LVL93:
+ 404:..\API/fixedpoint.c ****     fval_0 = FIX_Abs(fval);
+ 745              		.loc 1 404 0 discriminator 4
+ 746 0010 FFF7FEFF 		bl	FIX_Abs
+ 747              	.LVL94:
+ 748 0014 0646     		mov	r6, r0
+ 749              	.LVL95:
+ 405:..\API/fixedpoint.c ****     //
+ 406:..\API/fixedpoint.c ****     if (fval_0 < (1 << FIXQ))
+ 750              		.loc 1 406 0 discriminator 4
+ 751 0016 B0F5803F 		cmp	r0, #65536
+ 752 001a 08DB     		blt	.L70
+ 407:..\API/fixedpoint.c ****     {
+ 408:..\API/fixedpoint.c ****         fval_1 = fval_0;
+ 409:..\API/fixedpoint.c ****         over_one = 0;
+ 410:..\API/fixedpoint.c ****     }
+ 411:..\API/fixedpoint.c ****     else
+ 412:..\API/fixedpoint.c ****     {
+ 413:..\API/fixedpoint.c ****         fval_1 = FIX_Div((1 << FIXQ), fval_0);
+ 753              		.loc 1 413 0
+ 754 001c 4FF48030 		mov	r0, #65536
+ 755              	.LVL96:
+ 756 0020 3146     		mov	r1, r6
+ 757 0022 FFF7FEFF 		bl	FIX_Div
+ 758              	.LVL97:
+ 759 0026 0646     		mov	r6, r0
+ 760              	.LVL98:
+ 414:..\API/fixedpoint.c ****         over_one = 1;
+ 761              		.loc 1 414 0
+ 762 0028 4FF00108 		mov	r8, #1
+ 763 002c 01E0     		b	.L62
+ 764              	.LVL99:
+ 765              	.L70:
+ 409:..\API/fixedpoint.c ****     }
+ 766              		.loc 1 409 0
+ 767 002e 4FF00008 		mov	r8, #0
+ 768              	.LVL100:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 22
+
+
+ 769              	.L62:
+ 415:..\API/fixedpoint.c ****     }
+ 416:..\API/fixedpoint.c ****     //
+ 417:..\API/fixedpoint.c ****     // Search
+ 418:..\API/fixedpoint.c ****     indexA =  0;
+ 419:..\API/fixedpoint.c ****     indexB = 44;
+ 770              		.loc 1 419 0
+ 771 0032 2C21     		movs	r1, #44
+ 418:..\API/fixedpoint.c ****     indexB = 44;
+ 772              		.loc 1 418 0
+ 773 0034 0022     		movs	r2, #0
+ 420:..\API/fixedpoint.c ****     while(indexA <= indexB)
+ 774              		.loc 1 420 0
+ 775 0036 14E0     		b	.L63
+ 776              	.LVL101:
+ 777              	.L67:
+ 421:..\API/fixedpoint.c ****     {
+ 422:..\API/fixedpoint.c ****         indexM = (indexA + indexB) / 2;
+ 778              		.loc 1 422 0
+ 779 0038 5418     		adds	r4, r2, r1
+ 780              	.LVL102:
+ 781 003a 6408     		lsrs	r4, r4, #1
+ 782              	.LVL103:
+ 423:..\API/fixedpoint.c ****         //
+ 424:..\API/fixedpoint.c ****         ftanM0 = TBL_TAN[indexM    ] >> (32 - FIXQ);
+ 783              		.loc 1 424 0
+ 784 003c 194B     		ldr	r3, .L73+4
+ 785 003e 03EB8400 		add	r0, r3, r4, lsl #2
+ 786 0042 B0F86A51 		ldrh	r5, [r0, #362]
+ 787              	.LVL104:
+ 425:..\API/fixedpoint.c ****         ftanM1 = TBL_TAN[indexM + 1] >> (32 - FIXQ);
+ 788              		.loc 1 425 0
+ 789 0046 601C     		adds	r0, r4, #1
+ 790 0048 03EB8003 		add	r3, r3, r0, lsl #2
+ 791 004c B3F86A91 		ldrh	r9, [r3, #362]
+ 792              	.LVL105:
+ 426:..\API/fixedpoint.c ****         if ((ftanM0 <= fval_1) && (fval_1 < ftanM1)) break;
+ 793              		.loc 1 426 0
+ 794 0050 B542     		cmp	r5, r6
+ 795 0052 01DC     		bgt	.L64
+ 796              		.loc 1 426 0 is_stmt 0 discriminator 1
+ 797 0054 4E45     		cmp	r6, r9
+ 798 0056 06DB     		blt	.L65
+ 799              	.L64:
+ 427:..\API/fixedpoint.c ****         //
+ 428:..\API/fixedpoint.c ****         if (fval_1 < ftanM0)
+ 800              		.loc 1 428 0 is_stmt 1
+ 801 0058 AE42     		cmp	r6, r5
+ 802 005a 01DA     		bge	.L71
+ 429:..\API/fixedpoint.c ****         {
+ 430:..\API/fixedpoint.c ****             indexB = indexM - 1;
+ 803              		.loc 1 430 0
+ 804 005c 611E     		subs	r1, r4, #1
+ 805              	.LVL106:
+ 806 005e 00E0     		b	.L63
+ 807              	.L71:
+ 431:..\API/fixedpoint.c ****         }
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 23
+
+
+ 432:..\API/fixedpoint.c ****         else
+ 433:..\API/fixedpoint.c ****         {
+ 434:..\API/fixedpoint.c ****             indexA = indexM + 1;
+ 808              		.loc 1 434 0
+ 809 0060 0246     		mov	r2, r0
+ 810              	.LVL107:
+ 811              	.L63:
+ 420:..\API/fixedpoint.c ****     {
+ 812              		.loc 1 420 0
+ 813 0062 8A42     		cmp	r2, r1
+ 814 0064 E8D9     		bls	.L67
+ 815              	.L65:
+ 435:..\API/fixedpoint.c ****         }
+ 436:..\API/fixedpoint.c ****     }    
+ 437:..\API/fixedpoint.c ****     //
+ 438:..\API/fixedpoint.c ****     // Interpolate
+ 439:..\API/fixedpoint.c ****     fdegM0 = FIX_INT(indexM); 
+ 816              		.loc 1 439 0
+ 817 0066 2046     		mov	r0, r4
+ 818 0068 FFF7FEFF 		bl	FIX_INT
+ 819              	.LVL108:
+ 820 006c 8246     		mov	r10, r0
+ 821              	.LVL109:
+ 440:..\API/fixedpoint.c ****     fdegM1 = FIX_INT(indexM + 1);
+ 822              		.loc 1 440 0
+ 823 006e 601C     		adds	r0, r4, #1
+ 824              	.LVL110:
+ 825 0070 FFF7FEFF 		bl	FIX_INT
+ 826              	.LVL111:
+ 441:..\API/fixedpoint.c ****     fdeg  = fdegM0 + FIX_Mul(FIX_Div(fdegM1 - fdegM0, ftanM1 - ftanM0), fval_1 - ftanM0);
+ 827              		.loc 1 441 0
+ 828 0074 CAEB0000 		rsb	r0, r10, r0
+ 829              	.LVL112:
+ 830 0078 C5EB0901 		rsb	r1, r5, r9
+ 831 007c FFF7FEFF 		bl	FIX_Div
+ 832              	.LVL113:
+ 833 0080 711B     		subs	r1, r6, r5
+ 834 0082 FFF7FEFF 		bl	FIX_Mul
+ 835              	.LVL114:
+ 836 0086 00EB0A01 		add	r1, r0, r10
+ 837              	.LVL115:
+ 442:..\API/fixedpoint.c ****     //
+ 443:..\API/fixedpoint.c ****     if (over_one) fdeg = (90 << FIXQ) - fdeg;
+ 838              		.loc 1 443 0
+ 839 008a B8F1000F 		cmp	r8, #0
+ 840 008e 01D0     		beq	.L68
+ 841              		.loc 1 443 0 is_stmt 0 discriminator 1
+ 842 0090 C1F5B401 		rsb	r1, r1, #5898240
+ 843              	.LVL116:
+ 844              	.L68:
+ 444:..\API/fixedpoint.c ****     fdeg = FIX_Mul(fsign, fdeg);
+ 845              		.loc 1 444 0 is_stmt 1
+ 846 0094 3846     		mov	r0, r7
+ 847 0096 FFF7FEFF 		bl	FIX_Mul
+ 848              	.LVL117:
+ 445:..\API/fixedpoint.c ****     
+ 446:..\API/fixedpoint.c ****     return fdeg;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 24
+
+
+ 447:..\API/fixedpoint.c **** }
+ 849              		.loc 1 447 0
+ 850 009a BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 851              	.LVL118:
+ 852              	.L74:
+ 853 009e 00BF     		.align	2
+ 854              	.L73:
+ 855 00a0 0000FFFF 		.word	-65536
+ 856 00a4 00000000 		.word	.LANCHOR0
+ 857              		.cfi_endproc
+ 858              	.LFE82:
+ 859              		.size	FIX_Atan_Deg, .-FIX_Atan_Deg
+ 860              		.section	.text.FIX_Atan,"ax",%progbits
+ 861              		.align	2
+ 862              		.global	FIX_Atan
+ 863              		.thumb
+ 864              		.thumb_func
+ 865              		.type	FIX_Atan, %function
+ 866              	FIX_Atan:
+ 867              	.LFB76:
+ 271:..\API/fixedpoint.c ****     fix32 fdeg;
+ 868              		.loc 1 271 0
+ 869              		.cfi_startproc
+ 870              		@ args = 0, pretend = 0, frame = 0
+ 871              		@ frame_needed = 0, uses_anonymous_args = 0
+ 872              	.LVL119:
+ 873 0000 08B5     		push	{r3, lr}
+ 874              		.cfi_def_cfa_offset 8
+ 875              		.cfi_offset 3, -8
+ 876              		.cfi_offset 14, -4
+ 275:..\API/fixedpoint.c ****     frad = FIX_Rad_Deg(fdeg);
+ 877              		.loc 1 275 0
+ 878 0002 FFF7FEFF 		bl	FIX_Atan_Deg
+ 879              	.LVL120:
+ 276:..\API/fixedpoint.c ****     return frad;
+ 880              		.loc 1 276 0
+ 881 0006 FFF7FEFF 		bl	FIX_Rad_Deg
+ 882              	.LVL121:
+ 278:..\API/fixedpoint.c **** 
+ 883              		.loc 1 278 0
+ 884 000a 08BD     		pop	{r3, pc}
+ 885              		.cfi_endproc
+ 886              	.LFE76:
+ 887              		.size	FIX_Atan, .-FIX_Atan
+ 888              		.section	.text.FIX_Atan2_Deg,"ax",%progbits
+ 889              		.align	2
+ 890              		.global	FIX_Atan2_Deg
+ 891              		.thumb
+ 892              		.thumb_func
+ 893              		.type	FIX_Atan2_Deg, %function
+ 894              	FIX_Atan2_Deg:
+ 895              	.LFB83:
+ 448:..\API/fixedpoint.c **** 
+ 449:..\API/fixedpoint.c **** //=============================
+ 450:..\API/fixedpoint.c **** // Fixed Point Atan2 in Degree
+ 451:..\API/fixedpoint.c **** //=============================
+ 452:..\API/fixedpoint.c **** // tan-1(fnum/fden), return -180~+180
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 25
+
+
+ 453:..\API/fixedpoint.c **** fix32 FIX_Atan2_Deg(fix32 fnum, fix32 fden)
+ 454:..\API/fixedpoint.c **** {
+ 896              		.loc 1 454 0
+ 897              		.cfi_startproc
+ 898              		@ args = 0, pretend = 0, frame = 0
+ 899              		@ frame_needed = 0, uses_anonymous_args = 0
+ 900              	.LVL122:
+ 901 0000 70B5     		push	{r4, r5, r6, lr}
+ 902              		.cfi_def_cfa_offset 16
+ 903              		.cfi_offset 4, -16
+ 904              		.cfi_offset 5, -12
+ 905              		.cfi_offset 6, -8
+ 906              		.cfi_offset 14, -4
+ 455:..\API/fixedpoint.c ****     uint32 quadrant;
+ 456:..\API/fixedpoint.c ****     fix32  fnum_0, fden_0;
+ 457:..\API/fixedpoint.c ****     fix32  fval_0, fdeg_0;
+ 458:..\API/fixedpoint.c ****     fix32  fdeg;
+ 459:..\API/fixedpoint.c **** 
+ 460:..\API/fixedpoint.c ****     
+ 461:..\API/fixedpoint.c ****     quadrant = ((fnum >= 0) && ((fden >= 0)))? 0 :
+ 907              		.loc 1 461 0
+ 908 0002 0028     		cmp	r0, #0
+ 909 0004 01DB     		blt	.L78
+ 910              		.loc 1 461 0 is_stmt 0 discriminator 2
+ 911 0006 0029     		cmp	r1, #0
+ 912 0008 0FDA     		bge	.L91
+ 913              	.L78:
+ 914              		.loc 1 461 0 discriminator 3
+ 915 000a 0028     		cmp	r0, #0
+ 916 000c 01DB     		blt	.L80
+ 462:..\API/fixedpoint.c ****                ((fnum >= 0) && ((fden <  0)))? 1 :
+ 917              		.loc 1 462 0 is_stmt 1
+ 918 000e 0029     		cmp	r1, #0
+ 919 0010 09DB     		blt	.L92
+ 920              	.L80:
+ 461:..\API/fixedpoint.c ****                ((fnum >= 0) && ((fden <  0)))? 1 :
+ 921              		.loc 1 461 0 discriminator 5
+ 922 0012 0028     		cmp	r0, #0
+ 923 0014 03DA     		bge	.L93
+ 463:..\API/fixedpoint.c ****                ((fnum <  0) && ((fden <  0)))? 2 : 
+ 924              		.loc 1 463 0
+ 925 0016 0029     		cmp	r1, #0
+ 926 0018 03DB     		blt	.L94
+ 461:..\API/fixedpoint.c ****                ((fnum >= 0) && ((fden <  0)))? 1 :
+ 927              		.loc 1 461 0
+ 928 001a 0325     		movs	r5, #3
+ 929 001c 06E0     		b	.L79
+ 930              	.L93:
+ 931 001e 0325     		movs	r5, #3
+ 932 0020 04E0     		b	.L79
+ 933              	.L94:
+ 934 0022 0225     		movs	r5, #2
+ 935 0024 02E0     		b	.L79
+ 936              	.L92:
+ 937 0026 0125     		movs	r5, #1
+ 938 0028 00E0     		b	.L79
+ 939              	.L91:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 26
+
+
+ 940 002a 0025     		movs	r5, #0
+ 941              	.L79:
+ 942              	.LVL123:
+ 464:..\API/fixedpoint.c ****                                                3;
+ 465:..\API/fixedpoint.c ****     //
+ 466:..\API/fixedpoint.c ****     if (fden == 0)
+ 943              		.loc 1 466 0 discriminator 12
+ 944 002c 31B9     		cbnz	r1, .L83
+ 467:..\API/fixedpoint.c ****     {
+ 468:..\API/fixedpoint.c ****         fdeg = (fnum >= 0)? (90 << FIXQ) : -(90 << FIXQ);
+ 945              		.loc 1 468 0
+ 946 002e 0028     		cmp	r0, #0
+ 947 0030 02DB     		blt	.L95
+ 948 0032 4FF4B400 		mov	r0, #5898240
+ 949              	.LVL124:
+ 950 0036 70BD     		pop	{r4, r5, r6, pc}
+ 951              	.LVL125:
+ 952              	.L95:
+ 953 0038 0D48     		ldr	r0, .L97
+ 954              	.LVL126:
+ 955 003a 70BD     		pop	{r4, r5, r6, pc}
+ 956              	.LVL127:
+ 957              	.L83:
+ 958 003c 0C46     		mov	r4, r1
+ 469:..\API/fixedpoint.c ****     }
+ 470:..\API/fixedpoint.c ****     else
+ 471:..\API/fixedpoint.c ****     {
+ 472:..\API/fixedpoint.c ****         fnum_0 = FIX_Abs(fnum);
+ 959              		.loc 1 472 0
+ 960 003e FFF7FEFF 		bl	FIX_Abs
+ 961              	.LVL128:
+ 962 0042 0646     		mov	r6, r0
+ 963              	.LVL129:
+ 473:..\API/fixedpoint.c ****         fden_0 = FIX_Abs(fden);
+ 964              		.loc 1 473 0
+ 965 0044 2046     		mov	r0, r4
+ 966              	.LVL130:
+ 967 0046 FFF7FEFF 		bl	FIX_Abs
+ 968              	.LVL131:
+ 969 004a 0146     		mov	r1, r0
+ 970              	.LVL132:
+ 474:..\API/fixedpoint.c ****         fval_0 = FIX_Div(fnum_0, fden_0);
+ 971              		.loc 1 474 0
+ 972 004c 3046     		mov	r0, r6
+ 973              	.LVL133:
+ 974 004e FFF7FEFF 		bl	FIX_Div
+ 975              	.LVL134:
+ 475:..\API/fixedpoint.c ****         fdeg_0 = FIX_Atan_Deg(fval_0);
+ 976              		.loc 1 475 0
+ 977 0052 FFF7FEFF 		bl	FIX_Atan_Deg
+ 978              	.LVL135:
+ 476:..\API/fixedpoint.c ****         //               
+ 477:..\API/fixedpoint.c ****         fdeg = (quadrant == 0)? ( fdeg_0) :
+ 979              		.loc 1 477 0
+ 980 0056 55B1     		cbz	r5, .L85
+ 478:..\API/fixedpoint.c ****                (quadrant == 1)? ( (180 << FIXQ) - fdeg_0) :
+ 981              		.loc 1 478 0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 27
+
+
+ 982 0058 012D     		cmp	r5, #1
+ 983 005a 02D1     		bne	.L87
+ 984              		.loc 1 478 0 is_stmt 0 discriminator 1
+ 985 005c C0F53400 		rsb	r0, r0, #11796480
+ 986              	.LVL136:
+ 987 0060 70BD     		pop	{r4, r5, r6, pc}
+ 988              	.LVL137:
+ 989              	.L87:
+ 479:..\API/fixedpoint.c ****                (quadrant == 2)? (-(180 << FIXQ) + fdeg_0) :
+ 990              		.loc 1 479 0 is_stmt 1
+ 991 0062 022D     		cmp	r5, #2
+ 992 0064 02D1     		bne	.L89
+ 993              		.loc 1 479 0 is_stmt 0 discriminator 1
+ 994 0066 A0F53400 		sub	r0, r0, #11796480
+ 995              	.LVL138:
+ 996 006a 70BD     		pop	{r4, r5, r6, pc}
+ 997              	.LVL139:
+ 998              	.L89:
+ 999              		.loc 1 479 0 discriminator 2
+ 1000 006c 4042     		negs	r0, r0
+ 1001              	.LVL140:
+ 1002              	.L85:
+ 480:..\API/fixedpoint.c ****                                 (-fdeg_0);
+ 481:..\API/fixedpoint.c ****     }
+ 482:..\API/fixedpoint.c ****     return fdeg;
+ 483:..\API/fixedpoint.c **** }
+ 1003              		.loc 1 483 0 is_stmt 1
+ 1004 006e 70BD     		pop	{r4, r5, r6, pc}
+ 1005              	.LVL141:
+ 1006              	.L98:
+ 1007              		.align	2
+ 1008              	.L97:
+ 1009 0070 0000A6FF 		.word	-5898240
+ 1010              		.cfi_endproc
+ 1011              	.LFE83:
+ 1012              		.size	FIX_Atan2_Deg, .-FIX_Atan2_Deg
+ 1013              		.section	.text.FIX_Atan2,"ax",%progbits
+ 1014              		.align	2
+ 1015              		.global	FIX_Atan2
+ 1016              		.thumb
+ 1017              		.thumb_func
+ 1018              		.type	FIX_Atan2, %function
+ 1019              	FIX_Atan2:
+ 1020              	.LFB77:
+ 284:..\API/fixedpoint.c ****     fix32 fdeg;
+ 1021              		.loc 1 284 0
+ 1022              		.cfi_startproc
+ 1023              		@ args = 0, pretend = 0, frame = 0
+ 1024              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1025              	.LVL142:
+ 1026 0000 08B5     		push	{r3, lr}
+ 1027              		.cfi_def_cfa_offset 8
+ 1028              		.cfi_offset 3, -8
+ 1029              		.cfi_offset 14, -4
+ 288:..\API/fixedpoint.c ****     frad = FIX_Rad_Deg(fdeg);
+ 1030              		.loc 1 288 0
+ 1031 0002 FFF7FEFF 		bl	FIX_Atan2_Deg
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 28
+
+
+ 1032              	.LVL143:
+ 289:..\API/fixedpoint.c ****     return frad;
+ 1033              		.loc 1 289 0
+ 1034 0006 FFF7FEFF 		bl	FIX_Rad_Deg
+ 1035              	.LVL144:
+ 291:..\API/fixedpoint.c **** 
+ 1036              		.loc 1 291 0
+ 1037 000a 08BD     		pop	{r3, pc}
+ 1038              		.cfi_endproc
+ 1039              	.LFE77:
+ 1040              		.size	FIX_Atan2, .-FIX_Atan2
+ 1041              		.section	.rodata
+ 1042              		.align	2
+ 1043              		.set	.LANCHOR0,. + 0
+ 1044              		.type	TBL_SIN, %object
+ 1045              		.size	TBL_SIN, 360
+ 1046              	TBL_SIN:
+ 1047 0000 00000000 		.word	0
+ 1048 0004 CBC27704 		.word	74957515
+ 1049 0008 652CEF08 		.word	149892197
+ 1050 000c A4E3650D 		.word	224781220
+ 1051 0010 6D8FDB11 		.word	299601773
+ 1052 0014 B9D64F16 		.word	374331065
+ 1053 0018 9B60C21A 		.word	448946331
+ 1054 001c 4CD4321F 		.word	523424844
+ 1055 0020 2DD9A023 		.word	597743917
+ 1056 0024 CF160C28 		.word	671880911
+ 1057 0028 FC34742C 		.word	745813244
+ 1058 002c BBDBD830 		.word	819518395
+ 1059 0030 59B33935 		.word	892973913
+ 1060 0034 6E649639 		.word	966157422
+ 1061 0038 E697EE3D 		.word	1039046630
+ 1062 003c 06F74142 		.word	1111619334
+ 1063 0040 752B9046 		.word	1183853429
+ 1064 0044 3EDFD84A 		.word	1255726910
+ 1065 0048 DDBC1B4F 		.word	1327217885
+ 1066 004c 406F5853 		.word	1398304576
+ 1067 0050 D2A18E57 		.word	1468965330
+ 1068 0054 7F00BE5B 		.word	1539178623
+ 1069 0058 BC37E65F 		.word	1608923068
+ 1070 005c 8AF40664 		.word	1678177418
+ 1071 0060 84E41F68 		.word	1746920580
+ 1072 0064 DDB5306C 		.word	1815131613
+ 1073 0068 6B173970 		.word	1882789739
+ 1074 006c ADB83874 		.word	1949874349
+ 1075 0070 D1492F78 		.word	2016365009
+ 1076 0074 B87B1C7C 		.word	2082241464
+ 1077 0078 00000080 		.word	-2147483648
+ 1078 007c 0889D983 		.word	-2082895608
+ 1079 0080 F5C9A887 		.word	-2018981387
+ 1080 0084 BC766D8B 		.word	-1955760452
+ 1081 0088 2144278F 		.word	-1893252063
+ 1082 008c C4E7D592 		.word	-1831475260
+ 1083 0090 24187996 		.word	-1770448860
+ 1084 0094 A38C109A 		.word	-1710191453
+ 1085 0098 8EFD9B9D 		.word	-1650721394
+ 1086 009c 22241BA1 		.word	-1592056798
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 29
+
+
+ 1087 00a0 92BA8DA4 		.word	-1534215534
+ 1088 00a4 0A7CF3A7 		.word	-1477215222
+ 1089 00a8 B7244CAB 		.word	-1421073225
+ 1090 00ac CC7197AE 		.word	-1365806644
+ 1091 00b0 8721D5B1 		.word	-1311432313
+ 1092 00b4 34F304B5 		.word	-1257966796
+ 1093 00b8 35A726B8 		.word	-1205426379
+ 1094 00bc 06FF39BB 		.word	-1153827066
+ 1095 00c0 42BD3EBE 		.word	-1103184574
+ 1096 00c4 A5A534C1 		.word	-1053514331
+ 1097 00c8 167D1BC4 		.word	-1004831466
+ 1098 00cc A909F3C6 		.word	-957150807
+ 1099 00d0 A012BBC9 		.word	-910486880
+ 1100 00d4 756073CC 		.word	-864853899
+ 1101 00d8 DDBC1BCF 		.word	-820265763
+ 1102 00dc C9F2B3D1 		.word	-776736055
+ 1103 00e0 6DCE3BD4 		.word	-734278035
+ 1104 00e4 451DB3D6 		.word	-692904635
+ 1105 00e8 16AE19D9 		.word	-652628458
+ 1106 00ec F4506FDB 		.word	-613461772
+ 1107 00f0 43D7B3DD 		.word	-575416509
+ 1108 00f4 BF13E7DF 		.word	-538504257
+ 1109 00f8 7BDA08E2 		.word	-502736261
+ 1110 00fc EA0019E4 		.word	-468123414
+ 1111 0100 DB5D17E6 		.word	-434676261
+ 1112 0104 81C903E8 		.word	-402404991
+ 1113 0108 781DDEE9 		.word	-371319432
+ 1114 010c C134A6EB 		.word	-341429055
+ 1115 0110 CDEB5BED 		.word	-312742963
+ 1116 0114 7820FFEE 		.word	-285269896
+ 1117 0118 13B28FF0 		.word	-259018221
+ 1118 011c 60810DF2 		.word	-233995936
+ 1119 0120 9A7078F3 		.word	-210210662
+ 1120 0124 7463D0F4 		.word	-187669644
+ 1121 0128 1B3F15F6 		.word	-166379749
+ 1122 012c 3AEA46F7 		.word	-146347462
+ 1123 0130 FC4C65F8 		.word	-127578884
+ 1124 0134 0A5170F9 		.word	-110079734
+ 1125 0138 94E167FA 		.word	-93855340
+ 1126 013c 4AEB4BFB 		.word	-78910646
+ 1127 0140 645C1CFC 		.word	-65250204
+ 1128 0144 A124D9FC 		.word	-52878175
+ 1129 0148 4A3582FD 		.word	-41798326
+ 1130 014c 2D8117FE 		.word	-32014035
+ 1131 0150 A8FC98FE 		.word	-23528280
+ 1132 0154 A19D06FF 		.word	-16343647
+ 1133 0158 8C5B60FF 		.word	-10462324
+ 1134 015c 692FA6FF 		.word	-5886103
+ 1135 0160 C613D8FF 		.word	-2616378
+ 1136 0164 C004F6FF 		.word	-654144
+ 1137              		.type	TBL_TAN, %object
+ 1138              		.size	TBL_TAN, 180
+ 1139              	TBL_TAN:
+ 1140 0168 00000000 		.word	0
+ 1141 016c 65EF7704 		.word	74968933
+ 1142 0170 4B91F008 		.word	149983563
+ 1143 0174 A2986A0D 		.word	225089698
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 30
+
+
+ 1144 0178 3AB9E611 		.word	300333370
+ 1145 017c 35A86516 		.word	375760949
+ 1146 0180 751CE81A 		.word	451419253
+ 1147 0184 1ACF6E1F 		.word	527355674
+ 1148 0188 F17BFA23 		.word	603618289
+ 1149 018c F7E18B28 		.word	680255991
+ 1150 0190 D8C3232D 		.word	757318616
+ 1151 0194 6FE8C231 		.word	834857071
+ 1152 0198 591B6A36 		.word	912923481
+ 1153 019c 832D1A3B 		.word	991571331
+ 1154 01a0 C2F5D33F 		.word	1070855618
+ 1155 01a4 7A519844 		.word	1150833018
+ 1156 01a8 46256849 		.word	1231562054
+ 1157 01ac AE5D444E 		.word	1313103278
+ 1158 01b0 EDEF2D53 		.word	1395519469
+ 1159 01b4 BEDA2558 		.word	1478875838
+ 1160 01b8 3D272D5D 		.word	1563240253
+ 1161 01bc D5E94462 		.word	1648683477
+ 1162 01c0 43436E67 		.word	1735279427
+ 1163 01c4 AE61AA6C 		.word	1823105454
+ 1164 01c8 D381FA71 		.word	1912242643
+ 1165 01cc 4EF05F77 		.word	2002776142
+ 1166 01d0 FD0ADC7C 		.word	2094795517
+ 1167 01d4 86427082 		.word	-2106572154
+ 1168 01d8 FC1B1E88 		.word	-2011292676
+ 1169 01dc B032E78D 		.word	-1914228048
+ 1170 01e0 2D3ACD93 		.word	-1815266771
+ 1171 01e4 6400D299 		.word	-1714290588
+ 1172 01e8 1770F79F 		.word	-1611173865
+ 1173 01ec 77933FA6 		.word	-1505782921
+ 1174 01f0 1597ACAC 		.word	-1397975275
+ 1175 01f4 1DCD40B3 		.word	-1287598819
+ 1176 01f8 EDB0FEB9 		.word	-1174490899
+ 1177 01fc 11EBE8C0 		.word	-1058477295
+ 1178 0200 B75502C8 		.word	-939371081
+ 1179 0204 A3014ECF 		.word	-816971357
+ 1180 0208 C23BCFD6 		.word	-691061822
+ 1181 020c 5E9389DE 		.word	-561409186
+ 1182 0210 23E180E6 		.word	-427761373
+ 1183 0214 064FB9EE 		.word	-289845498
+ 1184 0218 2A6137F7 		.word	-147365590
+ 1185              		.text
+ 1186              	.Letext0:
+ 1187              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 1188              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 1189              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 1190              		.file 5 "..\\API\\fixedpoint.h"
+ 1191              		.file 6 "Generated_Source\\PSoC5/core_cm3.h"
+ 1192              		.section	.debug_info,"",%progbits
+ 1193              	.Ldebug_info0:
+ 1194 0000 D90A0000 		.4byte	0xad9
+ 1195 0004 0400     		.2byte	0x4
+ 1196 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 1197 000a 04       		.byte	0x4
+ 1198 000b 01       		.uleb128 0x1
+ 1199 000c 08020000 		.4byte	.LASF76
+ 1200 0010 01       		.byte	0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 31
+
+
+ 1201 0011 4C010000 		.4byte	.LASF77
+ 1202 0015 49000000 		.4byte	.LASF78
+ 1203 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 1204 001d 00000000 		.4byte	0
+ 1205 0021 00000000 		.4byte	.Ldebug_line0
+ 1206 0025 02       		.uleb128 0x2
+ 1207 0026 08       		.byte	0x8
+ 1208 0027 07       		.byte	0x7
+ 1209 0028 98010000 		.4byte	.LASF0
+ 1210 002c 03       		.uleb128 0x3
+ 1211 002d 04       		.byte	0x4
+ 1212 002e 05       		.byte	0x5
+ 1213 002f 696E7400 		.ascii	"int\000"
+ 1214 0033 02       		.uleb128 0x2
+ 1215 0034 08       		.byte	0x8
+ 1216 0035 04       		.byte	0x4
+ 1217 0036 FE020000 		.4byte	.LASF1
+ 1218 003a 02       		.uleb128 0x2
+ 1219 003b 01       		.byte	0x1
+ 1220 003c 06       		.byte	0x6
+ 1221 003d F8000000 		.4byte	.LASF2
+ 1222 0041 02       		.uleb128 0x2
+ 1223 0042 01       		.byte	0x1
+ 1224 0043 08       		.byte	0x8
+ 1225 0044 6D010000 		.4byte	.LASF3
+ 1226 0048 02       		.uleb128 0x2
+ 1227 0049 02       		.byte	0x2
+ 1228 004a 05       		.byte	0x5
+ 1229 004b 93000000 		.4byte	.LASF4
+ 1230 004f 02       		.uleb128 0x2
+ 1231 0050 02       		.byte	0x2
+ 1232 0051 07       		.byte	0x7
+ 1233 0052 EA010000 		.4byte	.LASF5
+ 1234 0056 04       		.uleb128 0x4
+ 1235 0057 26030000 		.4byte	.LASF10
+ 1236 005b 02       		.byte	0x2
+ 1237 005c 3F       		.byte	0x3f
+ 1238 005d 61000000 		.4byte	0x61
+ 1239 0061 02       		.uleb128 0x2
+ 1240 0062 04       		.byte	0x4
+ 1241 0063 05       		.byte	0x5
+ 1242 0064 2C010000 		.4byte	.LASF6
+ 1243 0068 02       		.uleb128 0x2
+ 1244 0069 04       		.byte	0x4
+ 1245 006a 07       		.byte	0x7
+ 1246 006b E6020000 		.4byte	.LASF7
+ 1247 006f 02       		.uleb128 0x2
+ 1248 0070 08       		.byte	0x8
+ 1249 0071 05       		.byte	0x5
+ 1250 0072 16010000 		.4byte	.LASF8
+ 1251 0076 02       		.uleb128 0x2
+ 1252 0077 04       		.byte	0x4
+ 1253 0078 07       		.byte	0x7
+ 1254 0079 B8010000 		.4byte	.LASF9
+ 1255 007d 04       		.uleb128 0x4
+ 1256 007e 9F020000 		.4byte	.LASF11
+ 1257 0082 03       		.byte	0x3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 32
+
+
+ 1258 0083 2C       		.byte	0x2c
+ 1259 0084 56000000 		.4byte	0x56
+ 1260 0088 05       		.uleb128 0x5
+ 1261 0089 DF020000 		.4byte	.LASF12
+ 1262 008d 04       		.byte	0x4
+ 1263 008e 3A01     		.2byte	0x13a
+ 1264 0090 68000000 		.4byte	0x68
+ 1265 0094 05       		.uleb128 0x5
+ 1266 0095 F8020000 		.4byte	.LASF13
+ 1267 0099 04       		.byte	0x4
+ 1268 009a 3D01     		.2byte	0x13d
+ 1269 009c 61000000 		.4byte	0x61
+ 1270 00a0 02       		.uleb128 0x2
+ 1271 00a1 04       		.byte	0x4
+ 1272 00a2 04       		.byte	0x4
+ 1273 00a3 10010000 		.4byte	.LASF14
+ 1274 00a7 05       		.uleb128 0x5
+ 1275 00a8 D4010000 		.4byte	.LASF15
+ 1276 00ac 04       		.byte	0x4
+ 1277 00ad 4301     		.2byte	0x143
+ 1278 00af 6F000000 		.4byte	0x6f
+ 1279 00b3 02       		.uleb128 0x2
+ 1280 00b4 01       		.byte	0x1
+ 1281 00b5 08       		.byte	0x8
+ 1282 00b6 03020000 		.4byte	.LASF16
+ 1283 00ba 02       		.uleb128 0x2
+ 1284 00bb 04       		.byte	0x4
+ 1285 00bc 07       		.byte	0x7
+ 1286 00bd 9D000000 		.4byte	.LASF17
+ 1287 00c1 04       		.uleb128 0x4
+ 1288 00c2 FD010000 		.4byte	.LASF18
+ 1289 00c6 05       		.byte	0x5
+ 1290 00c7 31       		.byte	0x31
+ 1291 00c8 94000000 		.4byte	0x94
+ 1292 00cc 06       		.uleb128 0x6
+ 1293 00cd A7020000 		.4byte	.LASF19
+ 1294 00d1 01       		.byte	0x1
+ 1295 00d2 52       		.byte	0x52
+ 1296 00d3 C1000000 		.4byte	0xc1
+ 1297 00d7 00000000 		.4byte	.LFB63
+ 1298 00db 04000000 		.4byte	.LFE63-.LFB63
+ 1299 00df 01       		.uleb128 0x1
+ 1300 00e0 9C       		.byte	0x9c
+ 1301 00e1 02010000 		.4byte	0x102
+ 1302 00e5 07       		.uleb128 0x7
+ 1303 00e6 696100   		.ascii	"ia\000"
+ 1304 00e9 01       		.byte	0x1
+ 1305 00ea 52       		.byte	0x52
+ 1306 00eb 94000000 		.4byte	0x94
+ 1307 00ef 00000000 		.4byte	.LLST0
+ 1308 00f3 08       		.uleb128 0x8
+ 1309 00f4 666100   		.ascii	"fa\000"
+ 1310 00f7 01       		.byte	0x1
+ 1311 00f8 54       		.byte	0x54
+ 1312 00f9 C1000000 		.4byte	0xc1
+ 1313 00fd 21000000 		.4byte	.LLST1
+ 1314 0101 00       		.byte	0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 33
+
+
+ 1315 0102 06       		.uleb128 0x6
+ 1316 0103 44010000 		.4byte	.LASF20
+ 1317 0107 01       		.byte	0x1
+ 1318 0108 5C       		.byte	0x5c
+ 1319 0109 94000000 		.4byte	0x94
+ 1320 010d 00000000 		.4byte	.LFB64
+ 1321 0111 04000000 		.4byte	.LFE64-.LFB64
+ 1322 0115 01       		.uleb128 0x1
+ 1323 0116 9C       		.byte	0x9c
+ 1324 0117 38010000 		.4byte	0x138
+ 1325 011b 07       		.uleb128 0x7
+ 1326 011c 666100   		.ascii	"fa\000"
+ 1327 011f 01       		.byte	0x1
+ 1328 0120 5C       		.byte	0x5c
+ 1329 0121 C1000000 		.4byte	0xc1
+ 1330 0125 43000000 		.4byte	.LLST2
+ 1331 0129 08       		.uleb128 0x8
+ 1332 012a 696100   		.ascii	"ia\000"
+ 1333 012d 01       		.byte	0x1
+ 1334 012e 5E       		.byte	0x5e
+ 1335 012f 94000000 		.4byte	0x94
+ 1336 0133 64000000 		.4byte	.LLST3
+ 1337 0137 00       		.byte	0
+ 1338 0138 09       		.uleb128 0x9
+ 1339 0139 00000000 		.4byte	.LASF21
+ 1340 013d 01       		.byte	0x1
+ 1341 013e 66       		.byte	0x66
+ 1342 013f C1000000 		.4byte	0xc1
+ 1343 0143 00000000 		.4byte	.LFB65
+ 1344 0147 14000000 		.4byte	.LFE65-.LFB65
+ 1345 014b 01       		.uleb128 0x1
+ 1346 014c 9C       		.byte	0x9c
+ 1347 014d 78010000 		.4byte	0x178
+ 1348 0151 07       		.uleb128 0x7
+ 1349 0152 646100   		.ascii	"da\000"
+ 1350 0155 01       		.byte	0x1
+ 1351 0156 66       		.byte	0x66
+ 1352 0157 33000000 		.4byte	0x33
+ 1353 015b 86000000 		.4byte	.LLST4
+ 1354 015f 0A       		.uleb128 0xa
+ 1355 0160 696100   		.ascii	"ia\000"
+ 1356 0163 01       		.byte	0x1
+ 1357 0164 68       		.byte	0x68
+ 1358 0165 94000000 		.4byte	0x94
+ 1359 0169 01       		.uleb128 0x1
+ 1360 016a 50       		.byte	0x50
+ 1361 016b 0A       		.uleb128 0xa
+ 1362 016c 666100   		.ascii	"fa\000"
+ 1363 016f 01       		.byte	0x1
+ 1364 0170 69       		.byte	0x69
+ 1365 0171 C1000000 		.4byte	0xc1
+ 1366 0175 01       		.uleb128 0x1
+ 1367 0176 50       		.byte	0x50
+ 1368 0177 00       		.byte	0
+ 1369 0178 09       		.uleb128 0x9
+ 1370 0179 5F030000 		.4byte	.LASF22
+ 1371 017d 01       		.byte	0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 34
+
+
+ 1372 017e 74       		.byte	0x74
+ 1373 017f 33000000 		.4byte	0x33
+ 1374 0183 00000000 		.4byte	.LFB66
+ 1375 0187 14000000 		.4byte	.LFE66-.LFB66
+ 1376 018b 01       		.uleb128 0x1
+ 1377 018c 9C       		.byte	0x9c
+ 1378 018d BC010000 		.4byte	0x1bc
+ 1379 0191 07       		.uleb128 0x7
+ 1380 0192 666100   		.ascii	"fa\000"
+ 1381 0195 01       		.byte	0x1
+ 1382 0196 74       		.byte	0x74
+ 1383 0197 C1000000 		.4byte	0xc1
+ 1384 019b BE000000 		.4byte	.LLST5
+ 1385 019f 08       		.uleb128 0x8
+ 1386 01a0 696100   		.ascii	"ia\000"
+ 1387 01a3 01       		.byte	0x1
+ 1388 01a4 76       		.byte	0x76
+ 1389 01a5 94000000 		.4byte	0x94
+ 1390 01a9 DF000000 		.4byte	.LLST6
+ 1391 01ad 08       		.uleb128 0x8
+ 1392 01ae 646100   		.ascii	"da\000"
+ 1393 01b1 01       		.byte	0x1
+ 1394 01b2 77       		.byte	0x77
+ 1395 01b3 33000000 		.4byte	0x33
+ 1396 01b7 00010000 		.4byte	.LLST7
+ 1397 01bb 00       		.byte	0
+ 1398 01bc 06       		.uleb128 0x6
+ 1399 01bd CA020000 		.4byte	.LASF23
+ 1400 01c1 01       		.byte	0x1
+ 1401 01c2 83       		.byte	0x83
+ 1402 01c3 C1000000 		.4byte	0xc1
+ 1403 01c7 00000000 		.4byte	.LFB67
+ 1404 01cb 04000000 		.4byte	.LFE67-.LFB67
+ 1405 01cf 01       		.uleb128 0x1
+ 1406 01d0 9C       		.byte	0x9c
+ 1407 01d1 FE010000 		.4byte	0x1fe
+ 1408 01d5 07       		.uleb128 0x7
+ 1409 01d6 666100   		.ascii	"fa\000"
+ 1410 01d9 01       		.byte	0x1
+ 1411 01da 83       		.byte	0x83
+ 1412 01db C1000000 		.4byte	0xc1
+ 1413 01df 28010000 		.4byte	.LLST8
+ 1414 01e3 0B       		.uleb128 0xb
+ 1415 01e4 666200   		.ascii	"fb\000"
+ 1416 01e7 01       		.byte	0x1
+ 1417 01e8 83       		.byte	0x83
+ 1418 01e9 C1000000 		.4byte	0xc1
+ 1419 01ed 01       		.uleb128 0x1
+ 1420 01ee 51       		.byte	0x51
+ 1421 01ef 08       		.uleb128 0x8
+ 1422 01f0 666300   		.ascii	"fc\000"
+ 1423 01f3 01       		.byte	0x1
+ 1424 01f4 85       		.byte	0x85
+ 1425 01f5 C1000000 		.4byte	0xc1
+ 1426 01f9 49010000 		.4byte	.LLST9
+ 1427 01fd 00       		.byte	0
+ 1428 01fe 06       		.uleb128 0x6
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 35
+
+
+ 1429 01ff 67030000 		.4byte	.LASF24
+ 1430 0203 01       		.byte	0x1
+ 1431 0204 8E       		.byte	0x8e
+ 1432 0205 C1000000 		.4byte	0xc1
+ 1433 0209 00000000 		.4byte	.LFB68
+ 1434 020d 04000000 		.4byte	.LFE68-.LFB68
+ 1435 0211 01       		.uleb128 0x1
+ 1436 0212 9C       		.byte	0x9c
+ 1437 0213 40020000 		.4byte	0x240
+ 1438 0217 07       		.uleb128 0x7
+ 1439 0218 666100   		.ascii	"fa\000"
+ 1440 021b 01       		.byte	0x1
+ 1441 021c 8E       		.byte	0x8e
+ 1442 021d C1000000 		.4byte	0xc1
+ 1443 0221 6C010000 		.4byte	.LLST10
+ 1444 0225 0B       		.uleb128 0xb
+ 1445 0226 666200   		.ascii	"fb\000"
+ 1446 0229 01       		.byte	0x1
+ 1447 022a 8E       		.byte	0x8e
+ 1448 022b C1000000 		.4byte	0xc1
+ 1449 022f 01       		.uleb128 0x1
+ 1450 0230 51       		.byte	0x51
+ 1451 0231 08       		.uleb128 0x8
+ 1452 0232 666300   		.ascii	"fc\000"
+ 1453 0235 01       		.byte	0x1
+ 1454 0236 90       		.byte	0x90
+ 1455 0237 C1000000 		.4byte	0xc1
+ 1456 023b 8D010000 		.4byte	.LLST11
+ 1457 023f 00       		.byte	0
+ 1458 0240 06       		.uleb128 0x6
+ 1459 0241 3A000000 		.4byte	.LASF25
+ 1460 0245 01       		.byte	0x1
+ 1461 0246 98       		.byte	0x98
+ 1462 0247 C1000000 		.4byte	0xc1
+ 1463 024b 00000000 		.4byte	.LFB69
+ 1464 024f 08000000 		.4byte	.LFE69-.LFB69
+ 1465 0253 01       		.uleb128 0x1
+ 1466 0254 9C       		.byte	0x9c
+ 1467 0255 76020000 		.4byte	0x276
+ 1468 0259 07       		.uleb128 0x7
+ 1469 025a 666100   		.ascii	"fa\000"
+ 1470 025d 01       		.byte	0x1
+ 1471 025e 98       		.byte	0x98
+ 1472 025f C1000000 		.4byte	0xc1
+ 1473 0263 B0010000 		.4byte	.LLST12
+ 1474 0267 08       		.uleb128 0x8
+ 1475 0268 666200   		.ascii	"fb\000"
+ 1476 026b 01       		.byte	0x1
+ 1477 026c 9A       		.byte	0x9a
+ 1478 026d C1000000 		.4byte	0xc1
+ 1479 0271 D1010000 		.4byte	.LLST13
+ 1480 0275 00       		.byte	0
+ 1481 0276 06       		.uleb128 0x6
+ 1482 0277 D2020000 		.4byte	.LASF26
+ 1483 027b 01       		.byte	0x1
+ 1484 027c A3       		.byte	0xa3
+ 1485 027d C1000000 		.4byte	0xc1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 36
+
+
+ 1486 0281 00000000 		.4byte	.LFB70
+ 1487 0285 1E000000 		.4byte	.LFE70-.LFB70
+ 1488 0289 01       		.uleb128 0x1
+ 1489 028a 9C       		.byte	0x9c
+ 1490 028b FD020000 		.4byte	0x2fd
+ 1491 028f 07       		.uleb128 0x7
+ 1492 0290 666100   		.ascii	"fa\000"
+ 1493 0293 01       		.byte	0x1
+ 1494 0294 A3       		.byte	0xa3
+ 1495 0295 C1000000 		.4byte	0xc1
+ 1496 0299 F6010000 		.4byte	.LLST14
+ 1497 029d 0B       		.uleb128 0xb
+ 1498 029e 666200   		.ascii	"fb\000"
+ 1499 02a1 01       		.byte	0x1
+ 1500 02a2 A3       		.byte	0xa3
+ 1501 02a3 C1000000 		.4byte	0xc1
+ 1502 02a7 01       		.uleb128 0x1
+ 1503 02a8 51       		.byte	0x51
+ 1504 02a9 0C       		.uleb128 0xc
+ 1505 02aa ED000000 		.4byte	.LASF27
+ 1506 02ae 01       		.byte	0x1
+ 1507 02af A5       		.byte	0xa5
+ 1508 02b0 A7000000 		.4byte	0xa7
+ 1509 02b4 06       		.uleb128 0x6
+ 1510 02b5 52       		.byte	0x52
+ 1511 02b6 93       		.byte	0x93
+ 1512 02b7 04       		.uleb128 0x4
+ 1513 02b8 53       		.byte	0x53
+ 1514 02b9 93       		.byte	0x93
+ 1515 02ba 04       		.uleb128 0x4
+ 1516 02bb 0C       		.uleb128 0xc
+ 1517 02bc AD000000 		.4byte	.LASF28
+ 1518 02c0 01       		.byte	0x1
+ 1519 02c1 A5       		.byte	0xa5
+ 1520 02c2 A7000000 		.4byte	0xa7
+ 1521 02c6 06       		.uleb128 0x6
+ 1522 02c7 54       		.byte	0x54
+ 1523 02c8 93       		.byte	0x93
+ 1524 02c9 04       		.uleb128 0x4
+ 1525 02ca 55       		.byte	0x55
+ 1526 02cb 93       		.byte	0x93
+ 1527 02cc 04       		.uleb128 0x4
+ 1528 02cd 0C       		.uleb128 0xc
+ 1529 02ce F2000000 		.4byte	.LASF29
+ 1530 02d2 01       		.byte	0x1
+ 1531 02d3 A6       		.byte	0xa6
+ 1532 02d4 A7000000 		.4byte	0xa7
+ 1533 02d8 06       		.uleb128 0x6
+ 1534 02d9 52       		.byte	0x52
+ 1535 02da 93       		.byte	0x93
+ 1536 02db 04       		.uleb128 0x4
+ 1537 02dc 53       		.byte	0x53
+ 1538 02dd 93       		.byte	0x93
+ 1539 02de 04       		.uleb128 0x4
+ 1540 02df 0D       		.uleb128 0xd
+ 1541 02e0 60010000 		.4byte	.LASF30
+ 1542 02e4 01       		.byte	0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 37
+
+
+ 1543 02e5 A7       		.byte	0xa7
+ 1544 02e6 94000000 		.4byte	0x94
+ 1545 02ea 17020000 		.4byte	.LLST15
+ 1546 02ee 08       		.uleb128 0x8
+ 1547 02ef 666300   		.ascii	"fc\000"
+ 1548 02f2 01       		.byte	0x1
+ 1549 02f3 A8       		.byte	0xa8
+ 1550 02f4 C1000000 		.4byte	0xc1
+ 1551 02f8 17020000 		.4byte	.LLST15
+ 1552 02fc 00       		.byte	0
+ 1553 02fd 09       		.uleb128 0x9
+ 1554 02fe DA010000 		.4byte	.LASF31
+ 1555 0302 01       		.byte	0x1
+ 1556 0303 B5       		.byte	0xb5
+ 1557 0304 C1000000 		.4byte	0xc1
+ 1558 0308 00000000 		.4byte	.LFB71
+ 1559 030c 1E000000 		.4byte	.LFE71-.LFB71
+ 1560 0310 01       		.uleb128 0x1
+ 1561 0311 9C       		.byte	0x9c
+ 1562 0312 75030000 		.4byte	0x375
+ 1563 0316 07       		.uleb128 0x7
+ 1564 0317 666100   		.ascii	"fa\000"
+ 1565 031a 01       		.byte	0x1
+ 1566 031b B5       		.byte	0xb5
+ 1567 031c C1000000 		.4byte	0xc1
+ 1568 0320 3C020000 		.4byte	.LLST17
+ 1569 0324 07       		.uleb128 0x7
+ 1570 0325 666200   		.ascii	"fb\000"
+ 1571 0328 01       		.byte	0x1
+ 1572 0329 B5       		.byte	0xb5
+ 1573 032a C1000000 		.4byte	0xc1
+ 1574 032e 81020000 		.4byte	.LLST18
+ 1575 0332 0E       		.uleb128 0xe
+ 1576 0333 ED000000 		.4byte	.LASF27
+ 1577 0337 01       		.byte	0x1
+ 1578 0338 B7       		.byte	0xb7
+ 1579 0339 A7000000 		.4byte	0xa7
+ 1580 033d 0D       		.uleb128 0xd
+ 1581 033e AD000000 		.4byte	.LASF28
+ 1582 0342 01       		.byte	0x1
+ 1583 0343 B7       		.byte	0xb7
+ 1584 0344 A7000000 		.4byte	0xa7
+ 1585 0348 B8020000 		.4byte	.LLST19
+ 1586 034c 0E       		.uleb128 0xe
+ 1587 034d F2000000 		.4byte	.LASF29
+ 1588 0351 01       		.byte	0x1
+ 1589 0352 B8       		.byte	0xb8
+ 1590 0353 A7000000 		.4byte	0xa7
+ 1591 0357 0D       		.uleb128 0xd
+ 1592 0358 60010000 		.4byte	.LASF30
+ 1593 035c 01       		.byte	0x1
+ 1594 035d B9       		.byte	0xb9
+ 1595 035e 94000000 		.4byte	0x94
+ 1596 0362 E3020000 		.4byte	.LLST20
+ 1597 0366 08       		.uleb128 0x8
+ 1598 0367 666300   		.ascii	"fc\000"
+ 1599 036a 01       		.byte	0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 38
+
+
+ 1600 036b BA       		.byte	0xba
+ 1601 036c C1000000 		.4byte	0xc1
+ 1602 0370 E3020000 		.4byte	.LLST20
+ 1603 0374 00       		.byte	0
+ 1604 0375 09       		.uleb128 0x9
+ 1605 0376 96020000 		.4byte	.LASF32
+ 1606 037a 01       		.byte	0x1
+ 1607 037b C9       		.byte	0xc9
+ 1608 037c A7000000 		.4byte	0xa7
+ 1609 0380 00000000 		.4byte	.LFB72
+ 1610 0384 5A000000 		.4byte	.LFE72-.LFB72
+ 1611 0388 01       		.uleb128 0x1
+ 1612 0389 9C       		.byte	0x9c
+ 1613 038a B6030000 		.4byte	0x3b6
+ 1614 038e 07       		.uleb128 0x7
+ 1615 038f 7800     		.ascii	"x\000"
+ 1616 0391 01       		.byte	0x1
+ 1617 0392 C9       		.byte	0xc9
+ 1618 0393 A7000000 		.4byte	0xa7
+ 1619 0397 F6020000 		.4byte	.LLST22
+ 1620 039b 08       		.uleb128 0x8
+ 1621 039c 7300     		.ascii	"s\000"
+ 1622 039e 01       		.byte	0x1
+ 1623 039f CB       		.byte	0xcb
+ 1624 03a0 A7000000 		.4byte	0xa7
+ 1625 03a4 3E030000 		.4byte	.LLST23
+ 1626 03a8 08       		.uleb128 0x8
+ 1627 03a9 7400     		.ascii	"t\000"
+ 1628 03ab 01       		.byte	0x1
+ 1629 03ac CB       		.byte	0xcb
+ 1630 03ad A7000000 		.4byte	0xa7
+ 1631 03b1 96030000 		.4byte	.LLST24
+ 1632 03b5 00       		.byte	0
+ 1633 03b6 06       		.uleb128 0x6
+ 1634 03b7 35010000 		.4byte	.LASF33
+ 1635 03bb 01       		.byte	0x1
+ 1636 03bc E3       		.byte	0xe3
+ 1637 03bd C1000000 		.4byte	0xc1
+ 1638 03c1 00000000 		.4byte	.LFB73
+ 1639 03c5 14000000 		.4byte	.LFE73-.LFB73
+ 1640 03c9 01       		.uleb128 0x1
+ 1641 03ca 9C       		.byte	0x9c
+ 1642 03cb 1D040000 		.4byte	0x41d
+ 1643 03cf 07       		.uleb128 0x7
+ 1644 03d0 666100   		.ascii	"fa\000"
+ 1645 03d3 01       		.byte	0x1
+ 1646 03d4 E3       		.byte	0xe3
+ 1647 03d5 C1000000 		.4byte	0xc1
+ 1648 03d9 CE030000 		.4byte	.LLST25
+ 1649 03dd 0E       		.uleb128 0xe
+ 1650 03de ED000000 		.4byte	.LASF27
+ 1651 03e2 01       		.byte	0x1
+ 1652 03e3 E5       		.byte	0xe5
+ 1653 03e4 A7000000 		.4byte	0xa7
+ 1654 03e8 0C       		.uleb128 0xc
+ 1655 03e9 AD000000 		.4byte	.LASF28
+ 1656 03ed 01       		.byte	0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 39
+
+
+ 1657 03ee E6       		.byte	0xe6
+ 1658 03ef A7000000 		.4byte	0xa7
+ 1659 03f3 06       		.uleb128 0x6
+ 1660 03f4 50       		.byte	0x50
+ 1661 03f5 93       		.byte	0x93
+ 1662 03f6 04       		.uleb128 0x4
+ 1663 03f7 51       		.byte	0x51
+ 1664 03f8 93       		.byte	0x93
+ 1665 03f9 04       		.uleb128 0x4
+ 1666 03fa 0C       		.uleb128 0xc
+ 1667 03fb 0A030000 		.4byte	.LASF34
+ 1668 03ff 01       		.byte	0x1
+ 1669 0400 E7       		.byte	0xe7
+ 1670 0401 94000000 		.4byte	0x94
+ 1671 0405 01       		.uleb128 0x1
+ 1672 0406 50       		.byte	0x50
+ 1673 0407 0A       		.uleb128 0xa
+ 1674 0408 666200   		.ascii	"fb\000"
+ 1675 040b 01       		.byte	0x1
+ 1676 040c E8       		.byte	0xe8
+ 1677 040d C1000000 		.4byte	0xc1
+ 1678 0411 01       		.uleb128 0x1
+ 1679 0412 50       		.byte	0x50
+ 1680 0413 0F       		.uleb128 0xf
+ 1681 0414 12000000 		.4byte	.LVL46
+ 1682 0418 75030000 		.4byte	0x375
+ 1683 041c 00       		.byte	0
+ 1684 041d 10       		.uleb128 0x10
+ 1685 041e 04010000 		.4byte	.LASF35
+ 1686 0422 01       		.byte	0x1
+ 1687 0423 2801     		.2byte	0x128
+ 1688 0425 C1000000 		.4byte	0xc1
+ 1689 0429 00000000 		.4byte	.LFB78
+ 1690 042d 18000000 		.4byte	.LFE78-.LFB78
+ 1691 0431 01       		.uleb128 0x1
+ 1692 0432 9C       		.byte	0x9c
+ 1693 0433 86040000 		.4byte	0x486
+ 1694 0437 11       		.uleb128 0x11
+ 1695 0438 D7000000 		.4byte	.LASF36
+ 1696 043c 01       		.byte	0x1
+ 1697 043d 2801     		.2byte	0x128
+ 1698 043f C1000000 		.4byte	0xc1
+ 1699 0443 FA030000 		.4byte	.LLST26
+ 1700 0447 12       		.uleb128 0x12
+ 1701 0448 38030000 		.4byte	.LASF37
+ 1702 044c 01       		.byte	0x1
+ 1703 044d 2A01     		.2byte	0x12a
+ 1704 044f C1000000 		.4byte	0xc1
+ 1705 0453 01       		.uleb128 0x1
+ 1706 0454 50       		.byte	0x50
+ 1707 0455 13       		.uleb128 0x13
+ 1708 0456 08000000 		.4byte	.LVL48
+ 1709 045a FD020000 		.4byte	0x2fd
+ 1710 045e 73040000 		.4byte	0x473
+ 1711 0462 14       		.uleb128 0x14
+ 1712 0463 01       		.uleb128 0x1
+ 1713 0464 51       		.byte	0x51
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 40
+
+
+ 1714 0465 05       		.uleb128 0x5
+ 1715 0466 0C       		.byte	0xc
+ 1716 0467 3F240300 		.4byte	0x3243f
+ 1717 046b 14       		.uleb128 0x14
+ 1718 046c 01       		.uleb128 0x1
+ 1719 046d 50       		.byte	0x50
+ 1720 046e 03       		.uleb128 0x3
+ 1721 046f F3       		.byte	0xf3
+ 1722 0470 01       		.uleb128 0x1
+ 1723 0471 50       		.byte	0x50
+ 1724 0472 00       		.byte	0
+ 1725 0473 15       		.uleb128 0x15
+ 1726 0474 12000000 		.4byte	.LVL49
+ 1727 0478 76020000 		.4byte	0x276
+ 1728 047c 14       		.uleb128 0x14
+ 1729 047d 01       		.uleb128 0x1
+ 1730 047e 50       		.byte	0x50
+ 1731 047f 04       		.uleb128 0x4
+ 1732 0480 08       		.byte	0x8
+ 1733 0481 B4       		.byte	0xb4
+ 1734 0482 40       		.byte	0x40
+ 1735 0483 24       		.byte	0x24
+ 1736 0484 00       		.byte	0
+ 1737 0485 00       		.byte	0
+ 1738 0486 10       		.uleb128 0x10
+ 1739 0487 08000000 		.4byte	.LASF38
+ 1740 048b 01       		.byte	0x1
+ 1741 048c 3201     		.2byte	0x132
+ 1742 048e C1000000 		.4byte	0xc1
+ 1743 0492 00000000 		.4byte	.LFB79
+ 1744 0496 18000000 		.4byte	.LFE79-.LFB79
+ 1745 049a 01       		.uleb128 0x1
+ 1746 049b 9C       		.byte	0x9c
+ 1747 049c EF040000 		.4byte	0x4ef
+ 1748 04a0 11       		.uleb128 0x11
+ 1749 04a1 38030000 		.4byte	.LASF37
+ 1750 04a5 01       		.byte	0x1
+ 1751 04a6 3201     		.2byte	0x132
+ 1752 04a8 C1000000 		.4byte	0xc1
+ 1753 04ac 1B040000 		.4byte	.LLST27
+ 1754 04b0 12       		.uleb128 0x12
+ 1755 04b1 D7000000 		.4byte	.LASF36
+ 1756 04b5 01       		.byte	0x1
+ 1757 04b6 3401     		.2byte	0x134
+ 1758 04b8 C1000000 		.4byte	0xc1
+ 1759 04bc 01       		.uleb128 0x1
+ 1760 04bd 50       		.byte	0x50
+ 1761 04be 13       		.uleb128 0x13
+ 1762 04bf 0A000000 		.4byte	.LVL51
+ 1763 04c3 FD020000 		.4byte	0x2fd
+ 1764 04c7 DB040000 		.4byte	0x4db
+ 1765 04cb 14       		.uleb128 0x14
+ 1766 04cc 01       		.uleb128 0x1
+ 1767 04cd 51       		.byte	0x51
+ 1768 04ce 04       		.uleb128 0x4
+ 1769 04cf 08       		.byte	0x8
+ 1770 04d0 B4       		.byte	0xb4
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 41
+
+
+ 1771 04d1 40       		.byte	0x40
+ 1772 04d2 24       		.byte	0x24
+ 1773 04d3 14       		.uleb128 0x14
+ 1774 04d4 01       		.uleb128 0x1
+ 1775 04d5 50       		.byte	0x50
+ 1776 04d6 03       		.uleb128 0x3
+ 1777 04d7 F3       		.byte	0xf3
+ 1778 04d8 01       		.uleb128 0x1
+ 1779 04d9 50       		.byte	0x50
+ 1780 04da 00       		.byte	0
+ 1781 04db 15       		.uleb128 0x15
+ 1782 04dc 12000000 		.4byte	.LVL52
+ 1783 04e0 76020000 		.4byte	0x276
+ 1784 04e4 14       		.uleb128 0x14
+ 1785 04e5 01       		.uleb128 0x1
+ 1786 04e6 50       		.byte	0x50
+ 1787 04e7 05       		.uleb128 0x5
+ 1788 04e8 0C       		.byte	0xc
+ 1789 04e9 3F240300 		.4byte	0x3243f
+ 1790 04ed 00       		.byte	0
+ 1791 04ee 00       		.byte	0
+ 1792 04ef 10       		.uleb128 0x10
+ 1793 04f0 8C010000 		.4byte	.LASF39
+ 1794 04f4 01       		.byte	0x1
+ 1795 04f5 3C01     		.2byte	0x13c
+ 1796 04f7 C1000000 		.4byte	0xc1
+ 1797 04fb 00000000 		.4byte	.LFB80
+ 1798 04ff A0000000 		.4byte	.LFE80-.LFB80
+ 1799 0503 01       		.uleb128 0x1
+ 1800 0504 9C       		.byte	0x9c
+ 1801 0505 37060000 		.4byte	0x637
+ 1802 0509 11       		.uleb128 0x11
+ 1803 050a 38030000 		.4byte	.LASF37
+ 1804 050e 01       		.byte	0x1
+ 1805 050f 3C01     		.2byte	0x13c
+ 1806 0511 C1000000 		.4byte	0xc1
+ 1807 0515 3C040000 		.4byte	.LLST28
+ 1808 0519 16       		.uleb128 0x16
+ 1809 051a 6F030000 		.4byte	.LASF40
+ 1810 051e 01       		.byte	0x1
+ 1811 051f 3E01     		.2byte	0x13e
+ 1812 0521 C1000000 		.4byte	0xc1
+ 1813 0525 5D040000 		.4byte	.LLST29
+ 1814 0529 16       		.uleb128 0x16
+ 1815 052a 3E010000 		.4byte	.LASF41
+ 1816 052e 01       		.byte	0x1
+ 1817 052f 3F01     		.2byte	0x13f
+ 1818 0531 C1000000 		.4byte	0xc1
+ 1819 0535 7B040000 		.4byte	.LLST30
+ 1820 0539 16       		.uleb128 0x16
+ 1821 053a AF010000 		.4byte	.LASF42
+ 1822 053e 01       		.byte	0x1
+ 1823 053f 4001     		.2byte	0x140
+ 1824 0541 88000000 		.4byte	0x88
+ 1825 0545 8E040000 		.4byte	.LLST31
+ 1826 0549 16       		.uleb128 0x16
+ 1827 054a 66010000 		.4byte	.LASF43
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 42
+
+
+ 1828 054e 01       		.byte	0x1
+ 1829 054f 4101     		.2byte	0x141
+ 1830 0551 C1000000 		.4byte	0xc1
+ 1831 0555 D2040000 		.4byte	.LLST32
+ 1832 0559 16       		.uleb128 0x16
+ 1833 055a A6000000 		.4byte	.LASF44
+ 1834 055e 01       		.byte	0x1
+ 1835 055f 4201     		.2byte	0x142
+ 1836 0561 C1000000 		.4byte	0xc1
+ 1837 0565 F0040000 		.4byte	.LLST33
+ 1838 0569 16       		.uleb128 0x16
+ 1839 056a 42000000 		.4byte	.LASF45
+ 1840 056e 01       		.byte	0x1
+ 1841 056f 4201     		.2byte	0x142
+ 1842 0571 C1000000 		.4byte	0xc1
+ 1843 0575 03050000 		.4byte	.LLST34
+ 1844 0579 16       		.uleb128 0x16
+ 1845 057a 20000000 		.4byte	.LASF46
+ 1846 057e 01       		.byte	0x1
+ 1847 057f 4301     		.2byte	0x143
+ 1848 0581 94000000 		.4byte	0x94
+ 1849 0585 34050000 		.4byte	.LLST35
+ 1850 0589 16       		.uleb128 0x16
+ 1851 058a 27000000 		.4byte	.LASF47
+ 1852 058e 01       		.byte	0x1
+ 1853 058f 4301     		.2byte	0x143
+ 1854 0591 94000000 		.4byte	0x94
+ 1855 0595 47050000 		.4byte	.LLST36
+ 1856 0599 16       		.uleb128 0x16
+ 1857 059a 14000000 		.4byte	.LASF48
+ 1858 059e 01       		.byte	0x1
+ 1859 059f 4401     		.2byte	0x144
+ 1860 05a1 C1000000 		.4byte	0xc1
+ 1861 05a5 65050000 		.4byte	.LLST37
+ 1862 05a9 16       		.uleb128 0x16
+ 1863 05aa C5010000 		.4byte	.LASF49
+ 1864 05ae 01       		.byte	0x1
+ 1865 05af 4401     		.2byte	0x144
+ 1866 05b1 C1000000 		.4byte	0xc1
+ 1867 05b5 78050000 		.4byte	.LLST38
+ 1868 05b9 12       		.uleb128 0x12
+ 1869 05ba E8000000 		.4byte	.LASF50
+ 1870 05be 01       		.byte	0x1
+ 1871 05bf 4501     		.2byte	0x145
+ 1872 05c1 C1000000 		.4byte	0xc1
+ 1873 05c5 01       		.uleb128 0x1
+ 1874 05c6 50       		.byte	0x50
+ 1875 05c7 0F       		.uleb128 0xf
+ 1876 05c8 12000000 		.4byte	.LVL55
+ 1877 05cc 40020000 		.4byte	0x240
+ 1878 05d0 13       		.uleb128 0x13
+ 1879 05d1 52000000 		.4byte	.LVL67
+ 1880 05d5 02010000 		.4byte	0x102
+ 1881 05d9 E4050000 		.4byte	0x5e4
+ 1882 05dd 14       		.uleb128 0x14
+ 1883 05de 01       		.uleb128 0x1
+ 1884 05df 50       		.byte	0x50
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 43
+
+
+ 1885 05e0 02       		.uleb128 0x2
+ 1886 05e1 76       		.byte	0x76
+ 1887 05e2 00       		.sleb128 0
+ 1888 05e3 00       		.byte	0
+ 1889 05e4 13       		.uleb128 0x13
+ 1890 05e5 62000000 		.4byte	.LVL71
+ 1891 05e9 02010000 		.4byte	0x102
+ 1892 05ed FA050000 		.4byte	0x5fa
+ 1893 05f1 14       		.uleb128 0x14
+ 1894 05f2 01       		.uleb128 0x1
+ 1895 05f3 50       		.byte	0x50
+ 1896 05f4 04       		.uleb128 0x4
+ 1897 05f5 76       		.byte	0x76
+ 1898 05f6 808004   		.sleb128 65536
+ 1899 05f9 00       		.byte	0
+ 1900 05fa 13       		.uleb128 0x13
+ 1901 05fb 80000000 		.4byte	.LVL76
+ 1902 05ff FD020000 		.4byte	0x2fd
+ 1903 0603 0F060000 		.4byte	0x60f
+ 1904 0607 14       		.uleb128 0x14
+ 1905 0608 01       		.uleb128 0x1
+ 1906 0609 51       		.byte	0x51
+ 1907 060a 03       		.uleb128 0x3
+ 1908 060b 40       		.byte	0x40
+ 1909 060c 3C       		.byte	0x3c
+ 1910 060d 24       		.byte	0x24
+ 1911 060e 00       		.byte	0
+ 1912 060f 13       		.uleb128 0x13
+ 1913 0610 86000000 		.4byte	.LVL77
+ 1914 0614 76020000 		.4byte	0x276
+ 1915 0618 26060000 		.4byte	0x626
+ 1916 061c 14       		.uleb128 0x14
+ 1917 061d 01       		.uleb128 0x1
+ 1918 061e 51       		.byte	0x51
+ 1919 061f 05       		.uleb128 0x5
+ 1920 0620 74       		.byte	0x74
+ 1921 0621 00       		.sleb128 0
+ 1922 0622 76       		.byte	0x76
+ 1923 0623 00       		.sleb128 0
+ 1924 0624 1C       		.byte	0x1c
+ 1925 0625 00       		.byte	0
+ 1926 0626 15       		.uleb128 0x15
+ 1927 0627 94000000 		.4byte	.LVL81
+ 1928 062b 76020000 		.4byte	0x276
+ 1929 062f 14       		.uleb128 0x14
+ 1930 0630 01       		.uleb128 0x1
+ 1931 0631 51       		.byte	0x51
+ 1932 0632 02       		.uleb128 0x2
+ 1933 0633 77       		.byte	0x77
+ 1934 0634 00       		.sleb128 0
+ 1935 0635 00       		.byte	0
+ 1936 0636 00       		.byte	0
+ 1937 0637 06       		.uleb128 0x6
+ 1938 0638 30030000 		.4byte	.LASF51
+ 1939 063c 01       		.byte	0x1
+ 1940 063d F4       		.byte	0xf4
+ 1941 063e C1000000 		.4byte	0xc1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 44
+
+
+ 1942 0642 00000000 		.4byte	.LFB74
+ 1943 0646 0C000000 		.4byte	.LFE74-.LFB74
+ 1944 064a 01       		.uleb128 0x1
+ 1945 064b 9C       		.byte	0x9c
+ 1946 064c 9A060000 		.4byte	0x69a
+ 1947 0650 17       		.uleb128 0x17
+ 1948 0651 D7000000 		.4byte	.LASF36
+ 1949 0655 01       		.byte	0x1
+ 1950 0656 F4       		.byte	0xf4
+ 1951 0657 C1000000 		.4byte	0xc1
+ 1952 065b 8B050000 		.4byte	.LLST39
+ 1953 065f 0D       		.uleb128 0xd
+ 1954 0660 38030000 		.4byte	.LASF37
+ 1955 0664 01       		.byte	0x1
+ 1956 0665 F6       		.byte	0xf6
+ 1957 0666 C1000000 		.4byte	0xc1
+ 1958 066a AC050000 		.4byte	.LLST40
+ 1959 066e 0C       		.uleb128 0xc
+ 1960 066f E8000000 		.4byte	.LASF50
+ 1961 0673 01       		.byte	0x1
+ 1962 0674 F7       		.byte	0xf7
+ 1963 0675 C1000000 		.4byte	0xc1
+ 1964 0679 01       		.uleb128 0x1
+ 1965 067a 50       		.byte	0x50
+ 1966 067b 13       		.uleb128 0x13
+ 1967 067c 06000000 		.4byte	.LVL84
+ 1968 0680 1D040000 		.4byte	0x41d
+ 1969 0684 90060000 		.4byte	0x690
+ 1970 0688 14       		.uleb128 0x14
+ 1971 0689 01       		.uleb128 0x1
+ 1972 068a 50       		.byte	0x50
+ 1973 068b 03       		.uleb128 0x3
+ 1974 068c F3       		.byte	0xf3
+ 1975 068d 01       		.uleb128 0x1
+ 1976 068e 50       		.byte	0x50
+ 1977 068f 00       		.byte	0
+ 1978 0690 0F       		.uleb128 0xf
+ 1979 0691 0A000000 		.4byte	.LVL85
+ 1980 0695 EF040000 		.4byte	0x4ef
+ 1981 0699 00       		.byte	0
+ 1982 069a 10       		.uleb128 0x10
+ 1983 069b 2E000000 		.4byte	.LASF52
+ 1984 069f 01       		.byte	0x1
+ 1985 06a0 7C01     		.2byte	0x17c
+ 1986 06a2 C1000000 		.4byte	0xc1
+ 1987 06a6 00000000 		.4byte	.LFB81
+ 1988 06aa 0C000000 		.4byte	.LFE81-.LFB81
+ 1989 06ae 01       		.uleb128 0x1
+ 1990 06af 9C       		.byte	0x9c
+ 1991 06b0 E9060000 		.4byte	0x6e9
+ 1992 06b4 11       		.uleb128 0x11
+ 1993 06b5 38030000 		.4byte	.LASF37
+ 1994 06b9 01       		.byte	0x1
+ 1995 06ba 7C01     		.2byte	0x17c
+ 1996 06bc C1000000 		.4byte	0xc1
+ 1997 06c0 BF050000 		.4byte	.LLST41
+ 1998 06c4 12       		.uleb128 0x12
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 45
+
+
+ 1999 06c5 DA020000 		.4byte	.LASF53
+ 2000 06c9 01       		.byte	0x1
+ 2001 06ca 7E01     		.2byte	0x17e
+ 2002 06cc C1000000 		.4byte	0xc1
+ 2003 06d0 01       		.uleb128 0x1
+ 2004 06d1 50       		.byte	0x50
+ 2005 06d2 15       		.uleb128 0x15
+ 2006 06d3 0A000000 		.4byte	.LVL88
+ 2007 06d7 EF040000 		.4byte	0x4ef
+ 2008 06db 14       		.uleb128 0x14
+ 2009 06dc 01       		.uleb128 0x1
+ 2010 06dd 50       		.byte	0x50
+ 2011 06de 08       		.uleb128 0x8
+ 2012 06df F3       		.byte	0xf3
+ 2013 06e0 01       		.uleb128 0x1
+ 2014 06e1 50       		.byte	0x50
+ 2015 06e2 23       		.byte	0x23
+ 2016 06e3 8080E802 		.uleb128 0x5a0000
+ 2017 06e7 00       		.byte	0
+ 2018 06e8 00       		.byte	0
+ 2019 06e9 10       		.uleb128 0x10
+ 2020 06ea CC010000 		.4byte	.LASF54
+ 2021 06ee 01       		.byte	0x1
+ 2022 06ef 0101     		.2byte	0x101
+ 2023 06f1 C1000000 		.4byte	0xc1
+ 2024 06f5 00000000 		.4byte	.LFB75
+ 2025 06f9 0C000000 		.4byte	.LFE75-.LFB75
+ 2026 06fd 01       		.uleb128 0x1
+ 2027 06fe 9C       		.byte	0x9c
+ 2028 06ff 50070000 		.4byte	0x750
+ 2029 0703 11       		.uleb128 0x11
+ 2030 0704 D7000000 		.4byte	.LASF36
+ 2031 0708 01       		.byte	0x1
+ 2032 0709 0101     		.2byte	0x101
+ 2033 070b C1000000 		.4byte	0xc1
+ 2034 070f F0050000 		.4byte	.LLST42
+ 2035 0713 16       		.uleb128 0x16
+ 2036 0714 38030000 		.4byte	.LASF37
+ 2037 0718 01       		.byte	0x1
+ 2038 0719 0301     		.2byte	0x103
+ 2039 071b C1000000 		.4byte	0xc1
+ 2040 071f 11060000 		.4byte	.LLST43
+ 2041 0723 12       		.uleb128 0x12
+ 2042 0724 DA020000 		.4byte	.LASF53
+ 2043 0728 01       		.byte	0x1
+ 2044 0729 0401     		.2byte	0x104
+ 2045 072b C1000000 		.4byte	0xc1
+ 2046 072f 01       		.uleb128 0x1
+ 2047 0730 50       		.byte	0x50
+ 2048 0731 13       		.uleb128 0x13
+ 2049 0732 06000000 		.4byte	.LVL90
+ 2050 0736 1D040000 		.4byte	0x41d
+ 2051 073a 46070000 		.4byte	0x746
+ 2052 073e 14       		.uleb128 0x14
+ 2053 073f 01       		.uleb128 0x1
+ 2054 0740 50       		.byte	0x50
+ 2055 0741 03       		.uleb128 0x3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 46
+
+
+ 2056 0742 F3       		.byte	0xf3
+ 2057 0743 01       		.uleb128 0x1
+ 2058 0744 50       		.byte	0x50
+ 2059 0745 00       		.byte	0
+ 2060 0746 0F       		.uleb128 0xf
+ 2061 0747 0A000000 		.4byte	.LVL91
+ 2062 074b 9A060000 		.4byte	0x69a
+ 2063 074f 00       		.byte	0
+ 2064 0750 10       		.uleb128 0x10
+ 2065 0751 AF020000 		.4byte	.LASF55
+ 2066 0755 01       		.byte	0x1
+ 2067 0756 8901     		.2byte	0x189
+ 2068 0758 C1000000 		.4byte	0xc1
+ 2069 075c 00000000 		.4byte	.LFB82
+ 2070 0760 A8000000 		.4byte	.LFE82-.LFB82
+ 2071 0764 01       		.uleb128 0x1
+ 2072 0765 9C       		.byte	0x9c
+ 2073 0766 C5080000 		.4byte	0x8c5
+ 2074 076a 11       		.uleb128 0x11
+ 2075 076b 05030000 		.4byte	.LASF56
+ 2076 076f 01       		.byte	0x1
+ 2077 0770 8901     		.2byte	0x189
+ 2078 0772 C1000000 		.4byte	0xc1
+ 2079 0776 24060000 		.4byte	.LLST44
+ 2080 077a 16       		.uleb128 0x16
+ 2081 077b 3E010000 		.4byte	.LASF41
+ 2082 077f 01       		.byte	0x1
+ 2083 0780 8B01     		.2byte	0x18b
+ 2084 0782 C1000000 		.4byte	0xc1
+ 2085 0786 45060000 		.4byte	.LLST45
+ 2086 078a 16       		.uleb128 0x16
+ 2087 078b BC020000 		.4byte	.LASF57
+ 2088 078f 01       		.byte	0x1
+ 2089 0790 8C01     		.2byte	0x18c
+ 2090 0792 C1000000 		.4byte	0xc1
+ 2091 0796 58060000 		.4byte	.LLST46
+ 2092 079a 16       		.uleb128 0x16
+ 2093 079b C3020000 		.4byte	.LASF58
+ 2094 079f 01       		.byte	0x1
+ 2095 07a0 8C01     		.2byte	0x18c
+ 2096 07a2 C1000000 		.4byte	0xc1
+ 2097 07a6 81060000 		.4byte	.LLST47
+ 2098 07aa 16       		.uleb128 0x16
+ 2099 07ab B2000000 		.4byte	.LASF59
+ 2100 07af 01       		.byte	0x1
+ 2101 07b0 8D01     		.2byte	0x18d
+ 2102 07b2 88000000 		.4byte	0x88
+ 2103 07b6 9F060000 		.4byte	.LLST48
+ 2104 07ba 16       		.uleb128 0x16
+ 2105 07bb C9000000 		.4byte	.LASF60
+ 2106 07bf 01       		.byte	0x1
+ 2107 07c0 8E01     		.2byte	0x18e
+ 2108 07c2 88000000 		.4byte	0x88
+ 2109 07c6 BE060000 		.4byte	.LLST49
+ 2110 07ca 16       		.uleb128 0x16
+ 2111 07cb D0000000 		.4byte	.LASF61
+ 2112 07cf 01       		.byte	0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 47
+
+
+ 2113 07d0 8E01     		.2byte	0x18e
+ 2114 07d2 88000000 		.4byte	0x88
+ 2115 07d6 DD060000 		.4byte	.LLST50
+ 2116 07da 16       		.uleb128 0x16
+ 2117 07db DC000000 		.4byte	.LASF62
+ 2118 07df 01       		.byte	0x1
+ 2119 07e0 8E01     		.2byte	0x18e
+ 2120 07e2 88000000 		.4byte	0x88
+ 2121 07e6 FD060000 		.4byte	.LLST51
+ 2122 07ea 16       		.uleb128 0x16
+ 2123 07eb 3D030000 		.4byte	.LASF63
+ 2124 07ef 01       		.byte	0x1
+ 2125 07f0 8F01     		.2byte	0x18f
+ 2126 07f2 C1000000 		.4byte	0xc1
+ 2127 07f6 1B070000 		.4byte	.LLST52
+ 2128 07fa 16       		.uleb128 0x16
+ 2129 07fb 58030000 		.4byte	.LASF64
+ 2130 07ff 01       		.byte	0x1
+ 2131 0800 8F01     		.2byte	0x18f
+ 2132 0802 C1000000 		.4byte	0xc1
+ 2133 0806 2E070000 		.4byte	.LLST53
+ 2134 080a 16       		.uleb128 0x16
+ 2135 080b C2000000 		.4byte	.LASF65
+ 2136 080f 01       		.byte	0x1
+ 2137 0810 9001     		.2byte	0x190
+ 2138 0812 C1000000 		.4byte	0xc1
+ 2139 0816 41070000 		.4byte	.LLST54
+ 2140 081a 16       		.uleb128 0x16
+ 2141 081b 85010000 		.4byte	.LASF66
+ 2142 081f 01       		.byte	0x1
+ 2143 0820 9001     		.2byte	0x190
+ 2144 0822 C1000000 		.4byte	0xc1
+ 2145 0826 5F070000 		.4byte	.LLST55
+ 2146 082a 16       		.uleb128 0x16
+ 2147 082b 38030000 		.4byte	.LASF37
+ 2148 082f 01       		.byte	0x1
+ 2149 0830 9001     		.2byte	0x190
+ 2150 0832 C1000000 		.4byte	0xc1
+ 2151 0836 72070000 		.4byte	.LLST56
+ 2152 083a 0F       		.uleb128 0xf
+ 2153 083b 14000000 		.4byte	.LVL94
+ 2154 083f 40020000 		.4byte	0x240
+ 2155 0843 13       		.uleb128 0x13
+ 2156 0844 26000000 		.4byte	.LVL97
+ 2157 0848 FD020000 		.4byte	0x2fd
+ 2158 084c 5E080000 		.4byte	0x85e
+ 2159 0850 14       		.uleb128 0x14
+ 2160 0851 01       		.uleb128 0x1
+ 2161 0852 51       		.byte	0x51
+ 2162 0853 02       		.uleb128 0x2
+ 2163 0854 76       		.byte	0x76
+ 2164 0855 00       		.sleb128 0
+ 2165 0856 14       		.uleb128 0x14
+ 2166 0857 01       		.uleb128 0x1
+ 2167 0858 50       		.byte	0x50
+ 2168 0859 03       		.uleb128 0x3
+ 2169 085a 40       		.byte	0x40
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 48
+
+
+ 2170 085b 3C       		.byte	0x3c
+ 2171 085c 24       		.byte	0x24
+ 2172 085d 00       		.byte	0
+ 2173 085e 13       		.uleb128 0x13
+ 2174 085f 6C000000 		.4byte	.LVL108
+ 2175 0863 CC000000 		.4byte	0xcc
+ 2176 0867 72080000 		.4byte	0x872
+ 2177 086b 14       		.uleb128 0x14
+ 2178 086c 01       		.uleb128 0x1
+ 2179 086d 50       		.byte	0x50
+ 2180 086e 02       		.uleb128 0x2
+ 2181 086f 74       		.byte	0x74
+ 2182 0870 00       		.sleb128 0
+ 2183 0871 00       		.byte	0
+ 2184 0872 13       		.uleb128 0x13
+ 2185 0873 74000000 		.4byte	.LVL111
+ 2186 0877 CC000000 		.4byte	0xcc
+ 2187 087b 86080000 		.4byte	0x886
+ 2188 087f 14       		.uleb128 0x14
+ 2189 0880 01       		.uleb128 0x1
+ 2190 0881 50       		.byte	0x50
+ 2191 0882 02       		.uleb128 0x2
+ 2192 0883 74       		.byte	0x74
+ 2193 0884 01       		.sleb128 1
+ 2194 0885 00       		.byte	0
+ 2195 0886 13       		.uleb128 0x13
+ 2196 0887 80000000 		.4byte	.LVL113
+ 2197 088b FD020000 		.4byte	0x2fd
+ 2198 088f 9D080000 		.4byte	0x89d
+ 2199 0893 14       		.uleb128 0x14
+ 2200 0894 01       		.uleb128 0x1
+ 2201 0895 51       		.byte	0x51
+ 2202 0896 05       		.uleb128 0x5
+ 2203 0897 79       		.byte	0x79
+ 2204 0898 00       		.sleb128 0
+ 2205 0899 75       		.byte	0x75
+ 2206 089a 00       		.sleb128 0
+ 2207 089b 1C       		.byte	0x1c
+ 2208 089c 00       		.byte	0
+ 2209 089d 13       		.uleb128 0x13
+ 2210 089e 86000000 		.4byte	.LVL114
+ 2211 08a2 76020000 		.4byte	0x276
+ 2212 08a6 B4080000 		.4byte	0x8b4
+ 2213 08aa 14       		.uleb128 0x14
+ 2214 08ab 01       		.uleb128 0x1
+ 2215 08ac 51       		.byte	0x51
+ 2216 08ad 05       		.uleb128 0x5
+ 2217 08ae 76       		.byte	0x76
+ 2218 08af 00       		.sleb128 0
+ 2219 08b0 75       		.byte	0x75
+ 2220 08b1 00       		.sleb128 0
+ 2221 08b2 1C       		.byte	0x1c
+ 2222 08b3 00       		.byte	0
+ 2223 08b4 15       		.uleb128 0x15
+ 2224 08b5 9A000000 		.4byte	.LVL117
+ 2225 08b9 76020000 		.4byte	0x276
+ 2226 08bd 14       		.uleb128 0x14
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 49
+
+
+ 2227 08be 01       		.uleb128 0x1
+ 2228 08bf 50       		.byte	0x50
+ 2229 08c0 02       		.uleb128 0x2
+ 2230 08c1 77       		.byte	0x77
+ 2231 08c2 00       		.sleb128 0
+ 2232 08c3 00       		.byte	0
+ 2233 08c4 00       		.byte	0
+ 2234 08c5 10       		.uleb128 0x10
+ 2235 08c6 1D030000 		.4byte	.LASF67
+ 2236 08ca 01       		.byte	0x1
+ 2237 08cb 0E01     		.2byte	0x10e
+ 2238 08cd C1000000 		.4byte	0xc1
+ 2239 08d1 00000000 		.4byte	.LFB76
+ 2240 08d5 0C000000 		.4byte	.LFE76-.LFB76
+ 2241 08d9 01       		.uleb128 0x1
+ 2242 08da 9C       		.byte	0x9c
+ 2243 08db 2C090000 		.4byte	0x92c
+ 2244 08df 11       		.uleb128 0x11
+ 2245 08e0 05030000 		.4byte	.LASF56
+ 2246 08e4 01       		.byte	0x1
+ 2247 08e5 0E01     		.2byte	0x10e
+ 2248 08e7 C1000000 		.4byte	0xc1
+ 2249 08eb 90070000 		.4byte	.LLST57
+ 2250 08ef 16       		.uleb128 0x16
+ 2251 08f0 38030000 		.4byte	.LASF37
+ 2252 08f4 01       		.byte	0x1
+ 2253 08f5 1001     		.2byte	0x110
+ 2254 08f7 C1000000 		.4byte	0xc1
+ 2255 08fb B1070000 		.4byte	.LLST58
+ 2256 08ff 12       		.uleb128 0x12
+ 2257 0900 D7000000 		.4byte	.LASF36
+ 2258 0904 01       		.byte	0x1
+ 2259 0905 1101     		.2byte	0x111
+ 2260 0907 C1000000 		.4byte	0xc1
+ 2261 090b 01       		.uleb128 0x1
+ 2262 090c 50       		.byte	0x50
+ 2263 090d 13       		.uleb128 0x13
+ 2264 090e 06000000 		.4byte	.LVL120
+ 2265 0912 50070000 		.4byte	0x750
+ 2266 0916 22090000 		.4byte	0x922
+ 2267 091a 14       		.uleb128 0x14
+ 2268 091b 01       		.uleb128 0x1
+ 2269 091c 50       		.byte	0x50
+ 2270 091d 03       		.uleb128 0x3
+ 2271 091e F3       		.byte	0xf3
+ 2272 091f 01       		.uleb128 0x1
+ 2273 0920 50       		.byte	0x50
+ 2274 0921 00       		.byte	0
+ 2275 0922 0F       		.uleb128 0xf
+ 2276 0923 0A000000 		.4byte	.LVL121
+ 2277 0927 86040000 		.4byte	0x486
+ 2278 092b 00       		.byte	0
+ 2279 092c 10       		.uleb128 0x10
+ 2280 092d 0F030000 		.4byte	.LASF68
+ 2281 0931 01       		.byte	0x1
+ 2282 0932 C501     		.2byte	0x1c5
+ 2283 0934 C1000000 		.4byte	0xc1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 50
+
+
+ 2284 0938 00000000 		.4byte	.LFB83
+ 2285 093c 74000000 		.4byte	.LFE83-.LFB83
+ 2286 0940 01       		.uleb128 0x1
+ 2287 0941 9C       		.byte	0x9c
+ 2288 0942 010A0000 		.4byte	0xa01
+ 2289 0946 11       		.uleb128 0x11
+ 2290 0947 1B000000 		.4byte	.LASF69
+ 2291 094b 01       		.byte	0x1
+ 2292 094c C501     		.2byte	0x1c5
+ 2293 094e C1000000 		.4byte	0xc1
+ 2294 0952 C4070000 		.4byte	.LLST59
+ 2295 0956 11       		.uleb128 0x11
+ 2296 0957 E3000000 		.4byte	.LASF70
+ 2297 095b 01       		.byte	0x1
+ 2298 095c C501     		.2byte	0x1c5
+ 2299 095e C1000000 		.4byte	0xc1
+ 2300 0962 17080000 		.4byte	.LLST60
+ 2301 0966 16       		.uleb128 0x16
+ 2302 0967 AF010000 		.4byte	.LASF42
+ 2303 096b 01       		.byte	0x1
+ 2304 096c C701     		.2byte	0x1c7
+ 2305 096e 88000000 		.4byte	0x88
+ 2306 0972 43080000 		.4byte	.LLST61
+ 2307 0976 16       		.uleb128 0x16
+ 2308 0977 51030000 		.4byte	.LASF71
+ 2309 097b 01       		.byte	0x1
+ 2310 097c C801     		.2byte	0x1c8
+ 2311 097e C1000000 		.4byte	0xc1
+ 2312 0982 56080000 		.4byte	.LLST62
+ 2313 0986 16       		.uleb128 0x16
+ 2314 0987 BB000000 		.4byte	.LASF72
+ 2315 098b 01       		.byte	0x1
+ 2316 098c C801     		.2byte	0x1c8
+ 2317 098e C1000000 		.4byte	0xc1
+ 2318 0992 74080000 		.4byte	.LLST63
+ 2319 0996 16       		.uleb128 0x16
+ 2320 0997 BC020000 		.4byte	.LASF57
+ 2321 099b 01       		.byte	0x1
+ 2322 099c C901     		.2byte	0x1c9
+ 2323 099e C1000000 		.4byte	0xc1
+ 2324 09a2 92080000 		.4byte	.LLST64
+ 2325 09a6 16       		.uleb128 0x16
+ 2326 09a7 6F030000 		.4byte	.LASF40
+ 2327 09ab 01       		.byte	0x1
+ 2328 09ac C901     		.2byte	0x1c9
+ 2329 09ae C1000000 		.4byte	0xc1
+ 2330 09b2 A5080000 		.4byte	.LLST65
+ 2331 09b6 16       		.uleb128 0x16
+ 2332 09b7 38030000 		.4byte	.LASF37
+ 2333 09bb 01       		.byte	0x1
+ 2334 09bc CA01     		.2byte	0x1ca
+ 2335 09be C1000000 		.4byte	0xc1
+ 2336 09c2 DE080000 		.4byte	.LLST66
+ 2337 09c6 0F       		.uleb128 0xf
+ 2338 09c7 42000000 		.4byte	.LVL128
+ 2339 09cb 40020000 		.4byte	0x240
+ 2340 09cf 13       		.uleb128 0x13
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 51
+
+
+ 2341 09d0 4A000000 		.4byte	.LVL131
+ 2342 09d4 40020000 		.4byte	0x240
+ 2343 09d8 E3090000 		.4byte	0x9e3
+ 2344 09dc 14       		.uleb128 0x14
+ 2345 09dd 01       		.uleb128 0x1
+ 2346 09de 50       		.byte	0x50
+ 2347 09df 02       		.uleb128 0x2
+ 2348 09e0 74       		.byte	0x74
+ 2349 09e1 00       		.sleb128 0
+ 2350 09e2 00       		.byte	0
+ 2351 09e3 13       		.uleb128 0x13
+ 2352 09e4 52000000 		.4byte	.LVL134
+ 2353 09e8 FD020000 		.4byte	0x2fd
+ 2354 09ec F7090000 		.4byte	0x9f7
+ 2355 09f0 14       		.uleb128 0x14
+ 2356 09f1 01       		.uleb128 0x1
+ 2357 09f2 50       		.byte	0x50
+ 2358 09f3 02       		.uleb128 0x2
+ 2359 09f4 76       		.byte	0x76
+ 2360 09f5 00       		.sleb128 0
+ 2361 09f6 00       		.byte	0
+ 2362 09f7 0F       		.uleb128 0xf
+ 2363 09f8 56000000 		.4byte	.LVL135
+ 2364 09fc 50070000 		.4byte	0x750
+ 2365 0a00 00       		.byte	0
+ 2366 0a01 10       		.uleb128 0x10
+ 2367 0a02 7B010000 		.4byte	.LASF73
+ 2368 0a06 01       		.byte	0x1
+ 2369 0a07 1B01     		.2byte	0x11b
+ 2370 0a09 C1000000 		.4byte	0xc1
+ 2371 0a0d 00000000 		.4byte	.LFB77
+ 2372 0a11 0C000000 		.4byte	.LFE77-.LFB77
+ 2373 0a15 01       		.uleb128 0x1
+ 2374 0a16 9C       		.byte	0x9c
+ 2375 0a17 7F0A0000 		.4byte	0xa7f
+ 2376 0a1b 11       		.uleb128 0x11
+ 2377 0a1c 1B000000 		.4byte	.LASF69
+ 2378 0a20 01       		.byte	0x1
+ 2379 0a21 1B01     		.2byte	0x11b
+ 2380 0a23 C1000000 		.4byte	0xc1
+ 2381 0a27 01090000 		.4byte	.LLST67
+ 2382 0a2b 11       		.uleb128 0x11
+ 2383 0a2c E3000000 		.4byte	.LASF70
+ 2384 0a30 01       		.byte	0x1
+ 2385 0a31 1B01     		.2byte	0x11b
+ 2386 0a33 C1000000 		.4byte	0xc1
+ 2387 0a37 22090000 		.4byte	.LLST68
+ 2388 0a3b 16       		.uleb128 0x16
+ 2389 0a3c 38030000 		.4byte	.LASF37
+ 2390 0a40 01       		.byte	0x1
+ 2391 0a41 1D01     		.2byte	0x11d
+ 2392 0a43 C1000000 		.4byte	0xc1
+ 2393 0a47 43090000 		.4byte	.LLST69
+ 2394 0a4b 12       		.uleb128 0x12
+ 2395 0a4c D7000000 		.4byte	.LASF36
+ 2396 0a50 01       		.byte	0x1
+ 2397 0a51 1E01     		.2byte	0x11e
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 52
+
+
+ 2398 0a53 C1000000 		.4byte	0xc1
+ 2399 0a57 01       		.uleb128 0x1
+ 2400 0a58 50       		.byte	0x50
+ 2401 0a59 13       		.uleb128 0x13
+ 2402 0a5a 06000000 		.4byte	.LVL143
+ 2403 0a5e 2C090000 		.4byte	0x92c
+ 2404 0a62 750A0000 		.4byte	0xa75
+ 2405 0a66 14       		.uleb128 0x14
+ 2406 0a67 01       		.uleb128 0x1
+ 2407 0a68 51       		.byte	0x51
+ 2408 0a69 03       		.uleb128 0x3
+ 2409 0a6a F3       		.byte	0xf3
+ 2410 0a6b 01       		.uleb128 0x1
+ 2411 0a6c 51       		.byte	0x51
+ 2412 0a6d 14       		.uleb128 0x14
+ 2413 0a6e 01       		.uleb128 0x1
+ 2414 0a6f 50       		.byte	0x50
+ 2415 0a70 03       		.uleb128 0x3
+ 2416 0a71 F3       		.byte	0xf3
+ 2417 0a72 01       		.uleb128 0x1
+ 2418 0a73 50       		.byte	0x50
+ 2419 0a74 00       		.byte	0
+ 2420 0a75 0F       		.uleb128 0xf
+ 2421 0a76 0A000000 		.4byte	.LVL144
+ 2422 0a7a 86040000 		.4byte	0x486
+ 2423 0a7e 00       		.byte	0
+ 2424 0a7f 18       		.uleb128 0x18
+ 2425 0a80 88000000 		.4byte	0x88
+ 2426 0a84 8F0A0000 		.4byte	0xa8f
+ 2427 0a88 19       		.uleb128 0x19
+ 2428 0a89 BA000000 		.4byte	0xba
+ 2429 0a8d 59       		.byte	0x59
+ 2430 0a8e 00       		.byte	0
+ 2431 0a8f 0C       		.uleb128 0xc
+ 2432 0a90 E2010000 		.4byte	.LASF74
+ 2433 0a94 01       		.byte	0x1
+ 2434 0a95 2C       		.byte	0x2c
+ 2435 0a96 A00A0000 		.4byte	0xaa0
+ 2436 0a9a 05       		.uleb128 0x5
+ 2437 0a9b 03       		.byte	0x3
+ 2438 0a9c 00000000 		.4byte	TBL_SIN
+ 2439 0aa0 1A       		.uleb128 0x1a
+ 2440 0aa1 7F0A0000 		.4byte	0xa7f
+ 2441 0aa5 18       		.uleb128 0x18
+ 2442 0aa6 88000000 		.4byte	0x88
+ 2443 0aaa B50A0000 		.4byte	0xab5
+ 2444 0aae 19       		.uleb128 0x19
+ 2445 0aaf BA000000 		.4byte	0xba
+ 2446 0ab3 2C       		.byte	0x2c
+ 2447 0ab4 00       		.byte	0
+ 2448 0ab5 0C       		.uleb128 0xc
+ 2449 0ab6 24010000 		.4byte	.LASF75
+ 2450 0aba 01       		.byte	0x1
+ 2451 0abb 41       		.byte	0x41
+ 2452 0abc C60A0000 		.4byte	0xac6
+ 2453 0ac0 05       		.uleb128 0x5
+ 2454 0ac1 03       		.byte	0x3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 53
+
+
+ 2455 0ac2 68010000 		.4byte	TBL_TAN
+ 2456 0ac6 1A       		.uleb128 0x1a
+ 2457 0ac7 A50A0000 		.4byte	0xaa5
+ 2458 0acb 1B       		.uleb128 0x1b
+ 2459 0acc 44030000 		.4byte	.LASF79
+ 2460 0ad0 06       		.byte	0x6
+ 2461 0ad1 5506     		.2byte	0x655
+ 2462 0ad3 D70A0000 		.4byte	0xad7
+ 2463 0ad7 1C       		.uleb128 0x1c
+ 2464 0ad8 7D000000 		.4byte	0x7d
+ 2465 0adc 00       		.byte	0
+ 2466              		.section	.debug_abbrev,"",%progbits
+ 2467              	.Ldebug_abbrev0:
+ 2468 0000 01       		.uleb128 0x1
+ 2469 0001 11       		.uleb128 0x11
+ 2470 0002 01       		.byte	0x1
+ 2471 0003 25       		.uleb128 0x25
+ 2472 0004 0E       		.uleb128 0xe
+ 2473 0005 13       		.uleb128 0x13
+ 2474 0006 0B       		.uleb128 0xb
+ 2475 0007 03       		.uleb128 0x3
+ 2476 0008 0E       		.uleb128 0xe
+ 2477 0009 1B       		.uleb128 0x1b
+ 2478 000a 0E       		.uleb128 0xe
+ 2479 000b 55       		.uleb128 0x55
+ 2480 000c 17       		.uleb128 0x17
+ 2481 000d 11       		.uleb128 0x11
+ 2482 000e 01       		.uleb128 0x1
+ 2483 000f 10       		.uleb128 0x10
+ 2484 0010 17       		.uleb128 0x17
+ 2485 0011 00       		.byte	0
+ 2486 0012 00       		.byte	0
+ 2487 0013 02       		.uleb128 0x2
+ 2488 0014 24       		.uleb128 0x24
+ 2489 0015 00       		.byte	0
+ 2490 0016 0B       		.uleb128 0xb
+ 2491 0017 0B       		.uleb128 0xb
+ 2492 0018 3E       		.uleb128 0x3e
+ 2493 0019 0B       		.uleb128 0xb
+ 2494 001a 03       		.uleb128 0x3
+ 2495 001b 0E       		.uleb128 0xe
+ 2496 001c 00       		.byte	0
+ 2497 001d 00       		.byte	0
+ 2498 001e 03       		.uleb128 0x3
+ 2499 001f 24       		.uleb128 0x24
+ 2500 0020 00       		.byte	0
+ 2501 0021 0B       		.uleb128 0xb
+ 2502 0022 0B       		.uleb128 0xb
+ 2503 0023 3E       		.uleb128 0x3e
+ 2504 0024 0B       		.uleb128 0xb
+ 2505 0025 03       		.uleb128 0x3
+ 2506 0026 08       		.uleb128 0x8
+ 2507 0027 00       		.byte	0
+ 2508 0028 00       		.byte	0
+ 2509 0029 04       		.uleb128 0x4
+ 2510 002a 16       		.uleb128 0x16
+ 2511 002b 00       		.byte	0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 54
+
+
+ 2512 002c 03       		.uleb128 0x3
+ 2513 002d 0E       		.uleb128 0xe
+ 2514 002e 3A       		.uleb128 0x3a
+ 2515 002f 0B       		.uleb128 0xb
+ 2516 0030 3B       		.uleb128 0x3b
+ 2517 0031 0B       		.uleb128 0xb
+ 2518 0032 49       		.uleb128 0x49
+ 2519 0033 13       		.uleb128 0x13
+ 2520 0034 00       		.byte	0
+ 2521 0035 00       		.byte	0
+ 2522 0036 05       		.uleb128 0x5
+ 2523 0037 16       		.uleb128 0x16
+ 2524 0038 00       		.byte	0
+ 2525 0039 03       		.uleb128 0x3
+ 2526 003a 0E       		.uleb128 0xe
+ 2527 003b 3A       		.uleb128 0x3a
+ 2528 003c 0B       		.uleb128 0xb
+ 2529 003d 3B       		.uleb128 0x3b
+ 2530 003e 05       		.uleb128 0x5
+ 2531 003f 49       		.uleb128 0x49
+ 2532 0040 13       		.uleb128 0x13
+ 2533 0041 00       		.byte	0
+ 2534 0042 00       		.byte	0
+ 2535 0043 06       		.uleb128 0x6
+ 2536 0044 2E       		.uleb128 0x2e
+ 2537 0045 01       		.byte	0x1
+ 2538 0046 3F       		.uleb128 0x3f
+ 2539 0047 19       		.uleb128 0x19
+ 2540 0048 03       		.uleb128 0x3
+ 2541 0049 0E       		.uleb128 0xe
+ 2542 004a 3A       		.uleb128 0x3a
+ 2543 004b 0B       		.uleb128 0xb
+ 2544 004c 3B       		.uleb128 0x3b
+ 2545 004d 0B       		.uleb128 0xb
+ 2546 004e 27       		.uleb128 0x27
+ 2547 004f 19       		.uleb128 0x19
+ 2548 0050 49       		.uleb128 0x49
+ 2549 0051 13       		.uleb128 0x13
+ 2550 0052 11       		.uleb128 0x11
+ 2551 0053 01       		.uleb128 0x1
+ 2552 0054 12       		.uleb128 0x12
+ 2553 0055 06       		.uleb128 0x6
+ 2554 0056 40       		.uleb128 0x40
+ 2555 0057 18       		.uleb128 0x18
+ 2556 0058 9742     		.uleb128 0x2117
+ 2557 005a 19       		.uleb128 0x19
+ 2558 005b 01       		.uleb128 0x1
+ 2559 005c 13       		.uleb128 0x13
+ 2560 005d 00       		.byte	0
+ 2561 005e 00       		.byte	0
+ 2562 005f 07       		.uleb128 0x7
+ 2563 0060 05       		.uleb128 0x5
+ 2564 0061 00       		.byte	0
+ 2565 0062 03       		.uleb128 0x3
+ 2566 0063 08       		.uleb128 0x8
+ 2567 0064 3A       		.uleb128 0x3a
+ 2568 0065 0B       		.uleb128 0xb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 55
+
+
+ 2569 0066 3B       		.uleb128 0x3b
+ 2570 0067 0B       		.uleb128 0xb
+ 2571 0068 49       		.uleb128 0x49
+ 2572 0069 13       		.uleb128 0x13
+ 2573 006a 02       		.uleb128 0x2
+ 2574 006b 17       		.uleb128 0x17
+ 2575 006c 00       		.byte	0
+ 2576 006d 00       		.byte	0
+ 2577 006e 08       		.uleb128 0x8
+ 2578 006f 34       		.uleb128 0x34
+ 2579 0070 00       		.byte	0
+ 2580 0071 03       		.uleb128 0x3
+ 2581 0072 08       		.uleb128 0x8
+ 2582 0073 3A       		.uleb128 0x3a
+ 2583 0074 0B       		.uleb128 0xb
+ 2584 0075 3B       		.uleb128 0x3b
+ 2585 0076 0B       		.uleb128 0xb
+ 2586 0077 49       		.uleb128 0x49
+ 2587 0078 13       		.uleb128 0x13
+ 2588 0079 02       		.uleb128 0x2
+ 2589 007a 17       		.uleb128 0x17
+ 2590 007b 00       		.byte	0
+ 2591 007c 00       		.byte	0
+ 2592 007d 09       		.uleb128 0x9
+ 2593 007e 2E       		.uleb128 0x2e
+ 2594 007f 01       		.byte	0x1
+ 2595 0080 3F       		.uleb128 0x3f
+ 2596 0081 19       		.uleb128 0x19
+ 2597 0082 03       		.uleb128 0x3
+ 2598 0083 0E       		.uleb128 0xe
+ 2599 0084 3A       		.uleb128 0x3a
+ 2600 0085 0B       		.uleb128 0xb
+ 2601 0086 3B       		.uleb128 0x3b
+ 2602 0087 0B       		.uleb128 0xb
+ 2603 0088 27       		.uleb128 0x27
+ 2604 0089 19       		.uleb128 0x19
+ 2605 008a 49       		.uleb128 0x49
+ 2606 008b 13       		.uleb128 0x13
+ 2607 008c 11       		.uleb128 0x11
+ 2608 008d 01       		.uleb128 0x1
+ 2609 008e 12       		.uleb128 0x12
+ 2610 008f 06       		.uleb128 0x6
+ 2611 0090 40       		.uleb128 0x40
+ 2612 0091 18       		.uleb128 0x18
+ 2613 0092 9642     		.uleb128 0x2116
+ 2614 0094 19       		.uleb128 0x19
+ 2615 0095 01       		.uleb128 0x1
+ 2616 0096 13       		.uleb128 0x13
+ 2617 0097 00       		.byte	0
+ 2618 0098 00       		.byte	0
+ 2619 0099 0A       		.uleb128 0xa
+ 2620 009a 34       		.uleb128 0x34
+ 2621 009b 00       		.byte	0
+ 2622 009c 03       		.uleb128 0x3
+ 2623 009d 08       		.uleb128 0x8
+ 2624 009e 3A       		.uleb128 0x3a
+ 2625 009f 0B       		.uleb128 0xb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 56
+
+
+ 2626 00a0 3B       		.uleb128 0x3b
+ 2627 00a1 0B       		.uleb128 0xb
+ 2628 00a2 49       		.uleb128 0x49
+ 2629 00a3 13       		.uleb128 0x13
+ 2630 00a4 02       		.uleb128 0x2
+ 2631 00a5 18       		.uleb128 0x18
+ 2632 00a6 00       		.byte	0
+ 2633 00a7 00       		.byte	0
+ 2634 00a8 0B       		.uleb128 0xb
+ 2635 00a9 05       		.uleb128 0x5
+ 2636 00aa 00       		.byte	0
+ 2637 00ab 03       		.uleb128 0x3
+ 2638 00ac 08       		.uleb128 0x8
+ 2639 00ad 3A       		.uleb128 0x3a
+ 2640 00ae 0B       		.uleb128 0xb
+ 2641 00af 3B       		.uleb128 0x3b
+ 2642 00b0 0B       		.uleb128 0xb
+ 2643 00b1 49       		.uleb128 0x49
+ 2644 00b2 13       		.uleb128 0x13
+ 2645 00b3 02       		.uleb128 0x2
+ 2646 00b4 18       		.uleb128 0x18
+ 2647 00b5 00       		.byte	0
+ 2648 00b6 00       		.byte	0
+ 2649 00b7 0C       		.uleb128 0xc
+ 2650 00b8 34       		.uleb128 0x34
+ 2651 00b9 00       		.byte	0
+ 2652 00ba 03       		.uleb128 0x3
+ 2653 00bb 0E       		.uleb128 0xe
+ 2654 00bc 3A       		.uleb128 0x3a
+ 2655 00bd 0B       		.uleb128 0xb
+ 2656 00be 3B       		.uleb128 0x3b
+ 2657 00bf 0B       		.uleb128 0xb
+ 2658 00c0 49       		.uleb128 0x49
+ 2659 00c1 13       		.uleb128 0x13
+ 2660 00c2 02       		.uleb128 0x2
+ 2661 00c3 18       		.uleb128 0x18
+ 2662 00c4 00       		.byte	0
+ 2663 00c5 00       		.byte	0
+ 2664 00c6 0D       		.uleb128 0xd
+ 2665 00c7 34       		.uleb128 0x34
+ 2666 00c8 00       		.byte	0
+ 2667 00c9 03       		.uleb128 0x3
+ 2668 00ca 0E       		.uleb128 0xe
+ 2669 00cb 3A       		.uleb128 0x3a
+ 2670 00cc 0B       		.uleb128 0xb
+ 2671 00cd 3B       		.uleb128 0x3b
+ 2672 00ce 0B       		.uleb128 0xb
+ 2673 00cf 49       		.uleb128 0x49
+ 2674 00d0 13       		.uleb128 0x13
+ 2675 00d1 02       		.uleb128 0x2
+ 2676 00d2 17       		.uleb128 0x17
+ 2677 00d3 00       		.byte	0
+ 2678 00d4 00       		.byte	0
+ 2679 00d5 0E       		.uleb128 0xe
+ 2680 00d6 34       		.uleb128 0x34
+ 2681 00d7 00       		.byte	0
+ 2682 00d8 03       		.uleb128 0x3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 57
+
+
+ 2683 00d9 0E       		.uleb128 0xe
+ 2684 00da 3A       		.uleb128 0x3a
+ 2685 00db 0B       		.uleb128 0xb
+ 2686 00dc 3B       		.uleb128 0x3b
+ 2687 00dd 0B       		.uleb128 0xb
+ 2688 00de 49       		.uleb128 0x49
+ 2689 00df 13       		.uleb128 0x13
+ 2690 00e0 00       		.byte	0
+ 2691 00e1 00       		.byte	0
+ 2692 00e2 0F       		.uleb128 0xf
+ 2693 00e3 898201   		.uleb128 0x4109
+ 2694 00e6 00       		.byte	0
+ 2695 00e7 11       		.uleb128 0x11
+ 2696 00e8 01       		.uleb128 0x1
+ 2697 00e9 31       		.uleb128 0x31
+ 2698 00ea 13       		.uleb128 0x13
+ 2699 00eb 00       		.byte	0
+ 2700 00ec 00       		.byte	0
+ 2701 00ed 10       		.uleb128 0x10
+ 2702 00ee 2E       		.uleb128 0x2e
+ 2703 00ef 01       		.byte	0x1
+ 2704 00f0 3F       		.uleb128 0x3f
+ 2705 00f1 19       		.uleb128 0x19
+ 2706 00f2 03       		.uleb128 0x3
+ 2707 00f3 0E       		.uleb128 0xe
+ 2708 00f4 3A       		.uleb128 0x3a
+ 2709 00f5 0B       		.uleb128 0xb
+ 2710 00f6 3B       		.uleb128 0x3b
+ 2711 00f7 05       		.uleb128 0x5
+ 2712 00f8 27       		.uleb128 0x27
+ 2713 00f9 19       		.uleb128 0x19
+ 2714 00fa 49       		.uleb128 0x49
+ 2715 00fb 13       		.uleb128 0x13
+ 2716 00fc 11       		.uleb128 0x11
+ 2717 00fd 01       		.uleb128 0x1
+ 2718 00fe 12       		.uleb128 0x12
+ 2719 00ff 06       		.uleb128 0x6
+ 2720 0100 40       		.uleb128 0x40
+ 2721 0101 18       		.uleb128 0x18
+ 2722 0102 9742     		.uleb128 0x2117
+ 2723 0104 19       		.uleb128 0x19
+ 2724 0105 01       		.uleb128 0x1
+ 2725 0106 13       		.uleb128 0x13
+ 2726 0107 00       		.byte	0
+ 2727 0108 00       		.byte	0
+ 2728 0109 11       		.uleb128 0x11
+ 2729 010a 05       		.uleb128 0x5
+ 2730 010b 00       		.byte	0
+ 2731 010c 03       		.uleb128 0x3
+ 2732 010d 0E       		.uleb128 0xe
+ 2733 010e 3A       		.uleb128 0x3a
+ 2734 010f 0B       		.uleb128 0xb
+ 2735 0110 3B       		.uleb128 0x3b
+ 2736 0111 05       		.uleb128 0x5
+ 2737 0112 49       		.uleb128 0x49
+ 2738 0113 13       		.uleb128 0x13
+ 2739 0114 02       		.uleb128 0x2
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 58
+
+
+ 2740 0115 17       		.uleb128 0x17
+ 2741 0116 00       		.byte	0
+ 2742 0117 00       		.byte	0
+ 2743 0118 12       		.uleb128 0x12
+ 2744 0119 34       		.uleb128 0x34
+ 2745 011a 00       		.byte	0
+ 2746 011b 03       		.uleb128 0x3
+ 2747 011c 0E       		.uleb128 0xe
+ 2748 011d 3A       		.uleb128 0x3a
+ 2749 011e 0B       		.uleb128 0xb
+ 2750 011f 3B       		.uleb128 0x3b
+ 2751 0120 05       		.uleb128 0x5
+ 2752 0121 49       		.uleb128 0x49
+ 2753 0122 13       		.uleb128 0x13
+ 2754 0123 02       		.uleb128 0x2
+ 2755 0124 18       		.uleb128 0x18
+ 2756 0125 00       		.byte	0
+ 2757 0126 00       		.byte	0
+ 2758 0127 13       		.uleb128 0x13
+ 2759 0128 898201   		.uleb128 0x4109
+ 2760 012b 01       		.byte	0x1
+ 2761 012c 11       		.uleb128 0x11
+ 2762 012d 01       		.uleb128 0x1
+ 2763 012e 31       		.uleb128 0x31
+ 2764 012f 13       		.uleb128 0x13
+ 2765 0130 01       		.uleb128 0x1
+ 2766 0131 13       		.uleb128 0x13
+ 2767 0132 00       		.byte	0
+ 2768 0133 00       		.byte	0
+ 2769 0134 14       		.uleb128 0x14
+ 2770 0135 8A8201   		.uleb128 0x410a
+ 2771 0138 00       		.byte	0
+ 2772 0139 02       		.uleb128 0x2
+ 2773 013a 18       		.uleb128 0x18
+ 2774 013b 9142     		.uleb128 0x2111
+ 2775 013d 18       		.uleb128 0x18
+ 2776 013e 00       		.byte	0
+ 2777 013f 00       		.byte	0
+ 2778 0140 15       		.uleb128 0x15
+ 2779 0141 898201   		.uleb128 0x4109
+ 2780 0144 01       		.byte	0x1
+ 2781 0145 11       		.uleb128 0x11
+ 2782 0146 01       		.uleb128 0x1
+ 2783 0147 31       		.uleb128 0x31
+ 2784 0148 13       		.uleb128 0x13
+ 2785 0149 00       		.byte	0
+ 2786 014a 00       		.byte	0
+ 2787 014b 16       		.uleb128 0x16
+ 2788 014c 34       		.uleb128 0x34
+ 2789 014d 00       		.byte	0
+ 2790 014e 03       		.uleb128 0x3
+ 2791 014f 0E       		.uleb128 0xe
+ 2792 0150 3A       		.uleb128 0x3a
+ 2793 0151 0B       		.uleb128 0xb
+ 2794 0152 3B       		.uleb128 0x3b
+ 2795 0153 05       		.uleb128 0x5
+ 2796 0154 49       		.uleb128 0x49
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 59
+
+
+ 2797 0155 13       		.uleb128 0x13
+ 2798 0156 02       		.uleb128 0x2
+ 2799 0157 17       		.uleb128 0x17
+ 2800 0158 00       		.byte	0
+ 2801 0159 00       		.byte	0
+ 2802 015a 17       		.uleb128 0x17
+ 2803 015b 05       		.uleb128 0x5
+ 2804 015c 00       		.byte	0
+ 2805 015d 03       		.uleb128 0x3
+ 2806 015e 0E       		.uleb128 0xe
+ 2807 015f 3A       		.uleb128 0x3a
+ 2808 0160 0B       		.uleb128 0xb
+ 2809 0161 3B       		.uleb128 0x3b
+ 2810 0162 0B       		.uleb128 0xb
+ 2811 0163 49       		.uleb128 0x49
+ 2812 0164 13       		.uleb128 0x13
+ 2813 0165 02       		.uleb128 0x2
+ 2814 0166 17       		.uleb128 0x17
+ 2815 0167 00       		.byte	0
+ 2816 0168 00       		.byte	0
+ 2817 0169 18       		.uleb128 0x18
+ 2818 016a 01       		.uleb128 0x1
+ 2819 016b 01       		.byte	0x1
+ 2820 016c 49       		.uleb128 0x49
+ 2821 016d 13       		.uleb128 0x13
+ 2822 016e 01       		.uleb128 0x1
+ 2823 016f 13       		.uleb128 0x13
+ 2824 0170 00       		.byte	0
+ 2825 0171 00       		.byte	0
+ 2826 0172 19       		.uleb128 0x19
+ 2827 0173 21       		.uleb128 0x21
+ 2828 0174 00       		.byte	0
+ 2829 0175 49       		.uleb128 0x49
+ 2830 0176 13       		.uleb128 0x13
+ 2831 0177 2F       		.uleb128 0x2f
+ 2832 0178 0B       		.uleb128 0xb
+ 2833 0179 00       		.byte	0
+ 2834 017a 00       		.byte	0
+ 2835 017b 1A       		.uleb128 0x1a
+ 2836 017c 26       		.uleb128 0x26
+ 2837 017d 00       		.byte	0
+ 2838 017e 49       		.uleb128 0x49
+ 2839 017f 13       		.uleb128 0x13
+ 2840 0180 00       		.byte	0
+ 2841 0181 00       		.byte	0
+ 2842 0182 1B       		.uleb128 0x1b
+ 2843 0183 34       		.uleb128 0x34
+ 2844 0184 00       		.byte	0
+ 2845 0185 03       		.uleb128 0x3
+ 2846 0186 0E       		.uleb128 0xe
+ 2847 0187 3A       		.uleb128 0x3a
+ 2848 0188 0B       		.uleb128 0xb
+ 2849 0189 3B       		.uleb128 0x3b
+ 2850 018a 05       		.uleb128 0x5
+ 2851 018b 49       		.uleb128 0x49
+ 2852 018c 13       		.uleb128 0x13
+ 2853 018d 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 60
+
+
+ 2854 018e 19       		.uleb128 0x19
+ 2855 018f 3C       		.uleb128 0x3c
+ 2856 0190 19       		.uleb128 0x19
+ 2857 0191 00       		.byte	0
+ 2858 0192 00       		.byte	0
+ 2859 0193 1C       		.uleb128 0x1c
+ 2860 0194 35       		.uleb128 0x35
+ 2861 0195 00       		.byte	0
+ 2862 0196 49       		.uleb128 0x49
+ 2863 0197 13       		.uleb128 0x13
+ 2864 0198 00       		.byte	0
+ 2865 0199 00       		.byte	0
+ 2866 019a 00       		.byte	0
+ 2867              		.section	.debug_loc,"",%progbits
+ 2868              	.Ldebug_loc0:
+ 2869              	.LLST0:
+ 2870 0000 00000000 		.4byte	.LVL0
+ 2871 0004 02000000 		.4byte	.LVL1
+ 2872 0008 0100     		.2byte	0x1
+ 2873 000a 50       		.byte	0x50
+ 2874 000b 02000000 		.4byte	.LVL1
+ 2875 000f 04000000 		.4byte	.LFE63
+ 2876 0013 0400     		.2byte	0x4
+ 2877 0015 F3       		.byte	0xf3
+ 2878 0016 01       		.uleb128 0x1
+ 2879 0017 50       		.byte	0x50
+ 2880 0018 9F       		.byte	0x9f
+ 2881 0019 00000000 		.4byte	0
+ 2882 001d 00000000 		.4byte	0
+ 2883              	.LLST1:
+ 2884 0021 00000000 		.4byte	.LVL0
+ 2885 0025 02000000 		.4byte	.LVL1
+ 2886 0029 0500     		.2byte	0x5
+ 2887 002b 70       		.byte	0x70
+ 2888 002c 00       		.sleb128 0
+ 2889 002d 40       		.byte	0x40
+ 2890 002e 24       		.byte	0x24
+ 2891 002f 9F       		.byte	0x9f
+ 2892 0030 02000000 		.4byte	.LVL1
+ 2893 0034 04000000 		.4byte	.LFE63
+ 2894 0038 0100     		.2byte	0x1
+ 2895 003a 50       		.byte	0x50
+ 2896 003b 00000000 		.4byte	0
+ 2897 003f 00000000 		.4byte	0
+ 2898              	.LLST2:
+ 2899 0043 00000000 		.4byte	.LVL2
+ 2900 0047 02000000 		.4byte	.LVL3
+ 2901 004b 0100     		.2byte	0x1
+ 2902 004d 50       		.byte	0x50
+ 2903 004e 02000000 		.4byte	.LVL3
+ 2904 0052 04000000 		.4byte	.LFE64
+ 2905 0056 0400     		.2byte	0x4
+ 2906 0058 F3       		.byte	0xf3
+ 2907 0059 01       		.uleb128 0x1
+ 2908 005a 50       		.byte	0x50
+ 2909 005b 9F       		.byte	0x9f
+ 2910 005c 00000000 		.4byte	0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 61
+
+
+ 2911 0060 00000000 		.4byte	0
+ 2912              	.LLST3:
+ 2913 0064 00000000 		.4byte	.LVL2
+ 2914 0068 02000000 		.4byte	.LVL3
+ 2915 006c 0500     		.2byte	0x5
+ 2916 006e 70       		.byte	0x70
+ 2917 006f 00       		.sleb128 0
+ 2918 0070 40       		.byte	0x40
+ 2919 0071 26       		.byte	0x26
+ 2920 0072 9F       		.byte	0x9f
+ 2921 0073 02000000 		.4byte	.LVL3
+ 2922 0077 04000000 		.4byte	.LFE64
+ 2923 007b 0100     		.2byte	0x1
+ 2924 007d 50       		.byte	0x50
+ 2925 007e 00000000 		.4byte	0
+ 2926 0082 00000000 		.4byte	0
+ 2927              	.LLST4:
+ 2928 0086 00000000 		.4byte	.LVL4
+ 2929 008a 09000000 		.4byte	.LVL5-1
+ 2930 008e 0600     		.2byte	0x6
+ 2931 0090 50       		.byte	0x50
+ 2932 0091 93       		.byte	0x93
+ 2933 0092 04       		.uleb128 0x4
+ 2934 0093 51       		.byte	0x51
+ 2935 0094 93       		.byte	0x93
+ 2936 0095 04       		.uleb128 0x4
+ 2937 0096 09000000 		.4byte	.LVL5-1
+ 2938 009a 0A000000 		.4byte	.LVL5
+ 2939 009e 0600     		.2byte	0x6
+ 2940 00a0 F3       		.byte	0xf3
+ 2941 00a1 03       		.uleb128 0x3
+ 2942 00a2 F5       		.byte	0xf5
+ 2943 00a3 00       		.uleb128 0
+ 2944 00a4 33       		.uleb128 0x33
+ 2945 00a5 9F       		.byte	0x9f
+ 2946 00a6 0A000000 		.4byte	.LVL5
+ 2947 00aa 0D000000 		.4byte	.LVL6-1
+ 2948 00ae 0600     		.2byte	0x6
+ 2949 00b0 50       		.byte	0x50
+ 2950 00b1 93       		.byte	0x93
+ 2951 00b2 04       		.uleb128 0x4
+ 2952 00b3 51       		.byte	0x51
+ 2953 00b4 93       		.byte	0x93
+ 2954 00b5 04       		.uleb128 0x4
+ 2955 00b6 00000000 		.4byte	0
+ 2956 00ba 00000000 		.4byte	0
+ 2957              	.LLST5:
+ 2958 00be 00000000 		.4byte	.LVL7
+ 2959 00c2 05000000 		.4byte	.LVL9-1
+ 2960 00c6 0100     		.2byte	0x1
+ 2961 00c8 50       		.byte	0x50
+ 2962 00c9 05000000 		.4byte	.LVL9-1
+ 2963 00cd 14000000 		.4byte	.LFE66
+ 2964 00d1 0400     		.2byte	0x4
+ 2965 00d3 F3       		.byte	0xf3
+ 2966 00d4 01       		.uleb128 0x1
+ 2967 00d5 50       		.byte	0x50
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 62
+
+
+ 2968 00d6 9F       		.byte	0x9f
+ 2969 00d7 00000000 		.4byte	0
+ 2970 00db 00000000 		.4byte	0
+ 2971              	.LLST6:
+ 2972 00df 02000000 		.4byte	.LVL8
+ 2973 00e3 05000000 		.4byte	.LVL9-1
+ 2974 00e7 0100     		.2byte	0x1
+ 2975 00e9 50       		.byte	0x50
+ 2976 00ea 05000000 		.4byte	.LVL9-1
+ 2977 00ee 14000000 		.4byte	.LFE66
+ 2978 00f2 0400     		.2byte	0x4
+ 2979 00f4 F3       		.byte	0xf3
+ 2980 00f5 01       		.uleb128 0x1
+ 2981 00f6 50       		.byte	0x50
+ 2982 00f7 9F       		.byte	0x9f
+ 2983 00f8 00000000 		.4byte	0
+ 2984 00fc 00000000 		.4byte	0
+ 2985              	.LLST7:
+ 2986 0100 06000000 		.4byte	.LVL9
+ 2987 0104 0D000000 		.4byte	.LVL10-1
+ 2988 0108 0600     		.2byte	0x6
+ 2989 010a 50       		.byte	0x50
+ 2990 010b 93       		.byte	0x93
+ 2991 010c 04       		.uleb128 0x4
+ 2992 010d 51       		.byte	0x51
+ 2993 010e 93       		.byte	0x93
+ 2994 010f 04       		.uleb128 0x4
+ 2995 0110 0E000000 		.4byte	.LVL10
+ 2996 0114 14000000 		.4byte	.LFE66
+ 2997 0118 0600     		.2byte	0x6
+ 2998 011a 50       		.byte	0x50
+ 2999 011b 93       		.byte	0x93
+ 3000 011c 04       		.uleb128 0x4
+ 3001 011d 51       		.byte	0x51
+ 3002 011e 93       		.byte	0x93
+ 3003 011f 04       		.uleb128 0x4
+ 3004 0120 00000000 		.4byte	0
+ 3005 0124 00000000 		.4byte	0
+ 3006              	.LLST8:
+ 3007 0128 00000000 		.4byte	.LVL11
+ 3008 012c 02000000 		.4byte	.LVL12
+ 3009 0130 0100     		.2byte	0x1
+ 3010 0132 50       		.byte	0x50
+ 3011 0133 02000000 		.4byte	.LVL12
+ 3012 0137 04000000 		.4byte	.LFE67
+ 3013 013b 0400     		.2byte	0x4
+ 3014 013d F3       		.byte	0xf3
+ 3015 013e 01       		.uleb128 0x1
+ 3016 013f 50       		.byte	0x50
+ 3017 0140 9F       		.byte	0x9f
+ 3018 0141 00000000 		.4byte	0
+ 3019 0145 00000000 		.4byte	0
+ 3020              	.LLST9:
+ 3021 0149 00000000 		.4byte	.LVL11
+ 3022 014d 02000000 		.4byte	.LVL12
+ 3023 0151 0600     		.2byte	0x6
+ 3024 0153 70       		.byte	0x70
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 63
+
+
+ 3025 0154 00       		.sleb128 0
+ 3026 0155 71       		.byte	0x71
+ 3027 0156 00       		.sleb128 0
+ 3028 0157 22       		.byte	0x22
+ 3029 0158 9F       		.byte	0x9f
+ 3030 0159 02000000 		.4byte	.LVL12
+ 3031 015d 04000000 		.4byte	.LFE67
+ 3032 0161 0100     		.2byte	0x1
+ 3033 0163 50       		.byte	0x50
+ 3034 0164 00000000 		.4byte	0
+ 3035 0168 00000000 		.4byte	0
+ 3036              	.LLST10:
+ 3037 016c 00000000 		.4byte	.LVL13
+ 3038 0170 02000000 		.4byte	.LVL14
+ 3039 0174 0100     		.2byte	0x1
+ 3040 0176 50       		.byte	0x50
+ 3041 0177 02000000 		.4byte	.LVL14
+ 3042 017b 04000000 		.4byte	.LFE68
+ 3043 017f 0400     		.2byte	0x4
+ 3044 0181 F3       		.byte	0xf3
+ 3045 0182 01       		.uleb128 0x1
+ 3046 0183 50       		.byte	0x50
+ 3047 0184 9F       		.byte	0x9f
+ 3048 0185 00000000 		.4byte	0
+ 3049 0189 00000000 		.4byte	0
+ 3050              	.LLST11:
+ 3051 018d 00000000 		.4byte	.LVL13
+ 3052 0191 02000000 		.4byte	.LVL14
+ 3053 0195 0600     		.2byte	0x6
+ 3054 0197 70       		.byte	0x70
+ 3055 0198 00       		.sleb128 0
+ 3056 0199 71       		.byte	0x71
+ 3057 019a 00       		.sleb128 0
+ 3058 019b 1C       		.byte	0x1c
+ 3059 019c 9F       		.byte	0x9f
+ 3060 019d 02000000 		.4byte	.LVL14
+ 3061 01a1 04000000 		.4byte	.LFE68
+ 3062 01a5 0100     		.2byte	0x1
+ 3063 01a7 50       		.byte	0x50
+ 3064 01a8 00000000 		.4byte	0
+ 3065 01ac 00000000 		.4byte	0
+ 3066              	.LLST12:
+ 3067 01b0 00000000 		.4byte	.LVL15
+ 3068 01b4 06000000 		.4byte	.LVL16
+ 3069 01b8 0100     		.2byte	0x1
+ 3070 01ba 50       		.byte	0x50
+ 3071 01bb 06000000 		.4byte	.LVL16
+ 3072 01bf 08000000 		.4byte	.LFE69
+ 3073 01c3 0400     		.2byte	0x4
+ 3074 01c5 F3       		.byte	0xf3
+ 3075 01c6 01       		.uleb128 0x1
+ 3076 01c7 50       		.byte	0x50
+ 3077 01c8 9F       		.byte	0x9f
+ 3078 01c9 00000000 		.4byte	0
+ 3079 01cd 00000000 		.4byte	0
+ 3080              	.LLST13:
+ 3081 01d1 00000000 		.4byte	.LVL15
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 64
+
+
+ 3082 01d5 06000000 		.4byte	.LVL16
+ 3083 01d9 0400     		.2byte	0x4
+ 3084 01db 70       		.byte	0x70
+ 3085 01dc 00       		.sleb128 0
+ 3086 01dd 19       		.byte	0x19
+ 3087 01de 9F       		.byte	0x9f
+ 3088 01df 06000000 		.4byte	.LVL16
+ 3089 01e3 08000000 		.4byte	.LFE69
+ 3090 01e7 0500     		.2byte	0x5
+ 3091 01e9 F3       		.byte	0xf3
+ 3092 01ea 01       		.uleb128 0x1
+ 3093 01eb 50       		.byte	0x50
+ 3094 01ec 19       		.byte	0x19
+ 3095 01ed 9F       		.byte	0x9f
+ 3096 01ee 00000000 		.4byte	0
+ 3097 01f2 00000000 		.4byte	0
+ 3098              	.LLST14:
+ 3099 01f6 00000000 		.4byte	.LVL17
+ 3100 01fa 16000000 		.4byte	.LVL19
+ 3101 01fe 0100     		.2byte	0x1
+ 3102 0200 50       		.byte	0x50
+ 3103 0201 16000000 		.4byte	.LVL19
+ 3104 0205 1E000000 		.4byte	.LFE70
+ 3105 0209 0400     		.2byte	0x4
+ 3106 020b F3       		.byte	0xf3
+ 3107 020c 01       		.uleb128 0x1
+ 3108 020d 50       		.byte	0x50
+ 3109 020e 9F       		.byte	0x9f
+ 3110 020f 00000000 		.4byte	0
+ 3111 0213 00000000 		.4byte	0
+ 3112              	.LLST15:
+ 3113 0217 16000000 		.4byte	.LVL19
+ 3114 021b 1A000000 		.4byte	.LVL20
+ 3115 021f 0800     		.2byte	0x8
+ 3116 0221 73       		.byte	0x73
+ 3117 0222 00       		.sleb128 0
+ 3118 0223 40       		.byte	0x40
+ 3119 0224 24       		.byte	0x24
+ 3120 0225 70       		.byte	0x70
+ 3121 0226 00       		.sleb128 0
+ 3122 0227 21       		.byte	0x21
+ 3123 0228 9F       		.byte	0x9f
+ 3124 0229 1A000000 		.4byte	.LVL20
+ 3125 022d 1E000000 		.4byte	.LFE70
+ 3126 0231 0100     		.2byte	0x1
+ 3127 0233 50       		.byte	0x50
+ 3128 0234 00000000 		.4byte	0
+ 3129 0238 00000000 		.4byte	0
+ 3130              	.LLST17:
+ 3131 023c 00000000 		.4byte	.LVL21
+ 3132 0240 0E000000 		.4byte	.LVL24
+ 3133 0244 0100     		.2byte	0x1
+ 3134 0246 50       		.byte	0x50
+ 3135 0247 0E000000 		.4byte	.LVL24
+ 3136 024b 14000000 		.4byte	.LVL26
+ 3137 024f 0100     		.2byte	0x1
+ 3138 0251 53       		.byte	0x53
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 65
+
+
+ 3139 0252 14000000 		.4byte	.LVL26
+ 3140 0256 1A000000 		.4byte	.LVL28
+ 3141 025a 0400     		.2byte	0x4
+ 3142 025c F3       		.byte	0xf3
+ 3143 025d 01       		.uleb128 0x1
+ 3144 025e 50       		.byte	0x50
+ 3145 025f 9F       		.byte	0x9f
+ 3146 0260 1A000000 		.4byte	.LVL28
+ 3147 0264 1C000000 		.4byte	.LVL29
+ 3148 0268 0100     		.2byte	0x1
+ 3149 026a 50       		.byte	0x50
+ 3150 026b 1C000000 		.4byte	.LVL29
+ 3151 026f 1E000000 		.4byte	.LFE71
+ 3152 0273 0400     		.2byte	0x4
+ 3153 0275 F3       		.byte	0xf3
+ 3154 0276 01       		.uleb128 0x1
+ 3155 0277 50       		.byte	0x50
+ 3156 0278 9F       		.byte	0x9f
+ 3157 0279 00000000 		.4byte	0
+ 3158 027d 00000000 		.4byte	0
+ 3159              	.LLST18:
+ 3160 0281 00000000 		.4byte	.LVL21
+ 3161 0285 0A000000 		.4byte	.LVL22
+ 3162 0289 0100     		.2byte	0x1
+ 3163 028b 51       		.byte	0x51
+ 3164 028c 0A000000 		.4byte	.LVL22
+ 3165 0290 17000000 		.4byte	.LVL27-1
+ 3166 0294 0100     		.2byte	0x1
+ 3167 0296 52       		.byte	0x52
+ 3168 0297 17000000 		.4byte	.LVL27-1
+ 3169 029b 1A000000 		.4byte	.LVL28
+ 3170 029f 0400     		.2byte	0x4
+ 3171 02a1 F3       		.byte	0xf3
+ 3172 02a2 01       		.uleb128 0x1
+ 3173 02a3 51       		.byte	0x51
+ 3174 02a4 9F       		.byte	0x9f
+ 3175 02a5 1A000000 		.4byte	.LVL28
+ 3176 02a9 1E000000 		.4byte	.LFE71
+ 3177 02ad 0100     		.2byte	0x1
+ 3178 02af 51       		.byte	0x51
+ 3179 02b0 00000000 		.4byte	0
+ 3180 02b4 00000000 		.4byte	0
+ 3181              	.LLST19:
+ 3182 02b8 0C000000 		.4byte	.LVL23
+ 3183 02bc 17000000 		.4byte	.LVL27-1
+ 3184 02c0 0700     		.2byte	0x7
+ 3185 02c2 72       		.byte	0x72
+ 3186 02c3 00       		.sleb128 0
+ 3187 02c4 F7       		.byte	0xf7
+ 3188 02c5 2C       		.uleb128 0x2c
+ 3189 02c6 F7       		.byte	0xf7
+ 3190 02c7 25       		.uleb128 0x25
+ 3191 02c8 9F       		.byte	0x9f
+ 3192 02c9 17000000 		.4byte	.LVL27-1
+ 3193 02cd 1A000000 		.4byte	.LVL28
+ 3194 02d1 0800     		.2byte	0x8
+ 3195 02d3 F3       		.byte	0xf3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 66
+
+
+ 3196 02d4 01       		.uleb128 0x1
+ 3197 02d5 51       		.byte	0x51
+ 3198 02d6 F7       		.byte	0xf7
+ 3199 02d7 2C       		.uleb128 0x2c
+ 3200 02d8 F7       		.byte	0xf7
+ 3201 02d9 25       		.uleb128 0x25
+ 3202 02da 9F       		.byte	0x9f
+ 3203 02db 00000000 		.4byte	0
+ 3204 02df 00000000 		.4byte	0
+ 3205              	.LLST20:
+ 3206 02e3 18000000 		.4byte	.LVL27
+ 3207 02e7 1A000000 		.4byte	.LVL28
+ 3208 02eb 0100     		.2byte	0x1
+ 3209 02ed 50       		.byte	0x50
+ 3210 02ee 00000000 		.4byte	0
+ 3211 02f2 00000000 		.4byte	0
+ 3212              	.LLST22:
+ 3213 02f6 00000000 		.4byte	.LVL30
+ 3214 02fa 2C000000 		.4byte	.LVL34
+ 3215 02fe 0600     		.2byte	0x6
+ 3216 0300 50       		.byte	0x50
+ 3217 0301 93       		.byte	0x93
+ 3218 0302 04       		.uleb128 0x4
+ 3219 0303 51       		.byte	0x51
+ 3220 0304 93       		.byte	0x93
+ 3221 0305 04       		.uleb128 0x4
+ 3222 0306 2C000000 		.4byte	.LVL34
+ 3223 030a 54000000 		.4byte	.LVL40
+ 3224 030e 0600     		.2byte	0x6
+ 3225 0310 F3       		.byte	0xf3
+ 3226 0311 03       		.uleb128 0x3
+ 3227 0312 F5       		.byte	0xf5
+ 3228 0313 00       		.uleb128 0
+ 3229 0314 25       		.uleb128 0x25
+ 3230 0315 9F       		.byte	0x9f
+ 3231 0316 54000000 		.4byte	.LVL40
+ 3232 031a 56000000 		.4byte	.LVL41
+ 3233 031e 0600     		.2byte	0x6
+ 3234 0320 50       		.byte	0x50
+ 3235 0321 93       		.byte	0x93
+ 3236 0322 04       		.uleb128 0x4
+ 3237 0323 51       		.byte	0x51
+ 3238 0324 93       		.byte	0x93
+ 3239 0325 04       		.uleb128 0x4
+ 3240 0326 56000000 		.4byte	.LVL41
+ 3241 032a 5A000000 		.4byte	.LFE72
+ 3242 032e 0600     		.2byte	0x6
+ 3243 0330 F3       		.byte	0xf3
+ 3244 0331 03       		.uleb128 0x3
+ 3245 0332 F5       		.byte	0xf5
+ 3246 0333 00       		.uleb128 0
+ 3247 0334 25       		.uleb128 0x25
+ 3248 0335 9F       		.byte	0x9f
+ 3249 0336 00000000 		.4byte	0
+ 3250 033a 00000000 		.4byte	0
+ 3251              	.LLST23:
+ 3252 033e 14000000 		.4byte	.LVL31
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 67
+
+
+ 3253 0342 16000000 		.4byte	.LVL32
+ 3254 0346 0600     		.2byte	0x6
+ 3255 0348 54       		.byte	0x54
+ 3256 0349 93       		.byte	0x93
+ 3257 034a 04       		.uleb128 0x4
+ 3258 034b 55       		.byte	0x55
+ 3259 034c 93       		.byte	0x93
+ 3260 034d 04       		.uleb128 0x4
+ 3261 034e 1E000000 		.4byte	.LVL33
+ 3262 0352 2C000000 		.4byte	.LVL34
+ 3263 0356 0600     		.2byte	0x6
+ 3264 0358 54       		.byte	0x54
+ 3265 0359 93       		.byte	0x93
+ 3266 035a 04       		.uleb128 0x4
+ 3267 035b 55       		.byte	0x55
+ 3268 035c 93       		.byte	0x93
+ 3269 035d 04       		.uleb128 0x4
+ 3270 035e 2C000000 		.4byte	.LVL34
+ 3271 0362 30000000 		.4byte	.LVL36
+ 3272 0366 0600     		.2byte	0x6
+ 3273 0368 50       		.byte	0x50
+ 3274 0369 93       		.byte	0x93
+ 3275 036a 04       		.uleb128 0x4
+ 3276 036b 51       		.byte	0x51
+ 3277 036c 93       		.byte	0x93
+ 3278 036d 04       		.uleb128 0x4
+ 3279 036e 30000000 		.4byte	.LVL36
+ 3280 0372 46000000 		.4byte	.LVL38
+ 3281 0376 0600     		.2byte	0x6
+ 3282 0378 54       		.byte	0x54
+ 3283 0379 93       		.byte	0x93
+ 3284 037a 04       		.uleb128 0x4
+ 3285 037b 55       		.byte	0x55
+ 3286 037c 93       		.byte	0x93
+ 3287 037d 04       		.uleb128 0x4
+ 3288 037e 46000000 		.4byte	.LVL38
+ 3289 0382 50000000 		.4byte	.LVL39
+ 3290 0386 0600     		.2byte	0x6
+ 3291 0388 50       		.byte	0x50
+ 3292 0389 93       		.byte	0x93
+ 3293 038a 04       		.uleb128 0x4
+ 3294 038b 51       		.byte	0x51
+ 3295 038c 93       		.byte	0x93
+ 3296 038d 04       		.uleb128 0x4
+ 3297 038e 00000000 		.4byte	0
+ 3298 0392 00000000 		.4byte	0
+ 3299              	.LLST24:
+ 3300 0396 14000000 		.4byte	.LVL31
+ 3301 039a 2C000000 		.4byte	.LVL34
+ 3302 039e 0600     		.2byte	0x6
+ 3303 03a0 52       		.byte	0x52
+ 3304 03a1 93       		.byte	0x93
+ 3305 03a2 04       		.uleb128 0x4
+ 3306 03a3 53       		.byte	0x53
+ 3307 03a4 93       		.byte	0x93
+ 3308 03a5 04       		.uleb128 0x4
+ 3309 03a6 2C000000 		.4byte	.LVL34
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 68
+
+
+ 3310 03aa 2E000000 		.4byte	.LVL35
+ 3311 03ae 0600     		.2byte	0x6
+ 3312 03b0 54       		.byte	0x54
+ 3313 03b1 93       		.byte	0x93
+ 3314 03b2 04       		.uleb128 0x4
+ 3315 03b3 55       		.byte	0x55
+ 3316 03b4 93       		.byte	0x93
+ 3317 03b5 04       		.uleb128 0x4
+ 3318 03b6 30000000 		.4byte	.LVL36
+ 3319 03ba 54000000 		.4byte	.LVL40
+ 3320 03be 0600     		.2byte	0x6
+ 3321 03c0 54       		.byte	0x54
+ 3322 03c1 93       		.byte	0x93
+ 3323 03c2 04       		.uleb128 0x4
+ 3324 03c3 55       		.byte	0x55
+ 3325 03c4 93       		.byte	0x93
+ 3326 03c5 04       		.uleb128 0x4
+ 3327 03c6 00000000 		.4byte	0
+ 3328 03ca 00000000 		.4byte	0
+ 3329              	.LLST25:
+ 3330 03ce 00000000 		.4byte	.LVL42
+ 3331 03d2 0A000000 		.4byte	.LVL44
+ 3332 03d6 0100     		.2byte	0x1
+ 3333 03d8 50       		.byte	0x50
+ 3334 03d9 0A000000 		.4byte	.LVL44
+ 3335 03dd 11000000 		.4byte	.LVL46-1
+ 3336 03e1 0100     		.2byte	0x1
+ 3337 03e3 53       		.byte	0x53
+ 3338 03e4 11000000 		.4byte	.LVL46-1
+ 3339 03e8 14000000 		.4byte	.LFE73
+ 3340 03ec 0400     		.2byte	0x4
+ 3341 03ee F3       		.byte	0xf3
+ 3342 03ef 01       		.uleb128 0x1
+ 3343 03f0 50       		.byte	0x50
+ 3344 03f1 9F       		.byte	0x9f
+ 3345 03f2 00000000 		.4byte	0
+ 3346 03f6 00000000 		.4byte	0
+ 3347              	.LLST26:
+ 3348 03fa 00000000 		.4byte	.LVL47
+ 3349 03fe 07000000 		.4byte	.LVL48-1
+ 3350 0402 0100     		.2byte	0x1
+ 3351 0404 50       		.byte	0x50
+ 3352 0405 07000000 		.4byte	.LVL48-1
+ 3353 0409 18000000 		.4byte	.LFE78
+ 3354 040d 0400     		.2byte	0x4
+ 3355 040f F3       		.byte	0xf3
+ 3356 0410 01       		.uleb128 0x1
+ 3357 0411 50       		.byte	0x50
+ 3358 0412 9F       		.byte	0x9f
+ 3359 0413 00000000 		.4byte	0
+ 3360 0417 00000000 		.4byte	0
+ 3361              	.LLST27:
+ 3362 041b 00000000 		.4byte	.LVL50
+ 3363 041f 09000000 		.4byte	.LVL51-1
+ 3364 0423 0100     		.2byte	0x1
+ 3365 0425 50       		.byte	0x50
+ 3366 0426 09000000 		.4byte	.LVL51-1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 69
+
+
+ 3367 042a 18000000 		.4byte	.LFE79
+ 3368 042e 0400     		.2byte	0x4
+ 3369 0430 F3       		.byte	0xf3
+ 3370 0431 01       		.uleb128 0x1
+ 3371 0432 50       		.byte	0x50
+ 3372 0433 9F       		.byte	0x9f
+ 3373 0434 00000000 		.4byte	0
+ 3374 0438 00000000 		.4byte	0
+ 3375              	.LLST28:
+ 3376 043c 00000000 		.4byte	.LVL53
+ 3377 0440 11000000 		.4byte	.LVL55-1
+ 3378 0444 0100     		.2byte	0x1
+ 3379 0446 50       		.byte	0x50
+ 3380 0447 11000000 		.4byte	.LVL55-1
+ 3381 044b A0000000 		.4byte	.LFE80
+ 3382 044f 0400     		.2byte	0x4
+ 3383 0451 F3       		.byte	0xf3
+ 3384 0452 01       		.uleb128 0x1
+ 3385 0453 50       		.byte	0x50
+ 3386 0454 9F       		.byte	0x9f
+ 3387 0455 00000000 		.4byte	0
+ 3388 0459 00000000 		.4byte	0
+ 3389              	.LLST29:
+ 3390 045d 14000000 		.4byte	.LVL56
+ 3391 0461 18000000 		.4byte	.LVL57
+ 3392 0465 0100     		.2byte	0x1
+ 3393 0467 50       		.byte	0x50
+ 3394 0468 18000000 		.4byte	.LVL57
+ 3395 046c 96000000 		.4byte	.LVL82
+ 3396 0470 0100     		.2byte	0x1
+ 3397 0472 54       		.byte	0x54
+ 3398 0473 00000000 		.4byte	0
+ 3399 0477 00000000 		.4byte	0
+ 3400              	.LLST30:
+ 3401 047b 0E000000 		.4byte	.LVL54
+ 3402 047f 96000000 		.4byte	.LVL82
+ 3403 0483 0100     		.2byte	0x1
+ 3404 0485 57       		.byte	0x57
+ 3405 0486 00000000 		.4byte	0
+ 3406 048a 00000000 		.4byte	0
+ 3407              	.LLST31:
+ 3408 048e 14000000 		.4byte	.LVL56
+ 3409 0492 18000000 		.4byte	.LVL57
+ 3410 0496 0200     		.2byte	0x2
+ 3411 0498 30       		.byte	0x30
+ 3412 0499 9F       		.byte	0x9f
+ 3413 049a 18000000 		.4byte	.LVL57
+ 3414 049e 24000000 		.4byte	.LVL60
+ 3415 04a2 0100     		.2byte	0x1
+ 3416 04a4 53       		.byte	0x53
+ 3417 04a5 24000000 		.4byte	.LVL60
+ 3418 04a9 28000000 		.4byte	.LVL61
+ 3419 04ad 0500     		.2byte	0x5
+ 3420 04af 73       		.byte	0x73
+ 3421 04b0 00       		.sleb128 0
+ 3422 04b1 33       		.byte	0x33
+ 3423 04b2 1A       		.byte	0x1a
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 70
+
+
+ 3424 04b3 9F       		.byte	0x9f
+ 3425 04b4 28000000 		.4byte	.LVL61
+ 3426 04b8 51000000 		.4byte	.LVL67-1
+ 3427 04bc 0100     		.2byte	0x1
+ 3428 04be 53       		.byte	0x53
+ 3429 04bf 8A000000 		.4byte	.LVL79
+ 3430 04c3 8E000000 		.4byte	.LVL80
+ 3431 04c7 0100     		.2byte	0x1
+ 3432 04c9 53       		.byte	0x53
+ 3433 04ca 00000000 		.4byte	0
+ 3434 04ce 00000000 		.4byte	0
+ 3435              	.LLST32:
+ 3436 04d2 88000000 		.4byte	.LVL78
+ 3437 04d6 8A000000 		.4byte	.LVL79
+ 3438 04da 0100     		.2byte	0x1
+ 3439 04dc 50       		.byte	0x50
+ 3440 04dd 8E000000 		.4byte	.LVL80
+ 3441 04e1 93000000 		.4byte	.LVL81-1
+ 3442 04e5 0100     		.2byte	0x1
+ 3443 04e7 50       		.byte	0x50
+ 3444 04e8 00000000 		.4byte	0
+ 3445 04ec 00000000 		.4byte	0
+ 3446              	.LLST33:
+ 3447 04f0 4C000000 		.4byte	.LVL66
+ 3448 04f4 8A000000 		.4byte	.LVL79
+ 3449 04f8 0100     		.2byte	0x1
+ 3450 04fa 56       		.byte	0x56
+ 3451 04fb 00000000 		.4byte	0
+ 3452 04ff 00000000 		.4byte	0
+ 3453              	.LLST34:
+ 3454 0503 5A000000 		.4byte	.LVL69
+ 3455 0507 5E000000 		.4byte	.LVL70
+ 3456 050b 0500     		.2byte	0x5
+ 3457 050d 76       		.byte	0x76
+ 3458 050e 808004   		.sleb128 65536
+ 3459 0511 9F       		.byte	0x9f
+ 3460 0512 5E000000 		.4byte	.LVL70
+ 3461 0516 61000000 		.4byte	.LVL71-1
+ 3462 051a 0100     		.2byte	0x1
+ 3463 051c 50       		.byte	0x50
+ 3464 051d 61000000 		.4byte	.LVL71-1
+ 3465 0521 8A000000 		.4byte	.LVL79
+ 3466 0525 0500     		.2byte	0x5
+ 3467 0527 76       		.byte	0x76
+ 3468 0528 808004   		.sleb128 65536
+ 3469 052b 9F       		.byte	0x9f
+ 3470 052c 00000000 		.4byte	0
+ 3471 0530 00000000 		.4byte	0
+ 3472              	.LLST35:
+ 3473 0534 52000000 		.4byte	.LVL67
+ 3474 0538 58000000 		.4byte	.LVL68
+ 3475 053c 0100     		.2byte	0x1
+ 3476 053e 50       		.byte	0x50
+ 3477 053f 00000000 		.4byte	0
+ 3478 0543 00000000 		.4byte	0
+ 3479              	.LLST36:
+ 3480 0547 62000000 		.4byte	.LVL71
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 71
+
+
+ 3481 054b 6E000000 		.4byte	.LVL72
+ 3482 054f 0100     		.2byte	0x1
+ 3483 0551 50       		.byte	0x50
+ 3484 0552 72000000 		.4byte	.LVL73
+ 3485 0556 76000000 		.4byte	.LVL74
+ 3486 055a 0100     		.2byte	0x1
+ 3487 055c 50       		.byte	0x50
+ 3488 055d 00000000 		.4byte	0
+ 3489 0561 00000000 		.4byte	0
+ 3490              	.LLST37:
+ 3491 0565 5A000000 		.4byte	.LVL69
+ 3492 0569 8A000000 		.4byte	.LVL79
+ 3493 056d 0100     		.2byte	0x1
+ 3494 056f 55       		.byte	0x55
+ 3495 0570 00000000 		.4byte	0
+ 3496 0574 00000000 		.4byte	0
+ 3497              	.LLST38:
+ 3498 0578 76000000 		.4byte	.LVL74
+ 3499 057c 78000000 		.4byte	.LVL75
+ 3500 0580 0100     		.2byte	0x1
+ 3501 0582 50       		.byte	0x50
+ 3502 0583 00000000 		.4byte	0
+ 3503 0587 00000000 		.4byte	0
+ 3504              	.LLST39:
+ 3505 058b 00000000 		.4byte	.LVL83
+ 3506 058f 05000000 		.4byte	.LVL84-1
+ 3507 0593 0100     		.2byte	0x1
+ 3508 0595 50       		.byte	0x50
+ 3509 0596 05000000 		.4byte	.LVL84-1
+ 3510 059a 0C000000 		.4byte	.LFE74
+ 3511 059e 0400     		.2byte	0x4
+ 3512 05a0 F3       		.byte	0xf3
+ 3513 05a1 01       		.uleb128 0x1
+ 3514 05a2 50       		.byte	0x50
+ 3515 05a3 9F       		.byte	0x9f
+ 3516 05a4 00000000 		.4byte	0
+ 3517 05a8 00000000 		.4byte	0
+ 3518              	.LLST40:
+ 3519 05ac 06000000 		.4byte	.LVL84
+ 3520 05b0 09000000 		.4byte	.LVL85-1
+ 3521 05b4 0100     		.2byte	0x1
+ 3522 05b6 50       		.byte	0x50
+ 3523 05b7 00000000 		.4byte	0
+ 3524 05bb 00000000 		.4byte	0
+ 3525              	.LLST41:
+ 3526 05bf 00000000 		.4byte	.LVL86
+ 3527 05c3 06000000 		.4byte	.LVL87
+ 3528 05c7 0100     		.2byte	0x1
+ 3529 05c9 50       		.byte	0x50
+ 3530 05ca 06000000 		.4byte	.LVL87
+ 3531 05ce 09000000 		.4byte	.LVL88-1
+ 3532 05d2 0600     		.2byte	0x6
+ 3533 05d4 70       		.byte	0x70
+ 3534 05d5 8080987D 		.sleb128 -5898240
+ 3535 05d9 9F       		.byte	0x9f
+ 3536 05da 09000000 		.4byte	.LVL88-1
+ 3537 05de 0C000000 		.4byte	.LFE81
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 72
+
+
+ 3538 05e2 0400     		.2byte	0x4
+ 3539 05e4 F3       		.byte	0xf3
+ 3540 05e5 01       		.uleb128 0x1
+ 3541 05e6 50       		.byte	0x50
+ 3542 05e7 9F       		.byte	0x9f
+ 3543 05e8 00000000 		.4byte	0
+ 3544 05ec 00000000 		.4byte	0
+ 3545              	.LLST42:
+ 3546 05f0 00000000 		.4byte	.LVL89
+ 3547 05f4 05000000 		.4byte	.LVL90-1
+ 3548 05f8 0100     		.2byte	0x1
+ 3549 05fa 50       		.byte	0x50
+ 3550 05fb 05000000 		.4byte	.LVL90-1
+ 3551 05ff 0C000000 		.4byte	.LFE75
+ 3552 0603 0400     		.2byte	0x4
+ 3553 0605 F3       		.byte	0xf3
+ 3554 0606 01       		.uleb128 0x1
+ 3555 0607 50       		.byte	0x50
+ 3556 0608 9F       		.byte	0x9f
+ 3557 0609 00000000 		.4byte	0
+ 3558 060d 00000000 		.4byte	0
+ 3559              	.LLST43:
+ 3560 0611 06000000 		.4byte	.LVL90
+ 3561 0615 09000000 		.4byte	.LVL91-1
+ 3562 0619 0100     		.2byte	0x1
+ 3563 061b 50       		.byte	0x50
+ 3564 061c 00000000 		.4byte	0
+ 3565 0620 00000000 		.4byte	0
+ 3566              	.LLST44:
+ 3567 0624 00000000 		.4byte	.LVL92
+ 3568 0628 13000000 		.4byte	.LVL94-1
+ 3569 062c 0100     		.2byte	0x1
+ 3570 062e 50       		.byte	0x50
+ 3571 062f 13000000 		.4byte	.LVL94-1
+ 3572 0633 A8000000 		.4byte	.LFE82
+ 3573 0637 0400     		.2byte	0x4
+ 3574 0639 F3       		.byte	0xf3
+ 3575 063a 01       		.uleb128 0x1
+ 3576 063b 50       		.byte	0x50
+ 3577 063c 9F       		.byte	0x9f
+ 3578 063d 00000000 		.4byte	0
+ 3579 0641 00000000 		.4byte	0
+ 3580              	.LLST45:
+ 3581 0645 10000000 		.4byte	.LVL93
+ 3582 0649 9E000000 		.4byte	.LVL118
+ 3583 064d 0100     		.2byte	0x1
+ 3584 064f 57       		.byte	0x57
+ 3585 0650 00000000 		.4byte	0
+ 3586 0654 00000000 		.4byte	0
+ 3587              	.LLST46:
+ 3588 0658 16000000 		.4byte	.LVL95
+ 3589 065c 20000000 		.4byte	.LVL96
+ 3590 0660 0100     		.2byte	0x1
+ 3591 0662 50       		.byte	0x50
+ 3592 0663 20000000 		.4byte	.LVL96
+ 3593 0667 28000000 		.4byte	.LVL98
+ 3594 066b 0100     		.2byte	0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 73
+
+
+ 3595 066d 56       		.byte	0x56
+ 3596 066e 2E000000 		.4byte	.LVL99
+ 3597 0672 32000000 		.4byte	.LVL100
+ 3598 0676 0100     		.2byte	0x1
+ 3599 0678 50       		.byte	0x50
+ 3600 0679 00000000 		.4byte	0
+ 3601 067d 00000000 		.4byte	0
+ 3602              	.LLST47:
+ 3603 0681 28000000 		.4byte	.LVL98
+ 3604 0685 2E000000 		.4byte	.LVL99
+ 3605 0689 0100     		.2byte	0x1
+ 3606 068b 50       		.byte	0x50
+ 3607 068c 32000000 		.4byte	.LVL100
+ 3608 0690 9E000000 		.4byte	.LVL118
+ 3609 0694 0100     		.2byte	0x1
+ 3610 0696 56       		.byte	0x56
+ 3611 0697 00000000 		.4byte	0
+ 3612 069b 00000000 		.4byte	0
+ 3613              	.LLST48:
+ 3614 069f 28000000 		.4byte	.LVL98
+ 3615 06a3 2E000000 		.4byte	.LVL99
+ 3616 06a7 0200     		.2byte	0x2
+ 3617 06a9 31       		.byte	0x31
+ 3618 06aa 9F       		.byte	0x9f
+ 3619 06ab 32000000 		.4byte	.LVL100
+ 3620 06af 9E000000 		.4byte	.LVL118
+ 3621 06b3 0100     		.2byte	0x1
+ 3622 06b5 58       		.byte	0x58
+ 3623 06b6 00000000 		.4byte	0
+ 3624 06ba 00000000 		.4byte	0
+ 3625              	.LLST49:
+ 3626 06be 32000000 		.4byte	.LVL100
+ 3627 06c2 38000000 		.4byte	.LVL101
+ 3628 06c6 0200     		.2byte	0x2
+ 3629 06c8 30       		.byte	0x30
+ 3630 06c9 9F       		.byte	0x9f
+ 3631 06ca 38000000 		.4byte	.LVL101
+ 3632 06ce 6B000000 		.4byte	.LVL108-1
+ 3633 06d2 0100     		.2byte	0x1
+ 3634 06d4 52       		.byte	0x52
+ 3635 06d5 00000000 		.4byte	0
+ 3636 06d9 00000000 		.4byte	0
+ 3637              	.LLST50:
+ 3638 06dd 32000000 		.4byte	.LVL100
+ 3639 06e1 38000000 		.4byte	.LVL101
+ 3640 06e5 0300     		.2byte	0x3
+ 3641 06e7 08       		.byte	0x8
+ 3642 06e8 2C       		.byte	0x2c
+ 3643 06e9 9F       		.byte	0x9f
+ 3644 06ea 38000000 		.4byte	.LVL101
+ 3645 06ee 6B000000 		.4byte	.LVL108-1
+ 3646 06f2 0100     		.2byte	0x1
+ 3647 06f4 51       		.byte	0x51
+ 3648 06f5 00000000 		.4byte	0
+ 3649 06f9 00000000 		.4byte	0
+ 3650              	.LLST51:
+ 3651 06fd 38000000 		.4byte	.LVL101
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 74
+
+
+ 3652 0701 3A000000 		.4byte	.LVL102
+ 3653 0705 0100     		.2byte	0x1
+ 3654 0707 54       		.byte	0x54
+ 3655 0708 3C000000 		.4byte	.LVL103
+ 3656 070c 9E000000 		.4byte	.LVL118
+ 3657 0710 0100     		.2byte	0x1
+ 3658 0712 54       		.byte	0x54
+ 3659 0713 00000000 		.4byte	0
+ 3660 0717 00000000 		.4byte	0
+ 3661              	.LLST52:
+ 3662 071b 38000000 		.4byte	.LVL101
+ 3663 071f 9E000000 		.4byte	.LVL118
+ 3664 0723 0100     		.2byte	0x1
+ 3665 0725 55       		.byte	0x55
+ 3666 0726 00000000 		.4byte	0
+ 3667 072a 00000000 		.4byte	0
+ 3668              	.LLST53:
+ 3669 072e 38000000 		.4byte	.LVL101
+ 3670 0732 9E000000 		.4byte	.LVL118
+ 3671 0736 0100     		.2byte	0x1
+ 3672 0738 59       		.byte	0x59
+ 3673 0739 00000000 		.4byte	0
+ 3674 073d 00000000 		.4byte	0
+ 3675              	.LLST54:
+ 3676 0741 6E000000 		.4byte	.LVL109
+ 3677 0745 70000000 		.4byte	.LVL110
+ 3678 0749 0100     		.2byte	0x1
+ 3679 074b 50       		.byte	0x50
+ 3680 074c 70000000 		.4byte	.LVL110
+ 3681 0750 9E000000 		.4byte	.LVL118
+ 3682 0754 0100     		.2byte	0x1
+ 3683 0756 5A       		.byte	0x5a
+ 3684 0757 00000000 		.4byte	0
+ 3685 075b 00000000 		.4byte	0
+ 3686              	.LLST55:
+ 3687 075f 74000000 		.4byte	.LVL111
+ 3688 0763 78000000 		.4byte	.LVL112
+ 3689 0767 0100     		.2byte	0x1
+ 3690 0769 50       		.byte	0x50
+ 3691 076a 00000000 		.4byte	0
+ 3692 076e 00000000 		.4byte	0
+ 3693              	.LLST56:
+ 3694 0772 8A000000 		.4byte	.LVL115
+ 3695 0776 99000000 		.4byte	.LVL117-1
+ 3696 077a 0100     		.2byte	0x1
+ 3697 077c 51       		.byte	0x51
+ 3698 077d 9A000000 		.4byte	.LVL117
+ 3699 0781 A8000000 		.4byte	.LFE82
+ 3700 0785 0100     		.2byte	0x1
+ 3701 0787 50       		.byte	0x50
+ 3702 0788 00000000 		.4byte	0
+ 3703 078c 00000000 		.4byte	0
+ 3704              	.LLST57:
+ 3705 0790 00000000 		.4byte	.LVL119
+ 3706 0794 05000000 		.4byte	.LVL120-1
+ 3707 0798 0100     		.2byte	0x1
+ 3708 079a 50       		.byte	0x50
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 75
+
+
+ 3709 079b 05000000 		.4byte	.LVL120-1
+ 3710 079f 0C000000 		.4byte	.LFE76
+ 3711 07a3 0400     		.2byte	0x4
+ 3712 07a5 F3       		.byte	0xf3
+ 3713 07a6 01       		.uleb128 0x1
+ 3714 07a7 50       		.byte	0x50
+ 3715 07a8 9F       		.byte	0x9f
+ 3716 07a9 00000000 		.4byte	0
+ 3717 07ad 00000000 		.4byte	0
+ 3718              	.LLST58:
+ 3719 07b1 06000000 		.4byte	.LVL120
+ 3720 07b5 09000000 		.4byte	.LVL121-1
+ 3721 07b9 0100     		.2byte	0x1
+ 3722 07bb 50       		.byte	0x50
+ 3723 07bc 00000000 		.4byte	0
+ 3724 07c0 00000000 		.4byte	0
+ 3725              	.LLST59:
+ 3726 07c4 00000000 		.4byte	.LVL122
+ 3727 07c8 36000000 		.4byte	.LVL124
+ 3728 07cc 0100     		.2byte	0x1
+ 3729 07ce 50       		.byte	0x50
+ 3730 07cf 36000000 		.4byte	.LVL124
+ 3731 07d3 38000000 		.4byte	.LVL125
+ 3732 07d7 0400     		.2byte	0x4
+ 3733 07d9 F3       		.byte	0xf3
+ 3734 07da 01       		.uleb128 0x1
+ 3735 07db 50       		.byte	0x50
+ 3736 07dc 9F       		.byte	0x9f
+ 3737 07dd 38000000 		.4byte	.LVL125
+ 3738 07e1 3A000000 		.4byte	.LVL126
+ 3739 07e5 0100     		.2byte	0x1
+ 3740 07e7 50       		.byte	0x50
+ 3741 07e8 3A000000 		.4byte	.LVL126
+ 3742 07ec 3C000000 		.4byte	.LVL127
+ 3743 07f0 0400     		.2byte	0x4
+ 3744 07f2 F3       		.byte	0xf3
+ 3745 07f3 01       		.uleb128 0x1
+ 3746 07f4 50       		.byte	0x50
+ 3747 07f5 9F       		.byte	0x9f
+ 3748 07f6 3C000000 		.4byte	.LVL127
+ 3749 07fa 41000000 		.4byte	.LVL128-1
+ 3750 07fe 0100     		.2byte	0x1
+ 3751 0800 50       		.byte	0x50
+ 3752 0801 41000000 		.4byte	.LVL128-1
+ 3753 0805 74000000 		.4byte	.LFE83
+ 3754 0809 0400     		.2byte	0x4
+ 3755 080b F3       		.byte	0xf3
+ 3756 080c 01       		.uleb128 0x1
+ 3757 080d 50       		.byte	0x50
+ 3758 080e 9F       		.byte	0x9f
+ 3759 080f 00000000 		.4byte	0
+ 3760 0813 00000000 		.4byte	0
+ 3761              	.LLST60:
+ 3762 0817 00000000 		.4byte	.LVL122
+ 3763 081b 41000000 		.4byte	.LVL128-1
+ 3764 081f 0100     		.2byte	0x1
+ 3765 0821 51       		.byte	0x51
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 76
+
+
+ 3766 0822 41000000 		.4byte	.LVL128-1
+ 3767 0826 70000000 		.4byte	.LVL141
+ 3768 082a 0100     		.2byte	0x1
+ 3769 082c 54       		.byte	0x54
+ 3770 082d 70000000 		.4byte	.LVL141
+ 3771 0831 74000000 		.4byte	.LFE83
+ 3772 0835 0400     		.2byte	0x4
+ 3773 0837 F3       		.byte	0xf3
+ 3774 0838 01       		.uleb128 0x1
+ 3775 0839 51       		.byte	0x51
+ 3776 083a 9F       		.byte	0x9f
+ 3777 083b 00000000 		.4byte	0
+ 3778 083f 00000000 		.4byte	0
+ 3779              	.LLST61:
+ 3780 0843 2C000000 		.4byte	.LVL123
+ 3781 0847 70000000 		.4byte	.LVL141
+ 3782 084b 0100     		.2byte	0x1
+ 3783 084d 55       		.byte	0x55
+ 3784 084e 00000000 		.4byte	0
+ 3785 0852 00000000 		.4byte	0
+ 3786              	.LLST62:
+ 3787 0856 44000000 		.4byte	.LVL129
+ 3788 085a 46000000 		.4byte	.LVL130
+ 3789 085e 0100     		.2byte	0x1
+ 3790 0860 50       		.byte	0x50
+ 3791 0861 46000000 		.4byte	.LVL130
+ 3792 0865 70000000 		.4byte	.LVL141
+ 3793 0869 0100     		.2byte	0x1
+ 3794 086b 56       		.byte	0x56
+ 3795 086c 00000000 		.4byte	0
+ 3796 0870 00000000 		.4byte	0
+ 3797              	.LLST63:
+ 3798 0874 4C000000 		.4byte	.LVL132
+ 3799 0878 4E000000 		.4byte	.LVL133
+ 3800 087c 0100     		.2byte	0x1
+ 3801 087e 50       		.byte	0x50
+ 3802 087f 4E000000 		.4byte	.LVL133
+ 3803 0883 51000000 		.4byte	.LVL134-1
+ 3804 0887 0100     		.2byte	0x1
+ 3805 0889 51       		.byte	0x51
+ 3806 088a 00000000 		.4byte	0
+ 3807 088e 00000000 		.4byte	0
+ 3808              	.LLST64:
+ 3809 0892 52000000 		.4byte	.LVL134
+ 3810 0896 55000000 		.4byte	.LVL135-1
+ 3811 089a 0100     		.2byte	0x1
+ 3812 089c 50       		.byte	0x50
+ 3813 089d 00000000 		.4byte	0
+ 3814 08a1 00000000 		.4byte	0
+ 3815              	.LLST65:
+ 3816 08a5 56000000 		.4byte	.LVL135
+ 3817 08a9 60000000 		.4byte	.LVL136
+ 3818 08ad 0100     		.2byte	0x1
+ 3819 08af 50       		.byte	0x50
+ 3820 08b0 62000000 		.4byte	.LVL137
+ 3821 08b4 6A000000 		.4byte	.LVL138
+ 3822 08b8 0100     		.2byte	0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 77
+
+
+ 3823 08ba 50       		.byte	0x50
+ 3824 08bb 6A000000 		.4byte	.LVL138
+ 3825 08bf 6C000000 		.4byte	.LVL139
+ 3826 08c3 0600     		.2byte	0x6
+ 3827 08c5 70       		.byte	0x70
+ 3828 08c6 8080D005 		.sleb128 11796480
+ 3829 08ca 9F       		.byte	0x9f
+ 3830 08cb 6C000000 		.4byte	.LVL139
+ 3831 08cf 6E000000 		.4byte	.LVL140
+ 3832 08d3 0100     		.2byte	0x1
+ 3833 08d5 50       		.byte	0x50
+ 3834 08d6 00000000 		.4byte	0
+ 3835 08da 00000000 		.4byte	0
+ 3836              	.LLST66:
+ 3837 08de 3A000000 		.4byte	.LVL126
+ 3838 08e2 3C000000 		.4byte	.LVL127
+ 3839 08e6 0600     		.2byte	0x6
+ 3840 08e8 11       		.byte	0x11
+ 3841 08e9 8080987D 		.sleb128 -5898240
+ 3842 08ed 9F       		.byte	0x9f
+ 3843 08ee 6E000000 		.4byte	.LVL140
+ 3844 08f2 74000000 		.4byte	.LFE83
+ 3845 08f6 0100     		.2byte	0x1
+ 3846 08f8 50       		.byte	0x50
+ 3847 08f9 00000000 		.4byte	0
+ 3848 08fd 00000000 		.4byte	0
+ 3849              	.LLST67:
+ 3850 0901 00000000 		.4byte	.LVL142
+ 3851 0905 05000000 		.4byte	.LVL143-1
+ 3852 0909 0100     		.2byte	0x1
+ 3853 090b 50       		.byte	0x50
+ 3854 090c 05000000 		.4byte	.LVL143-1
+ 3855 0910 0C000000 		.4byte	.LFE77
+ 3856 0914 0400     		.2byte	0x4
+ 3857 0916 F3       		.byte	0xf3
+ 3858 0917 01       		.uleb128 0x1
+ 3859 0918 50       		.byte	0x50
+ 3860 0919 9F       		.byte	0x9f
+ 3861 091a 00000000 		.4byte	0
+ 3862 091e 00000000 		.4byte	0
+ 3863              	.LLST68:
+ 3864 0922 00000000 		.4byte	.LVL142
+ 3865 0926 05000000 		.4byte	.LVL143-1
+ 3866 092a 0100     		.2byte	0x1
+ 3867 092c 51       		.byte	0x51
+ 3868 092d 05000000 		.4byte	.LVL143-1
+ 3869 0931 0C000000 		.4byte	.LFE77
+ 3870 0935 0400     		.2byte	0x4
+ 3871 0937 F3       		.byte	0xf3
+ 3872 0938 01       		.uleb128 0x1
+ 3873 0939 51       		.byte	0x51
+ 3874 093a 9F       		.byte	0x9f
+ 3875 093b 00000000 		.4byte	0
+ 3876 093f 00000000 		.4byte	0
+ 3877              	.LLST69:
+ 3878 0943 06000000 		.4byte	.LVL143
+ 3879 0947 09000000 		.4byte	.LVL144-1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 78
+
+
+ 3880 094b 0100     		.2byte	0x1
+ 3881 094d 50       		.byte	0x50
+ 3882 094e 00000000 		.4byte	0
+ 3883 0952 00000000 		.4byte	0
+ 3884              		.section	.debug_aranges,"",%progbits
+ 3885 0000 BC000000 		.4byte	0xbc
+ 3886 0004 0200     		.2byte	0x2
+ 3887 0006 00000000 		.4byte	.Ldebug_info0
+ 3888 000a 04       		.byte	0x4
+ 3889 000b 00       		.byte	0
+ 3890 000c 0000     		.2byte	0
+ 3891 000e 0000     		.2byte	0
+ 3892 0010 00000000 		.4byte	.LFB63
+ 3893 0014 04000000 		.4byte	.LFE63-.LFB63
+ 3894 0018 00000000 		.4byte	.LFB64
+ 3895 001c 04000000 		.4byte	.LFE64-.LFB64
+ 3896 0020 00000000 		.4byte	.LFB65
+ 3897 0024 14000000 		.4byte	.LFE65-.LFB65
+ 3898 0028 00000000 		.4byte	.LFB66
+ 3899 002c 14000000 		.4byte	.LFE66-.LFB66
+ 3900 0030 00000000 		.4byte	.LFB67
+ 3901 0034 04000000 		.4byte	.LFE67-.LFB67
+ 3902 0038 00000000 		.4byte	.LFB68
+ 3903 003c 04000000 		.4byte	.LFE68-.LFB68
+ 3904 0040 00000000 		.4byte	.LFB69
+ 3905 0044 08000000 		.4byte	.LFE69-.LFB69
+ 3906 0048 00000000 		.4byte	.LFB70
+ 3907 004c 1E000000 		.4byte	.LFE70-.LFB70
+ 3908 0050 00000000 		.4byte	.LFB71
+ 3909 0054 1E000000 		.4byte	.LFE71-.LFB71
+ 3910 0058 00000000 		.4byte	.LFB72
+ 3911 005c 5A000000 		.4byte	.LFE72-.LFB72
+ 3912 0060 00000000 		.4byte	.LFB73
+ 3913 0064 14000000 		.4byte	.LFE73-.LFB73
+ 3914 0068 00000000 		.4byte	.LFB78
+ 3915 006c 18000000 		.4byte	.LFE78-.LFB78
+ 3916 0070 00000000 		.4byte	.LFB79
+ 3917 0074 18000000 		.4byte	.LFE79-.LFB79
+ 3918 0078 00000000 		.4byte	.LFB80
+ 3919 007c A0000000 		.4byte	.LFE80-.LFB80
+ 3920 0080 00000000 		.4byte	.LFB74
+ 3921 0084 0C000000 		.4byte	.LFE74-.LFB74
+ 3922 0088 00000000 		.4byte	.LFB81
+ 3923 008c 0C000000 		.4byte	.LFE81-.LFB81
+ 3924 0090 00000000 		.4byte	.LFB75
+ 3925 0094 0C000000 		.4byte	.LFE75-.LFB75
+ 3926 0098 00000000 		.4byte	.LFB82
+ 3927 009c A8000000 		.4byte	.LFE82-.LFB82
+ 3928 00a0 00000000 		.4byte	.LFB76
+ 3929 00a4 0C000000 		.4byte	.LFE76-.LFB76
+ 3930 00a8 00000000 		.4byte	.LFB83
+ 3931 00ac 74000000 		.4byte	.LFE83-.LFB83
+ 3932 00b0 00000000 		.4byte	.LFB77
+ 3933 00b4 0C000000 		.4byte	.LFE77-.LFB77
+ 3934 00b8 00000000 		.4byte	0
+ 3935 00bc 00000000 		.4byte	0
+ 3936              		.section	.debug_ranges,"",%progbits
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 79
+
+
+ 3937              	.Ldebug_ranges0:
+ 3938 0000 00000000 		.4byte	.LFB63
+ 3939 0004 04000000 		.4byte	.LFE63
+ 3940 0008 00000000 		.4byte	.LFB64
+ 3941 000c 04000000 		.4byte	.LFE64
+ 3942 0010 00000000 		.4byte	.LFB65
+ 3943 0014 14000000 		.4byte	.LFE65
+ 3944 0018 00000000 		.4byte	.LFB66
+ 3945 001c 14000000 		.4byte	.LFE66
+ 3946 0020 00000000 		.4byte	.LFB67
+ 3947 0024 04000000 		.4byte	.LFE67
+ 3948 0028 00000000 		.4byte	.LFB68
+ 3949 002c 04000000 		.4byte	.LFE68
+ 3950 0030 00000000 		.4byte	.LFB69
+ 3951 0034 08000000 		.4byte	.LFE69
+ 3952 0038 00000000 		.4byte	.LFB70
+ 3953 003c 1E000000 		.4byte	.LFE70
+ 3954 0040 00000000 		.4byte	.LFB71
+ 3955 0044 1E000000 		.4byte	.LFE71
+ 3956 0048 00000000 		.4byte	.LFB72
+ 3957 004c 5A000000 		.4byte	.LFE72
+ 3958 0050 00000000 		.4byte	.LFB73
+ 3959 0054 14000000 		.4byte	.LFE73
+ 3960 0058 00000000 		.4byte	.LFB78
+ 3961 005c 18000000 		.4byte	.LFE78
+ 3962 0060 00000000 		.4byte	.LFB79
+ 3963 0064 18000000 		.4byte	.LFE79
+ 3964 0068 00000000 		.4byte	.LFB80
+ 3965 006c A0000000 		.4byte	.LFE80
+ 3966 0070 00000000 		.4byte	.LFB74
+ 3967 0074 0C000000 		.4byte	.LFE74
+ 3968 0078 00000000 		.4byte	.LFB81
+ 3969 007c 0C000000 		.4byte	.LFE81
+ 3970 0080 00000000 		.4byte	.LFB75
+ 3971 0084 0C000000 		.4byte	.LFE75
+ 3972 0088 00000000 		.4byte	.LFB82
+ 3973 008c A8000000 		.4byte	.LFE82
+ 3974 0090 00000000 		.4byte	.LFB76
+ 3975 0094 0C000000 		.4byte	.LFE76
+ 3976 0098 00000000 		.4byte	.LFB83
+ 3977 009c 74000000 		.4byte	.LFE83
+ 3978 00a0 00000000 		.4byte	.LFB77
+ 3979 00a4 0C000000 		.4byte	.LFE77
+ 3980 00a8 00000000 		.4byte	0
+ 3981 00ac 00000000 		.4byte	0
+ 3982              		.section	.debug_line,"",%progbits
+ 3983              	.Ldebug_line0:
+ 3984 0000 A2030000 		.section	.debug_str,"MS",%progbits,1
+ 3984      02006401 
+ 3984      00000201 
+ 3984      FB0E0D00 
+ 3984      01010101 
+ 3985              	.LASF21:
+ 3986 0000 4649585F 		.ascii	"FIX_DBL\000"
+ 3986      44424C00 
+ 3987              	.LASF38:
+ 3988 0008 4649585F 		.ascii	"FIX_Rad_Deg\000"
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 80
+
+
+ 3988      5261645F 
+ 3988      44656700 
+ 3989              	.LASF48:
+ 3990 0014 6673696E 		.ascii	"fsin_A\000"
+ 3990      5F4100
+ 3991              	.LASF69:
+ 3992 001b 666E756D 		.ascii	"fnum\000"
+ 3992      00
+ 3993              	.LASF46:
+ 3994 0020 69646567 		.ascii	"ideg_A\000"
+ 3994      5F4100
+ 3995              	.LASF47:
+ 3996 0027 69646567 		.ascii	"ideg_B\000"
+ 3996      5F4200
+ 3997              	.LASF52:
+ 3998 002e 4649585F 		.ascii	"FIX_Cos_Deg\000"
+ 3998      436F735F 
+ 3998      44656700 
+ 3999              	.LASF25:
+ 4000 003a 4649585F 		.ascii	"FIX_Abs\000"
+ 4000      41627300 
+ 4001              	.LASF45:
+ 4002 0042 66646567 		.ascii	"fdeg_B\000"
+ 4002      5F4200
+ 4003              	.LASF78:
+ 4004 0049 4A3A5C50 		.ascii	"J:\\PSoC_Creator\\CY8CKIT-059\\CY8CKIT-059_DDS_USB\\"
+ 4004      536F435F 
+ 4004      43726561 
+ 4004      746F725C 
+ 4004      43593843 
+ 4005 0079 43593843 		.ascii	"CY8CKIT-059_DDS_USB.cydsn\000"
+ 4005      4B49542D 
+ 4005      3035395F 
+ 4005      4444535F 
+ 4005      5553422E 
+ 4006              	.LASF4:
+ 4007 0093 73686F72 		.ascii	"short int\000"
+ 4007      7420696E 
+ 4007      7400
+ 4008              	.LASF17:
+ 4009 009d 73697A65 		.ascii	"sizetype\000"
+ 4009      74797065 
+ 4009      00
+ 4010              	.LASF44:
+ 4011 00a6 66646567 		.ascii	"fdeg_A\000"
+ 4011      5F4100
+ 4012              	.LASF28:
+ 4013 00ad 69623634 		.ascii	"ib64\000"
+ 4013      00
+ 4014              	.LASF59:
+ 4015 00b2 6F766572 		.ascii	"over_one\000"
+ 4015      5F6F6E65 
+ 4015      00
+ 4016              	.LASF72:
+ 4017 00bb 6664656E 		.ascii	"fden_0\000"
+ 4017      5F3000
+ 4018              	.LASF65:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 81
+
+
+ 4019 00c2 66646567 		.ascii	"fdegM0\000"
+ 4019      4D3000
+ 4020              	.LASF60:
+ 4021 00c9 696E6465 		.ascii	"indexA\000"
+ 4021      784100
+ 4022              	.LASF61:
+ 4023 00d0 696E6465 		.ascii	"indexB\000"
+ 4023      784200
+ 4024              	.LASF36:
+ 4025 00d7 66726164 		.ascii	"frad\000"
+ 4025      00
+ 4026              	.LASF62:
+ 4027 00dc 696E6465 		.ascii	"indexM\000"
+ 4027      784D00
+ 4028              	.LASF70:
+ 4029 00e3 6664656E 		.ascii	"fden\000"
+ 4029      00
+ 4030              	.LASF50:
+ 4031 00e8 6673696E 		.ascii	"fsin\000"
+ 4031      00
+ 4032              	.LASF27:
+ 4033 00ed 69613634 		.ascii	"ia64\000"
+ 4033      00
+ 4034              	.LASF29:
+ 4035 00f2 69616236 		.ascii	"iab64\000"
+ 4035      3400
+ 4036              	.LASF2:
+ 4037 00f8 7369676E 		.ascii	"signed char\000"
+ 4037      65642063 
+ 4037      68617200 
+ 4038              	.LASF35:
+ 4039 0104 4649585F 		.ascii	"FIX_Deg_Rad\000"
+ 4039      4465675F 
+ 4039      52616400 
+ 4040              	.LASF14:
+ 4041 0110 666C6F61 		.ascii	"float\000"
+ 4041      7400
+ 4042              	.LASF8:
+ 4043 0116 6C6F6E67 		.ascii	"long long int\000"
+ 4043      206C6F6E 
+ 4043      6720696E 
+ 4043      7400
+ 4044              	.LASF75:
+ 4045 0124 54424C5F 		.ascii	"TBL_TAN\000"
+ 4045      54414E00 
+ 4046              	.LASF6:
+ 4047 012c 6C6F6E67 		.ascii	"long int\000"
+ 4047      20696E74 
+ 4047      00
+ 4048              	.LASF33:
+ 4049 0135 4649585F 		.ascii	"FIX_Sqrt\000"
+ 4049      53717274 
+ 4049      00
+ 4050              	.LASF41:
+ 4051 013e 66736967 		.ascii	"fsign\000"
+ 4051      6E00
+ 4052              	.LASF20:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 82
+
+
+ 4053 0144 494E545F 		.ascii	"INT_FIX\000"
+ 4053      46495800 
+ 4054              	.LASF77:
+ 4055 014c 2E2E5C41 		.ascii	"..\\API\\fixedpoint.c\000"
+ 4055      50495C66 
+ 4055      69786564 
+ 4055      706F696E 
+ 4055      742E6300 
+ 4056              	.LASF30:
+ 4057 0160 69616233 		.ascii	"iab32\000"
+ 4057      3200
+ 4058              	.LASF43:
+ 4059 0166 6673696E 		.ascii	"fsin_0\000"
+ 4059      5F3000
+ 4060              	.LASF3:
+ 4061 016d 756E7369 		.ascii	"unsigned char\000"
+ 4061      676E6564 
+ 4061      20636861 
+ 4061      7200
+ 4062              	.LASF73:
+ 4063 017b 4649585F 		.ascii	"FIX_Atan2\000"
+ 4063      4174616E 
+ 4063      3200
+ 4064              	.LASF66:
+ 4065 0185 66646567 		.ascii	"fdegM1\000"
+ 4065      4D3100
+ 4066              	.LASF39:
+ 4067 018c 4649585F 		.ascii	"FIX_Sin_Deg\000"
+ 4067      53696E5F 
+ 4067      44656700 
+ 4068              	.LASF0:
+ 4069 0198 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 4069      206C6F6E 
+ 4069      6720756E 
+ 4069      7369676E 
+ 4069      65642069 
+ 4070              	.LASF42:
+ 4071 01af 71756164 		.ascii	"quadrant\000"
+ 4071      72616E74 
+ 4071      00
+ 4072              	.LASF9:
+ 4073 01b8 756E7369 		.ascii	"unsigned int\000"
+ 4073      676E6564 
+ 4073      20696E74 
+ 4073      00
+ 4074              	.LASF49:
+ 4075 01c5 6673696E 		.ascii	"fsin_B\000"
+ 4075      5F4200
+ 4076              	.LASF54:
+ 4077 01cc 4649585F 		.ascii	"FIX_Cos\000"
+ 4077      436F7300 
+ 4078              	.LASF15:
+ 4079 01d4 696E7436 		.ascii	"int64\000"
+ 4079      3400
+ 4080              	.LASF31:
+ 4081 01da 4649585F 		.ascii	"FIX_Div\000"
+ 4081      44697600 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 83
+
+
+ 4082              	.LASF74:
+ 4083 01e2 54424C5F 		.ascii	"TBL_SIN\000"
+ 4083      53494E00 
+ 4084              	.LASF5:
+ 4085 01ea 73686F72 		.ascii	"short unsigned int\000"
+ 4085      7420756E 
+ 4085      7369676E 
+ 4085      65642069 
+ 4085      6E7400
+ 4086              	.LASF18:
+ 4087 01fd 66697833 		.ascii	"fix32\000"
+ 4087      3200
+ 4088              	.LASF16:
+ 4089 0203 63686172 		.ascii	"char\000"
+ 4089      00
+ 4090              	.LASF76:
+ 4091 0208 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 4091      4320342E 
+ 4091      392E3320 
+ 4091      32303135 
+ 4091      30333033 
+ 4092 023b 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 4092      20726576 
+ 4092      6973696F 
+ 4092      6E203232 
+ 4092      31323230 
+ 4093 026e 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 4093      66756E63 
+ 4093      74696F6E 
+ 4093      2D736563 
+ 4093      74696F6E 
+ 4094              	.LASF32:
+ 4095 0296 494E545F 		.ascii	"INT_Sqrt\000"
+ 4095      53717274 
+ 4095      00
+ 4096              	.LASF11:
+ 4097 029f 696E7433 		.ascii	"int32_t\000"
+ 4097      325F7400 
+ 4098              	.LASF19:
+ 4099 02a7 4649585F 		.ascii	"FIX_INT\000"
+ 4099      494E5400 
+ 4100              	.LASF55:
+ 4101 02af 4649585F 		.ascii	"FIX_Atan_Deg\000"
+ 4101      4174616E 
+ 4101      5F446567 
+ 4101      00
+ 4102              	.LASF57:
+ 4103 02bc 6676616C 		.ascii	"fval_0\000"
+ 4103      5F3000
+ 4104              	.LASF58:
+ 4105 02c3 6676616C 		.ascii	"fval_1\000"
+ 4105      5F3100
+ 4106              	.LASF23:
+ 4107 02ca 4649585F 		.ascii	"FIX_Add\000"
+ 4107      41646400 
+ 4108              	.LASF26:
+ 4109 02d2 4649585F 		.ascii	"FIX_Mul\000"
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 84
+
+
+ 4109      4D756C00 
+ 4110              	.LASF53:
+ 4111 02da 66636F73 		.ascii	"fcos\000"
+ 4111      00
+ 4112              	.LASF12:
+ 4113 02df 75696E74 		.ascii	"uint32\000"
+ 4113      333200
+ 4114              	.LASF7:
+ 4115 02e6 6C6F6E67 		.ascii	"long unsigned int\000"
+ 4115      20756E73 
+ 4115      69676E65 
+ 4115      6420696E 
+ 4115      7400
+ 4116              	.LASF13:
+ 4117 02f8 696E7433 		.ascii	"int32\000"
+ 4117      3200
+ 4118              	.LASF1:
+ 4119 02fe 646F7562 		.ascii	"double\000"
+ 4119      6C6500
+ 4120              	.LASF56:
+ 4121 0305 6676616C 		.ascii	"fval\000"
+ 4121      00
+ 4122              	.LASF34:
+ 4123 030a 69623332 		.ascii	"ib32\000"
+ 4123      00
+ 4124              	.LASF68:
+ 4125 030f 4649585F 		.ascii	"FIX_Atan2_Deg\000"
+ 4125      4174616E 
+ 4125      325F4465 
+ 4125      6700
+ 4126              	.LASF67:
+ 4127 031d 4649585F 		.ascii	"FIX_Atan\000"
+ 4127      4174616E 
+ 4127      00
+ 4128              	.LASF10:
+ 4129 0326 5F5F696E 		.ascii	"__int32_t\000"
+ 4129      7433325F 
+ 4129      7400
+ 4130              	.LASF51:
+ 4131 0330 4649585F 		.ascii	"FIX_Sin\000"
+ 4131      53696E00 
+ 4132              	.LASF37:
+ 4133 0338 66646567 		.ascii	"fdeg\000"
+ 4133      00
+ 4134              	.LASF63:
+ 4135 033d 6674616E 		.ascii	"ftanM0\000"
+ 4135      4D3000
+ 4136              	.LASF79:
+ 4137 0344 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 4137      52784275 
+ 4137      66666572 
+ 4137      00
+ 4138              	.LASF71:
+ 4139 0351 666E756D 		.ascii	"fnum_0\000"
+ 4139      5F3000
+ 4140              	.LASF64:
+ 4141 0358 6674616E 		.ascii	"ftanM1\000"
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccjg2ckK.s 			page 85
+
+
+ 4141      4D3100
+ 4142              	.LASF22:
+ 4143 035f 44424C5F 		.ascii	"DBL_FIX\000"
+ 4143      46495800 
+ 4144              	.LASF24:
+ 4145 0367 4649585F 		.ascii	"FIX_Sub\000"
+ 4145      53756200 
+ 4146              	.LASF40:
+ 4147 036f 66646567 		.ascii	"fdeg_0\000"
+ 4147      5F3000
+ 4148              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

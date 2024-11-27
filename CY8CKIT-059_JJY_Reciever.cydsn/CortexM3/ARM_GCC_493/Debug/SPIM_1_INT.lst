@@ -1,0 +1,1084 @@
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"SPIM_1_INT.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.SPIM_1_TX_ISR,"ax",%progbits
+  19              		.align	2
+  20              		.global	SPIM_1_TX_ISR
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	SPIM_1_TX_ISR, %function
+  24              	SPIM_1_TX_ISR:
+  25              	.LFB0:
+  26              		.file 1 ".\\Generated_Source\\PSoC5\\SPIM_1_INT.c"
+   1:.\Generated_Source\PSoC5/SPIM_1_INT.c **** /*******************************************************************************
+   2:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * File Name: SPIM_1_INT.c
+   3:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Version 2.50
+   4:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+   5:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Description:
+   6:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  This file provides all Interrupt Service Routine (ISR) for the SPI Master
+   7:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  component.
+   8:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+   9:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Note:
+  10:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  None.
+  11:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+  12:.\Generated_Source\PSoC5/SPIM_1_INT.c **** ********************************************************************************
+  13:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Copyright 2008-2015, Cypress Semiconductor Corporation.  All rights reserved.
+  14:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * You may use this file only in accordance with the license, terms, conditions,
+  15:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * disclaimers, and limitations in the end user license agreement accompanying
+  16:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * the software package with which this file was provided.
+  17:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *******************************************************************************/
+  18:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  19:.\Generated_Source\PSoC5/SPIM_1_INT.c **** #include "SPIM_1_PVT.h"
+  20:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  21:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  22:.\Generated_Source\PSoC5/SPIM_1_INT.c **** /* User code required at start of ISR */
+  23:.\Generated_Source\PSoC5/SPIM_1_INT.c **** /* `#START SPIM_1_ISR_START_DEF` */
+  24:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  25:.\Generated_Source\PSoC5/SPIM_1_INT.c **** /* `#END` */
+  26:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  27:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  28:.\Generated_Source\PSoC5/SPIM_1_INT.c **** /*******************************************************************************
+  29:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Function Name: SPIM_1_TX_ISR
+  30:.\Generated_Source\PSoC5/SPIM_1_INT.c **** ********************************************************************************
+  31:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 2
+
+
+  32:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Summary:
+  33:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  Interrupt Service Routine for TX portion of the SPI Master.
+  34:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+  35:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Parameters:
+  36:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  None.
+  37:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+  38:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Return:
+  39:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  None.
+  40:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+  41:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Global variables:
+  42:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  SPIM_1_txBufferWrite - used for the account of the bytes which
+  43:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  have been written down in the TX software buffer.
+  44:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  SPIM_1_txBufferRead - used for the account of the bytes which
+  45:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  have been read from the TX software buffer, modified when exist data to
+  46:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  sending and FIFO Not Full.
+  47:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  SPIM_1_txBuffer[SPIM_1_TX_BUFFER_SIZE] - used to store
+  48:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  data to sending.
+  49:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  All described above Global variables are used when Software Buffer is used.
+  50:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+  51:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *******************************************************************************/
+  52:.\Generated_Source\PSoC5/SPIM_1_INT.c **** CY_ISR(SPIM_1_TX_ISR)
+  53:.\Generated_Source\PSoC5/SPIM_1_INT.c **** {
+  27              		.loc 1 53 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  54:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #if(SPIM_1_TX_SOFTWARE_BUF_ENABLED)
+  55:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         uint8 tmpStatus;
+  56:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #endif /* (SPIM_1_TX_SOFTWARE_BUF_ENABLED) */
+  57:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  58:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #ifdef SPIM_1_TX_ISR_ENTRY_CALLBACK
+  59:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         SPIM_1_TX_ISR_EntryCallback();
+  60:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #endif /* SPIM_1_TX_ISR_ENTRY_CALLBACK */
+  61:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  62:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* User code required at start of ISR */
+  63:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* `#START SPIM_1_TX_ISR_START` */
+  64:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  65:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* `#END` */
+  66:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     
+  67:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #if(SPIM_1_TX_SOFTWARE_BUF_ENABLED)
+  68:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         /* Check if TX data buffer is not empty and there is space in TX FIFO */
+  69:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         while(SPIM_1_txBufferRead != SPIM_1_txBufferWrite)
+  32              		.loc 1 69 0
+  33 0000 28E0     		b	.L2
+  34              	.L6:
+  70:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         {
+  71:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             tmpStatus = SPIM_1_GET_STATUS_TX(SPIM_1_swStatusTx);
+  35              		.loc 1 71 0
+  36 0002 1E4B     		ldr	r3, .L8
+  37 0004 1978     		ldrb	r1, [r3]	@ zero_extendqisi2
+  38 0006 1E4A     		ldr	r2, .L8+4
+  39 0008 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  40 000a 03F00903 		and	r3, r3, #9
+  41 000e 0B43     		orrs	r3, r3, r1
+  42              	.LVL0:
+  72:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             SPIM_1_swStatusTx = tmpStatus;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 3
+
+
+  43              		.loc 1 72 0
+  44 0010 1370     		strb	r3, [r2]
+  73:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  74:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             if(0u != (SPIM_1_swStatusTx & SPIM_1_STS_TX_FIFO_NOT_FULL))
+  45              		.loc 1 74 0
+  46 0012 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  47              	.LVL1:
+  48 0014 13F0040F 		tst	r3, #4
+  49 0018 23D0     		beq	.L3
+  75:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             {
+  76:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 if(0u == SPIM_1_txBufferFull)
+  50              		.loc 1 76 0
+  51 001a 1A4B     		ldr	r3, .L8+8
+  52 001c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  53 001e 13F0FF0F 		tst	r3, #255
+  54 0022 0CD1     		bne	.L4
+  77:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 {
+  78:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                    SPIM_1_txBufferRead++;
+  55              		.loc 1 78 0
+  56 0024 184A     		ldr	r2, .L8+12
+  57              	.LVL2:
+  58 0026 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  59 0028 0133     		adds	r3, r3, #1
+  60 002a DBB2     		uxtb	r3, r3
+  61 002c 1370     		strb	r3, [r2]
+  62              	.LVL3:
+  79:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  80:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                     if(SPIM_1_txBufferRead >= SPIM_1_TX_BUFFER_SIZE)
+  63              		.loc 1 80 0
+  64 002e 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  65 0030 DBB2     		uxtb	r3, r3
+  66 0032 042B     		cmp	r3, #4
+  67 0034 06D9     		bls	.L5
+  81:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                     {
+  82:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                         SPIM_1_txBufferRead = 0u;
+  68              		.loc 1 82 0
+  69 0036 0022     		movs	r2, #0
+  70 0038 134B     		ldr	r3, .L8+12
+  71 003a 1A70     		strb	r2, [r3]
+  72 003c 02E0     		b	.L5
+  73              	.LVL4:
+  74              	.L4:
+  83:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                     }
+  84:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 }
+  85:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 else
+  86:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 {
+  87:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                     SPIM_1_txBufferFull = 0u;
+  75              		.loc 1 87 0
+  76 003e 0022     		movs	r2, #0
+  77              	.LVL5:
+  78 0040 104B     		ldr	r3, .L8+8
+  79 0042 1A70     		strb	r2, [r3]
+  80              	.LVL6:
+  81              	.L5:
+  88:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 }
+  89:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+  90:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 /* Put data element into the TX FIFO */
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 4
+
+
+  91:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 CY_SET_REG8(SPIM_1_TXDATA_PTR, 
+  82              		.loc 1 91 0
+  83 0044 104B     		ldr	r3, .L8+12
+  84 0046 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  85 0048 DBB2     		uxtb	r3, r3
+  86 004a 104A     		ldr	r2, .L8+16
+  87 004c D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+  88 004e DBB2     		uxtb	r3, r3
+  89 0050 0F4A     		ldr	r2, .L8+20
+  90 0052 1370     		strb	r3, [r2]
+  91              	.L2:
+  69:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         {
+  92              		.loc 1 69 0
+  93 0054 0C4B     		ldr	r3, .L8+12
+  94 0056 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  95 0058 0E4A     		ldr	r2, .L8+24
+  96 005a 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+  97 005c DBB2     		uxtb	r3, r3
+  98 005e 9342     		cmp	r3, r2
+  99 0060 CFD1     		bne	.L6
+ 100              	.L3:
+  92:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                                              SPIM_1_txBuffer[SPIM_1_txBufferRead]);
+  93:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             }
+  94:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             else
+  95:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             {
+  96:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 break;
+  97:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             }
+  98:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         }
+  99:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 100:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         if(SPIM_1_txBufferRead == SPIM_1_txBufferWrite)
+ 101              		.loc 1 100 0
+ 102 0062 094B     		ldr	r3, .L8+12
+ 103 0064 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 104 0066 0B4A     		ldr	r2, .L8+24
+ 105 0068 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 106 006a DBB2     		uxtb	r3, r3
+ 107 006c 9342     		cmp	r3, r2
+ 108 006e 04D1     		bne	.L1
+ 101:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         {
+ 102:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             /* TX Buffer is EMPTY: disable interrupt on TX NOT FULL */
+ 103:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             SPIM_1_TX_STATUS_MASK_REG &= ((uint8) ~SPIM_1_STS_TX_FIFO_NOT_FULL);
+ 109              		.loc 1 103 0
+ 110 0070 094A     		ldr	r2, .L8+28
+ 111 0072 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 112 0074 03F0FB03 		and	r3, r3, #251
+ 113 0078 1370     		strb	r3, [r2]
+ 114              	.L1:
+ 115 007a 7047     		bx	lr
+ 116              	.L9:
+ 117              		.align	2
+ 118              	.L8:
+ 119 007c 66650040 		.word	1073767782
+ 120 0080 00000000 		.word	SPIM_1_swStatusTx
+ 121 0084 00000000 		.word	SPIM_1_txBufferFull
+ 122 0088 00000000 		.word	SPIM_1_txBufferRead
+ 123 008c 00000000 		.word	SPIM_1_txBuffer
+ 124 0090 46640040 		.word	1073767494
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 5
+
+
+ 125 0094 00000000 		.word	SPIM_1_txBufferWrite
+ 126 0098 86650040 		.word	1073767814
+ 127              		.cfi_endproc
+ 128              	.LFE0:
+ 129              		.size	SPIM_1_TX_ISR, .-SPIM_1_TX_ISR
+ 130              		.section	.text.SPIM_1_RX_ISR,"ax",%progbits
+ 131              		.align	2
+ 132              		.global	SPIM_1_RX_ISR
+ 133              		.thumb
+ 134              		.thumb_func
+ 135              		.type	SPIM_1_RX_ISR, %function
+ 136              	SPIM_1_RX_ISR:
+ 137              	.LFB1:
+ 104:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         }
+ 105:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 106:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #endif /* (SPIM_1_TX_SOFTWARE_BUF_ENABLED) */
+ 107:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 108:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* User code required at end of ISR (Optional) */
+ 109:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* `#START SPIM_1_TX_ISR_END` */
+ 110:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 111:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* `#END` */
+ 112:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     
+ 113:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #ifdef SPIM_1_TX_ISR_EXIT_CALLBACK
+ 114:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         SPIM_1_TX_ISR_ExitCallback();
+ 115:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #endif /* SPIM_1_TX_ISR_EXIT_CALLBACK */
+ 116:.\Generated_Source\PSoC5/SPIM_1_INT.c **** }
+ 117:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 118:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 119:.\Generated_Source\PSoC5/SPIM_1_INT.c **** /*******************************************************************************
+ 120:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Function Name: SPIM_1_RX_ISR
+ 121:.\Generated_Source\PSoC5/SPIM_1_INT.c **** ********************************************************************************
+ 122:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+ 123:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Summary:
+ 124:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  Interrupt Service Routine for RX portion of the SPI Master.
+ 125:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+ 126:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Parameters:
+ 127:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  None.
+ 128:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+ 129:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Return:
+ 130:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  None.
+ 131:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+ 132:.\Generated_Source\PSoC5/SPIM_1_INT.c **** * Global variables:
+ 133:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  SPIM_1_rxBufferWrite - used for the account of the bytes which
+ 134:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  have been written down in the RX software buffer modified when FIFO contains
+ 135:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  new data.
+ 136:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  SPIM_1_rxBufferRead - used for the account of the bytes which
+ 137:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  have been read from the RX software buffer, modified when overflow occurred.
+ 138:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  SPIM_1_rxBuffer[SPIM_1_RX_BUFFER_SIZE] - used to store
+ 139:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  received data, modified when FIFO contains new data.
+ 140:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *  All described above Global variables are used when Software Buffer is used.
+ 141:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *
+ 142:.\Generated_Source\PSoC5/SPIM_1_INT.c **** *******************************************************************************/
+ 143:.\Generated_Source\PSoC5/SPIM_1_INT.c **** CY_ISR(SPIM_1_RX_ISR)
+ 144:.\Generated_Source\PSoC5/SPIM_1_INT.c **** {
+ 138              		.loc 1 144 0
+ 139              		.cfi_startproc
+ 140              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 6
+
+
+ 141              		@ frame_needed = 0, uses_anonymous_args = 0
+ 142              		@ link register save eliminated.
+ 145:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #if(SPIM_1_RX_SOFTWARE_BUF_ENABLED)
+ 146:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         uint8 tmpStatus;
+ 147:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         uint8 rxData;
+ 148:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #endif /* (SPIM_1_RX_SOFTWARE_BUF_ENABLED) */
+ 149:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 150:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #ifdef SPIM_1_RX_ISR_ENTRY_CALLBACK
+ 151:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         SPIM_1_RX_ISR_EntryCallback();
+ 152:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #endif /* SPIM_1_RX_ISR_ENTRY_CALLBACK */
+ 153:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 154:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* User code required at start of ISR */
+ 155:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* `#START SPIM_1_RX_ISR_START` */
+ 156:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 157:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* `#END` */
+ 158:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     
+ 159:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #if(SPIM_1_RX_SOFTWARE_BUF_ENABLED)
+ 160:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 161:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         tmpStatus = SPIM_1_GET_STATUS_RX(SPIM_1_swStatusRx);
+ 143              		.loc 1 161 0
+ 144 0000 204B     		ldr	r3, .L16
+ 145 0002 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 146 0004 2049     		ldr	r1, .L16+4
+ 147 0006 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 148 0008 03F04003 		and	r3, r3, #64
+ 149 000c 1343     		orrs	r3, r3, r2
+ 150              	.LVL7:
+ 162:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         SPIM_1_swStatusRx = tmpStatus;
+ 151              		.loc 1 162 0
+ 152 000e 0B70     		strb	r3, [r1]
+ 163:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 164:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         /* Check if RX data FIFO has some data to be moved into the RX Buffer */
+ 165:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         while(0u != (SPIM_1_swStatusRx & SPIM_1_STS_RX_FIFO_NOT_EMPTY))
+ 153              		.loc 1 165 0
+ 154 0010 31E0     		b	.L11
+ 155              	.LVL8:
+ 156              	.L15:
+ 166:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         {
+ 167:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             rxData = CY_GET_REG8(SPIM_1_RXDATA_PTR);
+ 157              		.loc 1 167 0
+ 158 0012 1E4B     		ldr	r3, .L16+8
+ 159 0014 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 160 0016 D2B2     		uxtb	r2, r2
+ 161              	.LVL9:
+ 168:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 169:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             /* Set next pointer. */
+ 170:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             SPIM_1_rxBufferWrite++;
+ 162              		.loc 1 170 0
+ 163 0018 1D49     		ldr	r1, .L16+12
+ 164              	.LVL10:
+ 165 001a 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 166 001c 0133     		adds	r3, r3, #1
+ 167 001e DBB2     		uxtb	r3, r3
+ 168 0020 0B70     		strb	r3, [r1]
+ 169              	.LVL11:
+ 171:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             if(SPIM_1_rxBufferWrite >= SPIM_1_RX_BUFFER_SIZE)
+ 170              		.loc 1 171 0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 7
+
+
+ 171 0022 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 172 0024 DBB2     		uxtb	r3, r3
+ 173 0026 042B     		cmp	r3, #4
+ 174 0028 02D9     		bls	.L12
+ 172:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             {
+ 173:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 SPIM_1_rxBufferWrite = 0u;
+ 175              		.loc 1 173 0
+ 176 002a 0021     		movs	r1, #0
+ 177 002c 184B     		ldr	r3, .L16+12
+ 178 002e 1970     		strb	r1, [r3]
+ 179              	.L12:
+ 174:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             }
+ 175:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 176:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             if(SPIM_1_rxBufferWrite == SPIM_1_rxBufferRead)
+ 180              		.loc 1 176 0
+ 181 0030 174B     		ldr	r3, .L16+12
+ 182 0032 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 183 0034 1749     		ldr	r1, .L16+16
+ 184 0036 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 185 0038 DBB2     		uxtb	r3, r3
+ 186 003a 8B42     		cmp	r3, r1
+ 187 003c 0ED1     		bne	.L13
+ 177:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             {
+ 178:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 SPIM_1_rxBufferRead++;
+ 188              		.loc 1 178 0
+ 189 003e 1549     		ldr	r1, .L16+16
+ 190 0040 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 191 0042 0133     		adds	r3, r3, #1
+ 192 0044 DBB2     		uxtb	r3, r3
+ 193 0046 0B70     		strb	r3, [r1]
+ 179:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 if(SPIM_1_rxBufferRead >= SPIM_1_RX_BUFFER_SIZE)
+ 194              		.loc 1 179 0
+ 195 0048 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 196 004a DBB2     		uxtb	r3, r3
+ 197 004c 042B     		cmp	r3, #4
+ 198 004e 02D9     		bls	.L14
+ 180:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 {
+ 181:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                     SPIM_1_rxBufferRead = 0u;
+ 199              		.loc 1 181 0
+ 200 0050 0021     		movs	r1, #0
+ 201 0052 104B     		ldr	r3, .L16+16
+ 202 0054 1970     		strb	r1, [r3]
+ 203              	.L14:
+ 182:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 }
+ 183:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 184:.\Generated_Source\PSoC5/SPIM_1_INT.c ****                 SPIM_1_rxBufferFull = 1u;
+ 204              		.loc 1 184 0
+ 205 0056 0121     		movs	r1, #1
+ 206 0058 0F4B     		ldr	r3, .L16+20
+ 207 005a 1970     		strb	r1, [r3]
+ 208              	.L13:
+ 185:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             }
+ 186:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 187:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             /* Move data from the FIFO to the Buffer */
+ 188:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             SPIM_1_rxBuffer[SPIM_1_rxBufferWrite] = rxData;
+ 209              		.loc 1 188 0
+ 210 005c 0C4B     		ldr	r3, .L16+12
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 8
+
+
+ 211 005e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 212 0060 DBB2     		uxtb	r3, r3
+ 213 0062 0E49     		ldr	r1, .L16+24
+ 214 0064 CA54     		strb	r2, [r1, r3]
+ 189:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 190:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             tmpStatus = SPIM_1_GET_STATUS_RX(SPIM_1_swStatusRx);
+ 215              		.loc 1 190 0
+ 216 0066 074B     		ldr	r3, .L16
+ 217 0068 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 218              	.LVL12:
+ 219 006a 0749     		ldr	r1, .L16+4
+ 220 006c 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 221 006e 03F04003 		and	r3, r3, #64
+ 222 0072 1343     		orrs	r3, r3, r2
+ 223              	.LVL13:
+ 191:.\Generated_Source\PSoC5/SPIM_1_INT.c ****             SPIM_1_swStatusRx = tmpStatus;
+ 224              		.loc 1 191 0
+ 225 0074 0B70     		strb	r3, [r1]
+ 226              	.L11:
+ 165:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         {
+ 227              		.loc 1 165 0
+ 228 0076 044B     		ldr	r3, .L16+4
+ 229              	.LVL14:
+ 230 0078 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 231 007a 13F0200F 		tst	r3, #32
+ 232 007e C8D1     		bne	.L15
+ 192:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         }
+ 193:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 194:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #endif /* (SPIM_1_RX_SOFTWARE_BUF_ENABLED) */
+ 195:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 196:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* User code required at end of ISR (Optional) */
+ 197:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* `#START SPIM_1_RX_ISR_END` */
+ 198:.\Generated_Source\PSoC5/SPIM_1_INT.c **** 
+ 199:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     /* `#END` */
+ 200:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     
+ 201:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #ifdef SPIM_1_RX_ISR_EXIT_CALLBACK
+ 202:.\Generated_Source\PSoC5/SPIM_1_INT.c ****         SPIM_1_RX_ISR_ExitCallback();
+ 203:.\Generated_Source\PSoC5/SPIM_1_INT.c ****     #endif /* SPIM_1_RX_ISR_EXIT_CALLBACK */
+ 204:.\Generated_Source\PSoC5/SPIM_1_INT.c **** }
+ 233              		.loc 1 204 0
+ 234 0080 7047     		bx	lr
+ 235              	.L17:
+ 236 0082 00BF     		.align	2
+ 237              	.L16:
+ 238 0084 67650040 		.word	1073767783
+ 239 0088 00000000 		.word	SPIM_1_swStatusRx
+ 240 008c 56640040 		.word	1073767510
+ 241 0090 00000000 		.word	SPIM_1_rxBufferWrite
+ 242 0094 00000000 		.word	SPIM_1_rxBufferRead
+ 243 0098 00000000 		.word	SPIM_1_rxBufferFull
+ 244 009c 00000000 		.word	SPIM_1_rxBuffer
+ 245              		.cfi_endproc
+ 246              	.LFE1:
+ 247              		.size	SPIM_1_RX_ISR, .-SPIM_1_RX_ISR
+ 248              		.text
+ 249              	.Letext0:
+ 250              		.file 2 ".\\Generated_Source\\PSoC5\\cytypes.h"
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 9
+
+
+ 251              		.file 3 ".\\Generated_Source\\PSoC5\\SPIM_1_PVT.h"
+ 252              		.section	.debug_info,"",%progbits
+ 253              	.Ldebug_info0:
+ 254 0000 82010000 		.4byte	0x182
+ 255 0004 0400     		.2byte	0x4
+ 256 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 257 000a 04       		.byte	0x4
+ 258 000b 01       		.uleb128 0x1
+ 259 000c 32010000 		.4byte	.LASF29
+ 260 0010 01       		.byte	0x1
+ 261 0011 00000000 		.4byte	.LASF30
+ 262 0015 5C000000 		.4byte	.LASF31
+ 263 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 264 001d 00000000 		.4byte	0
+ 265 0021 00000000 		.4byte	.Ldebug_line0
+ 266 0025 02       		.uleb128 0x2
+ 267 0026 01       		.byte	0x1
+ 268 0027 06       		.byte	0x6
+ 269 0028 79020000 		.4byte	.LASF0
+ 270 002c 02       		.uleb128 0x2
+ 271 002d 01       		.byte	0x1
+ 272 002e 08       		.byte	0x8
+ 273 002f C3000000 		.4byte	.LASF1
+ 274 0033 02       		.uleb128 0x2
+ 275 0034 02       		.byte	0x2
+ 276 0035 05       		.byte	0x5
+ 277 0036 38020000 		.4byte	.LASF2
+ 278 003a 02       		.uleb128 0x2
+ 279 003b 02       		.byte	0x2
+ 280 003c 07       		.byte	0x7
+ 281 003d 26000000 		.4byte	.LASF3
+ 282 0041 02       		.uleb128 0x2
+ 283 0042 04       		.byte	0x4
+ 284 0043 05       		.byte	0x5
+ 285 0044 54020000 		.4byte	.LASF4
+ 286 0048 02       		.uleb128 0x2
+ 287 0049 04       		.byte	0x4
+ 288 004a 07       		.byte	0x7
+ 289 004b D6000000 		.4byte	.LASF5
+ 290 004f 02       		.uleb128 0x2
+ 291 0050 08       		.byte	0x8
+ 292 0051 05       		.byte	0x5
+ 293 0052 25020000 		.4byte	.LASF6
+ 294 0056 02       		.uleb128 0x2
+ 295 0057 08       		.byte	0x8
+ 296 0058 07       		.byte	0x7
+ 297 0059 F5010000 		.4byte	.LASF7
+ 298 005d 03       		.uleb128 0x3
+ 299 005e 04       		.byte	0x4
+ 300 005f 05       		.byte	0x5
+ 301 0060 696E7400 		.ascii	"int\000"
+ 302 0064 02       		.uleb128 0x2
+ 303 0065 04       		.byte	0x4
+ 304 0066 07       		.byte	0x7
+ 305 0067 D4010000 		.4byte	.LASF8
+ 306 006b 04       		.uleb128 0x4
+ 307 006c E8000000 		.4byte	.LASF12
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 10
+
+
+ 308 0070 02       		.byte	0x2
+ 309 0071 3801     		.2byte	0x138
+ 310 0073 2C000000 		.4byte	0x2c
+ 311 0077 02       		.uleb128 0x2
+ 312 0078 04       		.byte	0x4
+ 313 0079 04       		.byte	0x4
+ 314 007a AD000000 		.4byte	.LASF9
+ 315 007e 02       		.uleb128 0x2
+ 316 007f 08       		.byte	0x8
+ 317 0080 04       		.byte	0x4
+ 318 0081 16010000 		.4byte	.LASF10
+ 319 0085 02       		.uleb128 0x2
+ 320 0086 01       		.byte	0x1
+ 321 0087 08       		.byte	0x8
+ 322 0088 33020000 		.4byte	.LASF11
+ 323 008c 04       		.uleb128 0x4
+ 324 008d D1000000 		.4byte	.LASF13
+ 325 0091 02       		.byte	0x2
+ 326 0092 E201     		.2byte	0x1e2
+ 327 0094 98000000 		.4byte	0x98
+ 328 0098 05       		.uleb128 0x5
+ 329 0099 6B000000 		.4byte	0x6b
+ 330 009d 02       		.uleb128 0x2
+ 331 009e 04       		.byte	0x4
+ 332 009f 07       		.byte	0x7
+ 333 00a0 1C020000 		.4byte	.LASF14
+ 334 00a4 06       		.uleb128 0x6
+ 335 00a5 85020000 		.4byte	.LASF15
+ 336 00a9 01       		.byte	0x1
+ 337 00aa 34       		.byte	0x34
+ 338 00ab 00000000 		.4byte	.LFB0
+ 339 00af 9C000000 		.4byte	.LFE0-.LFB0
+ 340 00b3 01       		.uleb128 0x1
+ 341 00b4 9C       		.byte	0x9c
+ 342 00b5 C9000000 		.4byte	0xc9
+ 343 00b9 07       		.uleb128 0x7
+ 344 00ba 5D020000 		.4byte	.LASF17
+ 345 00be 01       		.byte	0x1
+ 346 00bf 37       		.byte	0x37
+ 347 00c0 6B000000 		.4byte	0x6b
+ 348 00c4 00000000 		.4byte	.LLST0
+ 349 00c8 00       		.byte	0
+ 350 00c9 06       		.uleb128 0x6
+ 351 00ca 4E000000 		.4byte	.LASF16
+ 352 00ce 01       		.byte	0x1
+ 353 00cf 8F       		.byte	0x8f
+ 354 00d0 00000000 		.4byte	.LFB1
+ 355 00d4 A0000000 		.4byte	.LFE1-.LFB1
+ 356 00d8 01       		.uleb128 0x1
+ 357 00d9 9C       		.byte	0x9c
+ 358 00da FD000000 		.4byte	0xfd
+ 359 00de 07       		.uleb128 0x7
+ 360 00df 5D020000 		.4byte	.LASF17
+ 361 00e3 01       		.byte	0x1
+ 362 00e4 92       		.byte	0x92
+ 363 00e5 6B000000 		.4byte	0x6b
+ 364 00e9 2B000000 		.4byte	.LLST1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 11
+
+
+ 365 00ed 07       		.uleb128 0x7
+ 366 00ee A6000000 		.4byte	.LASF18
+ 367 00f2 01       		.byte	0x1
+ 368 00f3 93       		.byte	0x93
+ 369 00f4 6B000000 		.4byte	0x6b
+ 370 00f8 61000000 		.4byte	.LLST2
+ 371 00fc 00       		.byte	0
+ 372 00fd 08       		.uleb128 0x8
+ 373 00fe 67020000 		.4byte	.LASF19
+ 374 0102 03       		.byte	0x3
+ 375 0103 21       		.byte	0x21
+ 376 0104 98000000 		.4byte	0x98
+ 377 0108 08       		.uleb128 0x8
+ 378 0109 42020000 		.4byte	.LASF20
+ 379 010d 03       		.byte	0x3
+ 380 010e 22       		.byte	0x22
+ 381 010f 98000000 		.4byte	0x98
+ 382 0113 09       		.uleb128 0x9
+ 383 0114 6B000000 		.4byte	0x6b
+ 384 0118 23010000 		.4byte	0x123
+ 385 011c 0A       		.uleb128 0xa
+ 386 011d 9D000000 		.4byte	0x9d
+ 387 0121 04       		.byte	0x4
+ 388 0122 00       		.byte	0
+ 389 0123 08       		.uleb128 0x8
+ 390 0124 B3000000 		.4byte	.LASF21
+ 391 0128 03       		.byte	0x3
+ 392 0129 25       		.byte	0x25
+ 393 012a 2E010000 		.4byte	0x12e
+ 394 012e 05       		.uleb128 0x5
+ 395 012f 13010000 		.4byte	0x113
+ 396 0133 08       		.uleb128 0x8
+ 397 0134 C0010000 		.4byte	.LASF22
+ 398 0138 03       		.byte	0x3
+ 399 0139 26       		.byte	0x26
+ 400 013a 98000000 		.4byte	0x98
+ 401 013e 08       		.uleb128 0x8
+ 402 013f 1D010000 		.4byte	.LASF23
+ 403 0143 03       		.byte	0x3
+ 404 0144 27       		.byte	0x27
+ 405 0145 98000000 		.4byte	0x98
+ 406 0149 08       		.uleb128 0x8
+ 407 014a EE000000 		.4byte	.LASF24
+ 408 014e 03       		.byte	0x3
+ 409 014f 28       		.byte	0x28
+ 410 0150 98000000 		.4byte	0x98
+ 411 0154 08       		.uleb128 0x8
+ 412 0155 0C020000 		.4byte	.LASF25
+ 413 0159 03       		.byte	0x3
+ 414 015a 2C       		.byte	0x2c
+ 415 015b 5F010000 		.4byte	0x15f
+ 416 015f 05       		.uleb128 0x5
+ 417 0160 13010000 		.4byte	0x113
+ 418 0164 08       		.uleb128 0x8
+ 419 0165 E1010000 		.4byte	.LASF26
+ 420 0169 03       		.byte	0x3
+ 421 016a 2D       		.byte	0x2d
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 12
+
+
+ 422 016b 98000000 		.4byte	0x98
+ 423 016f 08       		.uleb128 0x8
+ 424 0170 39000000 		.4byte	.LASF27
+ 425 0174 03       		.byte	0x3
+ 426 0175 2E       		.byte	0x2e
+ 427 0176 98000000 		.4byte	0x98
+ 428 017a 08       		.uleb128 0x8
+ 429 017b 02010000 		.4byte	.LASF28
+ 430 017f 03       		.byte	0x3
+ 431 0180 2F       		.byte	0x2f
+ 432 0181 98000000 		.4byte	0x98
+ 433 0185 00       		.byte	0
+ 434              		.section	.debug_abbrev,"",%progbits
+ 435              	.Ldebug_abbrev0:
+ 436 0000 01       		.uleb128 0x1
+ 437 0001 11       		.uleb128 0x11
+ 438 0002 01       		.byte	0x1
+ 439 0003 25       		.uleb128 0x25
+ 440 0004 0E       		.uleb128 0xe
+ 441 0005 13       		.uleb128 0x13
+ 442 0006 0B       		.uleb128 0xb
+ 443 0007 03       		.uleb128 0x3
+ 444 0008 0E       		.uleb128 0xe
+ 445 0009 1B       		.uleb128 0x1b
+ 446 000a 0E       		.uleb128 0xe
+ 447 000b 55       		.uleb128 0x55
+ 448 000c 17       		.uleb128 0x17
+ 449 000d 11       		.uleb128 0x11
+ 450 000e 01       		.uleb128 0x1
+ 451 000f 10       		.uleb128 0x10
+ 452 0010 17       		.uleb128 0x17
+ 453 0011 00       		.byte	0
+ 454 0012 00       		.byte	0
+ 455 0013 02       		.uleb128 0x2
+ 456 0014 24       		.uleb128 0x24
+ 457 0015 00       		.byte	0
+ 458 0016 0B       		.uleb128 0xb
+ 459 0017 0B       		.uleb128 0xb
+ 460 0018 3E       		.uleb128 0x3e
+ 461 0019 0B       		.uleb128 0xb
+ 462 001a 03       		.uleb128 0x3
+ 463 001b 0E       		.uleb128 0xe
+ 464 001c 00       		.byte	0
+ 465 001d 00       		.byte	0
+ 466 001e 03       		.uleb128 0x3
+ 467 001f 24       		.uleb128 0x24
+ 468 0020 00       		.byte	0
+ 469 0021 0B       		.uleb128 0xb
+ 470 0022 0B       		.uleb128 0xb
+ 471 0023 3E       		.uleb128 0x3e
+ 472 0024 0B       		.uleb128 0xb
+ 473 0025 03       		.uleb128 0x3
+ 474 0026 08       		.uleb128 0x8
+ 475 0027 00       		.byte	0
+ 476 0028 00       		.byte	0
+ 477 0029 04       		.uleb128 0x4
+ 478 002a 16       		.uleb128 0x16
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 13
+
+
+ 479 002b 00       		.byte	0
+ 480 002c 03       		.uleb128 0x3
+ 481 002d 0E       		.uleb128 0xe
+ 482 002e 3A       		.uleb128 0x3a
+ 483 002f 0B       		.uleb128 0xb
+ 484 0030 3B       		.uleb128 0x3b
+ 485 0031 05       		.uleb128 0x5
+ 486 0032 49       		.uleb128 0x49
+ 487 0033 13       		.uleb128 0x13
+ 488 0034 00       		.byte	0
+ 489 0035 00       		.byte	0
+ 490 0036 05       		.uleb128 0x5
+ 491 0037 35       		.uleb128 0x35
+ 492 0038 00       		.byte	0
+ 493 0039 49       		.uleb128 0x49
+ 494 003a 13       		.uleb128 0x13
+ 495 003b 00       		.byte	0
+ 496 003c 00       		.byte	0
+ 497 003d 06       		.uleb128 0x6
+ 498 003e 2E       		.uleb128 0x2e
+ 499 003f 01       		.byte	0x1
+ 500 0040 3F       		.uleb128 0x3f
+ 501 0041 19       		.uleb128 0x19
+ 502 0042 03       		.uleb128 0x3
+ 503 0043 0E       		.uleb128 0xe
+ 504 0044 3A       		.uleb128 0x3a
+ 505 0045 0B       		.uleb128 0xb
+ 506 0046 3B       		.uleb128 0x3b
+ 507 0047 0B       		.uleb128 0xb
+ 508 0048 27       		.uleb128 0x27
+ 509 0049 19       		.uleb128 0x19
+ 510 004a 11       		.uleb128 0x11
+ 511 004b 01       		.uleb128 0x1
+ 512 004c 12       		.uleb128 0x12
+ 513 004d 06       		.uleb128 0x6
+ 514 004e 40       		.uleb128 0x40
+ 515 004f 18       		.uleb128 0x18
+ 516 0050 9742     		.uleb128 0x2117
+ 517 0052 19       		.uleb128 0x19
+ 518 0053 01       		.uleb128 0x1
+ 519 0054 13       		.uleb128 0x13
+ 520 0055 00       		.byte	0
+ 521 0056 00       		.byte	0
+ 522 0057 07       		.uleb128 0x7
+ 523 0058 34       		.uleb128 0x34
+ 524 0059 00       		.byte	0
+ 525 005a 03       		.uleb128 0x3
+ 526 005b 0E       		.uleb128 0xe
+ 527 005c 3A       		.uleb128 0x3a
+ 528 005d 0B       		.uleb128 0xb
+ 529 005e 3B       		.uleb128 0x3b
+ 530 005f 0B       		.uleb128 0xb
+ 531 0060 49       		.uleb128 0x49
+ 532 0061 13       		.uleb128 0x13
+ 533 0062 02       		.uleb128 0x2
+ 534 0063 17       		.uleb128 0x17
+ 535 0064 00       		.byte	0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 14
+
+
+ 536 0065 00       		.byte	0
+ 537 0066 08       		.uleb128 0x8
+ 538 0067 34       		.uleb128 0x34
+ 539 0068 00       		.byte	0
+ 540 0069 03       		.uleb128 0x3
+ 541 006a 0E       		.uleb128 0xe
+ 542 006b 3A       		.uleb128 0x3a
+ 543 006c 0B       		.uleb128 0xb
+ 544 006d 3B       		.uleb128 0x3b
+ 545 006e 0B       		.uleb128 0xb
+ 546 006f 49       		.uleb128 0x49
+ 547 0070 13       		.uleb128 0x13
+ 548 0071 3F       		.uleb128 0x3f
+ 549 0072 19       		.uleb128 0x19
+ 550 0073 3C       		.uleb128 0x3c
+ 551 0074 19       		.uleb128 0x19
+ 552 0075 00       		.byte	0
+ 553 0076 00       		.byte	0
+ 554 0077 09       		.uleb128 0x9
+ 555 0078 01       		.uleb128 0x1
+ 556 0079 01       		.byte	0x1
+ 557 007a 49       		.uleb128 0x49
+ 558 007b 13       		.uleb128 0x13
+ 559 007c 01       		.uleb128 0x1
+ 560 007d 13       		.uleb128 0x13
+ 561 007e 00       		.byte	0
+ 562 007f 00       		.byte	0
+ 563 0080 0A       		.uleb128 0xa
+ 564 0081 21       		.uleb128 0x21
+ 565 0082 00       		.byte	0
+ 566 0083 49       		.uleb128 0x49
+ 567 0084 13       		.uleb128 0x13
+ 568 0085 2F       		.uleb128 0x2f
+ 569 0086 0B       		.uleb128 0xb
+ 570 0087 00       		.byte	0
+ 571 0088 00       		.byte	0
+ 572 0089 00       		.byte	0
+ 573              		.section	.debug_loc,"",%progbits
+ 574              	.Ldebug_loc0:
+ 575              	.LLST0:
+ 576 0000 10000000 		.4byte	.LVL0
+ 577 0004 14000000 		.4byte	.LVL1
+ 578 0008 0100     		.2byte	0x1
+ 579 000a 53       		.byte	0x53
+ 580 000b 14000000 		.4byte	.LVL1
+ 581 000f 26000000 		.4byte	.LVL2
+ 582 0013 0200     		.2byte	0x2
+ 583 0015 72       		.byte	0x72
+ 584 0016 00       		.sleb128 0
+ 585 0017 3E000000 		.4byte	.LVL4
+ 586 001b 40000000 		.4byte	.LVL5
+ 587 001f 0200     		.2byte	0x2
+ 588 0021 72       		.byte	0x72
+ 589 0022 00       		.sleb128 0
+ 590 0023 00000000 		.4byte	0
+ 591 0027 00000000 		.4byte	0
+ 592              	.LLST1:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 15
+
+
+ 593 002b 0E000000 		.4byte	.LVL7
+ 594 002f 12000000 		.4byte	.LVL8
+ 595 0033 0100     		.2byte	0x1
+ 596 0035 53       		.byte	0x53
+ 597 0036 12000000 		.4byte	.LVL8
+ 598 003a 1A000000 		.4byte	.LVL10
+ 599 003e 0200     		.2byte	0x2
+ 600 0040 71       		.byte	0x71
+ 601 0041 00       		.sleb128 0
+ 602 0042 74000000 		.4byte	.LVL13
+ 603 0046 78000000 		.4byte	.LVL14
+ 604 004a 0100     		.2byte	0x1
+ 605 004c 53       		.byte	0x53
+ 606 004d 78000000 		.4byte	.LVL14
+ 607 0051 A0000000 		.4byte	.LFE1
+ 608 0055 0200     		.2byte	0x2
+ 609 0057 71       		.byte	0x71
+ 610 0058 00       		.sleb128 0
+ 611 0059 00000000 		.4byte	0
+ 612 005d 00000000 		.4byte	0
+ 613              	.LLST2:
+ 614 0061 18000000 		.4byte	.LVL9
+ 615 0065 6A000000 		.4byte	.LVL12
+ 616 0069 0100     		.2byte	0x1
+ 617 006b 52       		.byte	0x52
+ 618 006c 00000000 		.4byte	0
+ 619 0070 00000000 		.4byte	0
+ 620              		.section	.debug_aranges,"",%progbits
+ 621 0000 24000000 		.4byte	0x24
+ 622 0004 0200     		.2byte	0x2
+ 623 0006 00000000 		.4byte	.Ldebug_info0
+ 624 000a 04       		.byte	0x4
+ 625 000b 00       		.byte	0
+ 626 000c 0000     		.2byte	0
+ 627 000e 0000     		.2byte	0
+ 628 0010 00000000 		.4byte	.LFB0
+ 629 0014 9C000000 		.4byte	.LFE0-.LFB0
+ 630 0018 00000000 		.4byte	.LFB1
+ 631 001c A0000000 		.4byte	.LFE1-.LFB1
+ 632 0020 00000000 		.4byte	0
+ 633 0024 00000000 		.4byte	0
+ 634              		.section	.debug_ranges,"",%progbits
+ 635              	.Ldebug_ranges0:
+ 636 0000 00000000 		.4byte	.LFB0
+ 637 0004 9C000000 		.4byte	.LFE0
+ 638 0008 00000000 		.4byte	.LFB1
+ 639 000c A0000000 		.4byte	.LFE1
+ 640 0010 00000000 		.4byte	0
+ 641 0014 00000000 		.4byte	0
+ 642              		.section	.debug_line,"",%progbits
+ 643              	.Ldebug_line0:
+ 644 0000 A8000000 		.section	.debug_str,"MS",%progbits,1
+ 644      02005900 
+ 644      00000201 
+ 644      FB0E0D00 
+ 644      01010101 
+ 645              	.LASF30:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 16
+
+
+ 646 0000 2E5C4765 		.ascii	".\\Generated_Source\\PSoC5\\SPIM_1_INT.c\000"
+ 646      6E657261 
+ 646      7465645F 
+ 646      536F7572 
+ 646      63655C50 
+ 647              	.LASF3:
+ 648 0026 73686F72 		.ascii	"short unsigned int\000"
+ 648      7420756E 
+ 648      7369676E 
+ 648      65642069 
+ 648      6E7400
+ 649              	.LASF27:
+ 650 0039 5350494D 		.ascii	"SPIM_1_rxBufferWrite\000"
+ 650      5F315F72 
+ 650      78427566 
+ 650      66657257 
+ 650      72697465 
+ 651              	.LASF16:
+ 652 004e 5350494D 		.ascii	"SPIM_1_RX_ISR\000"
+ 652      5F315F52 
+ 652      585F4953 
+ 652      5200
+ 653              	.LASF31:
+ 654 005c 4A3A5C50 		.ascii	"J:\\PSoC_Creator\\CY8CKIT-059\\CY8CKIT-059_DSS_USB\\"
+ 654      536F435F 
+ 654      43726561 
+ 654      746F725C 
+ 654      43593843 
+ 655 008c 43593843 		.ascii	"CY8CKIT-059_DDS_USB.cydsn\000"
+ 655      4B49542D 
+ 655      3035395F 
+ 655      4444535F 
+ 655      5553422E 
+ 656              	.LASF18:
+ 657 00a6 72784461 		.ascii	"rxData\000"
+ 657      746100
+ 658              	.LASF9:
+ 659 00ad 666C6F61 		.ascii	"float\000"
+ 659      7400
+ 660              	.LASF21:
+ 661 00b3 5350494D 		.ascii	"SPIM_1_txBuffer\000"
+ 661      5F315F74 
+ 661      78427566 
+ 661      66657200 
+ 662              	.LASF1:
+ 663 00c3 756E7369 		.ascii	"unsigned char\000"
+ 663      676E6564 
+ 663      20636861 
+ 663      7200
+ 664              	.LASF13:
+ 665 00d1 72656738 		.ascii	"reg8\000"
+ 665      00
+ 666              	.LASF5:
+ 667 00d6 6C6F6E67 		.ascii	"long unsigned int\000"
+ 667      20756E73 
+ 667      69676E65 
+ 667      6420696E 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 17
+
+
+ 667      7400
+ 668              	.LASF12:
+ 669 00e8 75696E74 		.ascii	"uint8\000"
+ 669      3800
+ 670              	.LASF24:
+ 671 00ee 5350494D 		.ascii	"SPIM_1_txBufferFull\000"
+ 671      5F315F74 
+ 671      78427566 
+ 671      66657246 
+ 671      756C6C00 
+ 672              	.LASF28:
+ 673 0102 5350494D 		.ascii	"SPIM_1_rxBufferFull\000"
+ 673      5F315F72 
+ 673      78427566 
+ 673      66657246 
+ 673      756C6C00 
+ 674              	.LASF10:
+ 675 0116 646F7562 		.ascii	"double\000"
+ 675      6C6500
+ 676              	.LASF23:
+ 677 011d 5350494D 		.ascii	"SPIM_1_txBufferWrite\000"
+ 677      5F315F74 
+ 677      78427566 
+ 677      66657257 
+ 677      72697465 
+ 678              	.LASF29:
+ 679 0132 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 679      4320342E 
+ 679      392E3320 
+ 679      32303135 
+ 679      30333033 
+ 680 0165 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 680      20726576 
+ 680      6973696F 
+ 680      6E203232 
+ 680      31323230 
+ 681 0198 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 681      66756E63 
+ 681      74696F6E 
+ 681      2D736563 
+ 681      74696F6E 
+ 682              	.LASF22:
+ 683 01c0 5350494D 		.ascii	"SPIM_1_txBufferRead\000"
+ 683      5F315F74 
+ 683      78427566 
+ 683      66657252 
+ 683      65616400 
+ 684              	.LASF8:
+ 685 01d4 756E7369 		.ascii	"unsigned int\000"
+ 685      676E6564 
+ 685      20696E74 
+ 685      00
+ 686              	.LASF26:
+ 687 01e1 5350494D 		.ascii	"SPIM_1_rxBufferRead\000"
+ 687      5F315F72 
+ 687      78427566 
+ 687      66657252 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 18
+
+
+ 687      65616400 
+ 688              	.LASF7:
+ 689 01f5 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 689      206C6F6E 
+ 689      6720756E 
+ 689      7369676E 
+ 689      65642069 
+ 690              	.LASF25:
+ 691 020c 5350494D 		.ascii	"SPIM_1_rxBuffer\000"
+ 691      5F315F72 
+ 691      78427566 
+ 691      66657200 
+ 692              	.LASF14:
+ 693 021c 73697A65 		.ascii	"sizetype\000"
+ 693      74797065 
+ 693      00
+ 694              	.LASF6:
+ 695 0225 6C6F6E67 		.ascii	"long long int\000"
+ 695      206C6F6E 
+ 695      6720696E 
+ 695      7400
+ 696              	.LASF11:
+ 697 0233 63686172 		.ascii	"char\000"
+ 697      00
+ 698              	.LASF2:
+ 699 0238 73686F72 		.ascii	"short int\000"
+ 699      7420696E 
+ 699      7400
+ 700              	.LASF20:
+ 701 0242 5350494D 		.ascii	"SPIM_1_swStatusRx\000"
+ 701      5F315F73 
+ 701      77537461 
+ 701      74757352 
+ 701      7800
+ 702              	.LASF4:
+ 703 0254 6C6F6E67 		.ascii	"long int\000"
+ 703      20696E74 
+ 703      00
+ 704              	.LASF17:
+ 705 025d 746D7053 		.ascii	"tmpStatus\000"
+ 705      74617475 
+ 705      7300
+ 706              	.LASF19:
+ 707 0267 5350494D 		.ascii	"SPIM_1_swStatusTx\000"
+ 707      5F315F73 
+ 707      77537461 
+ 707      74757354 
+ 707      7800
+ 708              	.LASF0:
+ 709 0279 7369676E 		.ascii	"signed char\000"
+ 709      65642063 
+ 709      68617200 
+ 710              	.LASF15:
+ 711 0285 5350494D 		.ascii	"SPIM_1_TX_ISR\000"
+ 711      5F315F54 
+ 711      585F4953 
+ 711      5200
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccyK6jx6.s 			page 19
+
+
+ 712              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

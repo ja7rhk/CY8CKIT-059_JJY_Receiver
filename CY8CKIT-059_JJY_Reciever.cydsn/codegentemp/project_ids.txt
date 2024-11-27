@@ -1,0 +1,6 @@
+E:\PSoC_Creator\CY8CKIT-059\CY8CKIT-059_JJY_Receiver\CY8CKIT-059_JJY_Reciever.cydsn\CY8CKIT-059_JJY_Reciever.cyprj|65ab5364-d56b-4c9f-a149-d0b8456865b7
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|662a748c-615e-4e5e-ae27-894b02e82537
+C:\Users\koseki\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|5ec57356-770c-4329-8476-b66a2ca73e90
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|42876a2d-22a9-4c92-8cd4-1eae9585040a
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|ee0a83a5-e0f2-4955-9ffb-48f7aa48777b
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|118825eb-ee3d-480e-8e1f-04599e7f99b1

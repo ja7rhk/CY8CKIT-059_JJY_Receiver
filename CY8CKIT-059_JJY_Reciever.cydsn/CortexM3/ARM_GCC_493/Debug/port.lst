@@ -1,0 +1,2463 @@
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"port.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.prvPortStartFirstTask,"ax",%progbits
+  19              		.align	2
+  20              		.thumb
+  21              		.thumb_func
+  22              		.type	prvPortStartFirstTask, %function
+  23              	prvPortStartFirstTask:
+  24              	.LFB67:
+  25              		.file 1 "..\\FreeRTOS\\port.c"
+   1:..\FreeRTOS/port.c **** /*
+   2:..\FreeRTOS/port.c ****     FreeRTOS V8.2.3 - Copyright (C) 2015 Real Time Engineers Ltd.
+   3:..\FreeRTOS/port.c ****     All rights reserved
+   4:..\FreeRTOS/port.c **** 
+   5:..\FreeRTOS/port.c ****     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
+   6:..\FreeRTOS/port.c **** 
+   7:..\FreeRTOS/port.c ****     This file is part of the FreeRTOS distribution.
+   8:..\FreeRTOS/port.c **** 
+   9:..\FreeRTOS/port.c ****     FreeRTOS is free software; you can redistribute it and/or modify it under
+  10:..\FreeRTOS/port.c ****     the terms of the GNU General Public License (version 2) as published by the
+  11:..\FreeRTOS/port.c ****     Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
+  12:..\FreeRTOS/port.c **** 
+  13:..\FreeRTOS/port.c ****     ***************************************************************************
+  14:..\FreeRTOS/port.c ****     >>!   NOTE: The modification to the GPL is included to allow you to     !<<
+  15:..\FreeRTOS/port.c ****     >>!   distribute a combined work that includes FreeRTOS without being   !<<
+  16:..\FreeRTOS/port.c ****     >>!   obliged to provide the source code for proprietary components     !<<
+  17:..\FreeRTOS/port.c ****     >>!   outside of the FreeRTOS kernel.                                   !<<
+  18:..\FreeRTOS/port.c ****     ***************************************************************************
+  19:..\FreeRTOS/port.c **** 
+  20:..\FreeRTOS/port.c ****     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
+  21:..\FreeRTOS/port.c ****     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  22:..\FreeRTOS/port.c ****     FOR A PARTICULAR PURPOSE.  Full license text is available on the following
+  23:..\FreeRTOS/port.c ****     link: http://www.freertos.org/a00114.html
+  24:..\FreeRTOS/port.c **** 
+  25:..\FreeRTOS/port.c ****     ***************************************************************************
+  26:..\FreeRTOS/port.c ****      *                                                                       *
+  27:..\FreeRTOS/port.c ****      *    FreeRTOS provides completely free yet professionally developed,    *
+  28:..\FreeRTOS/port.c ****      *    robust, strictly quality controlled, supported, and cross          *
+  29:..\FreeRTOS/port.c ****      *    platform software that is more than just the market leader, it     *
+  30:..\FreeRTOS/port.c ****      *    is the industry's de facto standard.                               *
+  31:..\FreeRTOS/port.c ****      *                                                                       *
+  32:..\FreeRTOS/port.c ****      *    Help yourself get started quickly while simultaneously helping     *
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 2
+
+
+  33:..\FreeRTOS/port.c ****      *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+  34:..\FreeRTOS/port.c ****      *    tutorial book, reference manual, or both:                          *
+  35:..\FreeRTOS/port.c ****      *    http://www.FreeRTOS.org/Documentation                              *
+  36:..\FreeRTOS/port.c ****      *                                                                       *
+  37:..\FreeRTOS/port.c ****     ***************************************************************************
+  38:..\FreeRTOS/port.c **** 
+  39:..\FreeRTOS/port.c ****     http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
+  40:..\FreeRTOS/port.c ****     the FAQ page "My application does not run, what could be wrong?".  Have you
+  41:..\FreeRTOS/port.c ****     defined configASSERT()?
+  42:..\FreeRTOS/port.c **** 
+  43:..\FreeRTOS/port.c ****     http://www.FreeRTOS.org/support - In return for receiving this top quality
+  44:..\FreeRTOS/port.c ****     embedded software for free we request you assist our global community by
+  45:..\FreeRTOS/port.c ****     participating in the support forum.
+  46:..\FreeRTOS/port.c **** 
+  47:..\FreeRTOS/port.c ****     http://www.FreeRTOS.org/training - Investing in training allows your team to
+  48:..\FreeRTOS/port.c ****     be as productive as possible as early as possible.  Now you can receive
+  49:..\FreeRTOS/port.c ****     FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+  50:..\FreeRTOS/port.c ****     Ltd, and the world's leading authority on the world's leading RTOS.
+  51:..\FreeRTOS/port.c **** 
+  52:..\FreeRTOS/port.c ****     http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
+  53:..\FreeRTOS/port.c ****     including FreeRTOS+Trace - an indispensable productivity tool, a DOS
+  54:..\FreeRTOS/port.c ****     compatible FAT file system, and our tiny thread aware UDP/IP stack.
+  55:..\FreeRTOS/port.c **** 
+  56:..\FreeRTOS/port.c ****     http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+  57:..\FreeRTOS/port.c ****     Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+  58:..\FreeRTOS/port.c **** 
+  59:..\FreeRTOS/port.c ****     http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
+  60:..\FreeRTOS/port.c ****     Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+  61:..\FreeRTOS/port.c ****     licenses offer ticketed support, indemnification and commercial middleware.
+  62:..\FreeRTOS/port.c **** 
+  63:..\FreeRTOS/port.c ****     http://www.SafeRTOS.com - High Integrity Systems also provide a safety
+  64:..\FreeRTOS/port.c ****     engineered and independently SIL3 certified version for use in safety and
+  65:..\FreeRTOS/port.c ****     mission critical applications that require provable dependability.
+  66:..\FreeRTOS/port.c **** 
+  67:..\FreeRTOS/port.c ****     1 tab == 4 spaces!
+  68:..\FreeRTOS/port.c **** */
+  69:..\FreeRTOS/port.c **** 
+  70:..\FreeRTOS/port.c **** /*-----------------------------------------------------------
+  71:..\FreeRTOS/port.c ****  * Implementation of functions defined in portable.h for the ARM CM3 port.
+  72:..\FreeRTOS/port.c ****  *----------------------------------------------------------*/
+  73:..\FreeRTOS/port.c **** 
+  74:..\FreeRTOS/port.c **** /* Scheduler includes. */
+  75:..\FreeRTOS/port.c **** #include "FreeRTOS.h"
+  76:..\FreeRTOS/port.c **** #include "task.h"
+  77:..\FreeRTOS/port.c **** 
+  78:..\FreeRTOS/port.c **** /* For backward compatibility, ensure configKERNEL_INTERRUPT_PRIORITY is
+  79:..\FreeRTOS/port.c **** defined.  The value should also ensure backward compatibility.
+  80:..\FreeRTOS/port.c **** FreeRTOS.org versions prior to V4.4.0 did not include this definition. */
+  81:..\FreeRTOS/port.c **** #ifndef configKERNEL_INTERRUPT_PRIORITY
+  82:..\FreeRTOS/port.c **** 	#define configKERNEL_INTERRUPT_PRIORITY 255
+  83:..\FreeRTOS/port.c **** #endif
+  84:..\FreeRTOS/port.c **** 
+  85:..\FreeRTOS/port.c **** #ifndef configSYSTICK_CLOCK_HZ
+  86:..\FreeRTOS/port.c **** 	#define configSYSTICK_CLOCK_HZ configCPU_CLOCK_HZ
+  87:..\FreeRTOS/port.c **** 	/* Ensure the SysTick is clocked at the same frequency as the core. */
+  88:..\FreeRTOS/port.c **** 	#define portNVIC_SYSTICK_CLK_BIT	( 1UL << 2UL )
+  89:..\FreeRTOS/port.c **** #else
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 3
+
+
+  90:..\FreeRTOS/port.c **** 	/* The way the SysTick is clocked is not modified in case it is not the same
+  91:..\FreeRTOS/port.c **** 	as the core. */
+  92:..\FreeRTOS/port.c **** 	#define portNVIC_SYSTICK_CLK_BIT	( 0 )
+  93:..\FreeRTOS/port.c **** #endif
+  94:..\FreeRTOS/port.c **** 
+  95:..\FreeRTOS/port.c **** /* Constants required to manipulate the core.  Registers first... */
+  96:..\FreeRTOS/port.c **** #define portNVIC_SYSTICK_CTRL_REG			( * ( ( volatile uint32_t * ) 0xe000e010 ) )
+  97:..\FreeRTOS/port.c **** #define portNVIC_SYSTICK_LOAD_REG			( * ( ( volatile uint32_t * ) 0xe000e014 ) )
+  98:..\FreeRTOS/port.c **** #define portNVIC_SYSTICK_CURRENT_VALUE_REG	( * ( ( volatile uint32_t * ) 0xe000e018 ) )
+  99:..\FreeRTOS/port.c **** #define portNVIC_SYSPRI2_REG				( * ( ( volatile uint32_t * ) 0xe000ed20 ) )
+ 100:..\FreeRTOS/port.c **** /* ...then bits in the registers. */
+ 101:..\FreeRTOS/port.c **** #define portNVIC_SYSTICK_INT_BIT			( 1UL << 1UL )
+ 102:..\FreeRTOS/port.c **** #define portNVIC_SYSTICK_ENABLE_BIT			( 1UL << 0UL )
+ 103:..\FreeRTOS/port.c **** #define portNVIC_SYSTICK_COUNT_FLAG_BIT		( 1UL << 16UL )
+ 104:..\FreeRTOS/port.c **** #define portNVIC_PENDSVCLEAR_BIT 			( 1UL << 27UL )
+ 105:..\FreeRTOS/port.c **** #define portNVIC_PEND_SYSTICK_CLEAR_BIT		( 1UL << 25UL )
+ 106:..\FreeRTOS/port.c **** 
+ 107:..\FreeRTOS/port.c **** #define portNVIC_PENDSV_PRI					( ( ( uint32_t ) configKERNEL_INTERRUPT_PRIORITY ) << 16UL )
+ 108:..\FreeRTOS/port.c **** #define portNVIC_SYSTICK_PRI				( ( ( uint32_t ) configKERNEL_INTERRUPT_PRIORITY ) << 24UL )
+ 109:..\FreeRTOS/port.c **** 
+ 110:..\FreeRTOS/port.c **** /* Constants required to check the validity of an interrupt priority. */
+ 111:..\FreeRTOS/port.c **** #define portFIRST_USER_INTERRUPT_NUMBER		( 16 )
+ 112:..\FreeRTOS/port.c **** #define portNVIC_IP_REGISTERS_OFFSET_16 	( 0xE000E3F0 )
+ 113:..\FreeRTOS/port.c **** #define portAIRCR_REG						( * ( ( volatile uint32_t * ) 0xE000ED0C ) )
+ 114:..\FreeRTOS/port.c **** #define portMAX_8_BIT_VALUE					( ( uint8_t ) 0xff )
+ 115:..\FreeRTOS/port.c **** #define portTOP_BIT_OF_BYTE					( ( uint8_t ) 0x80 )
+ 116:..\FreeRTOS/port.c **** #define portMAX_PRIGROUP_BITS				( ( uint8_t ) 7 )
+ 117:..\FreeRTOS/port.c **** #define portPRIORITY_GROUP_MASK				( 0x07UL << 8UL )
+ 118:..\FreeRTOS/port.c **** #define portPRIGROUP_SHIFT					( 8UL )
+ 119:..\FreeRTOS/port.c **** 
+ 120:..\FreeRTOS/port.c **** /* Masks off all bits but the VECTACTIVE bits in the ICSR register. */
+ 121:..\FreeRTOS/port.c **** #define portVECTACTIVE_MASK					( 0xFFUL )
+ 122:..\FreeRTOS/port.c **** 
+ 123:..\FreeRTOS/port.c **** /* Constants required to set up the initial stack. */
+ 124:..\FreeRTOS/port.c **** #define portINITIAL_XPSR					( 0x01000000UL )
+ 125:..\FreeRTOS/port.c **** 
+ 126:..\FreeRTOS/port.c **** /* The systick is a 24-bit counter. */
+ 127:..\FreeRTOS/port.c **** #define portMAX_24_BIT_NUMBER				( 0xffffffUL )
+ 128:..\FreeRTOS/port.c **** 
+ 129:..\FreeRTOS/port.c **** /* A fiddle factor to estimate the number of SysTick counts that would have
+ 130:..\FreeRTOS/port.c **** occurred while the SysTick counter is stopped during tickless idle
+ 131:..\FreeRTOS/port.c **** calculations. */
+ 132:..\FreeRTOS/port.c **** #define portMISSED_COUNTS_FACTOR			( 45UL )
+ 133:..\FreeRTOS/port.c **** 
+ 134:..\FreeRTOS/port.c **** /* Let the user override the pre-loading of the initial LR with the address of
+ 135:..\FreeRTOS/port.c **** prvTaskExitError() in case it messes up unwinding of the stack in the
+ 136:..\FreeRTOS/port.c **** debugger. */
+ 137:..\FreeRTOS/port.c **** #ifdef configTASK_RETURN_ADDRESS
+ 138:..\FreeRTOS/port.c **** 	#define portTASK_RETURN_ADDRESS	configTASK_RETURN_ADDRESS
+ 139:..\FreeRTOS/port.c **** #else
+ 140:..\FreeRTOS/port.c **** 	#define portTASK_RETURN_ADDRESS	prvTaskExitError
+ 141:..\FreeRTOS/port.c **** #endif
+ 142:..\FreeRTOS/port.c **** 
+ 143:..\FreeRTOS/port.c **** /* Each task maintains its own interrupt status in the critical nesting
+ 144:..\FreeRTOS/port.c **** variable. */
+ 145:..\FreeRTOS/port.c **** static UBaseType_t uxCriticalNesting = 0xaaaaaaaa;
+ 146:..\FreeRTOS/port.c **** 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 4
+
+
+ 147:..\FreeRTOS/port.c **** /*
+ 148:..\FreeRTOS/port.c ****  * Setup the timer to generate the tick interrupts.  The implementation in this
+ 149:..\FreeRTOS/port.c ****  * file is weak to allow application writers to change the timer used to
+ 150:..\FreeRTOS/port.c ****  * generate the tick interrupt.
+ 151:..\FreeRTOS/port.c ****  */
+ 152:..\FreeRTOS/port.c **** void vPortSetupTimerInterrupt( void );
+ 153:..\FreeRTOS/port.c **** 
+ 154:..\FreeRTOS/port.c **** /*
+ 155:..\FreeRTOS/port.c ****  * Exception handlers.
+ 156:..\FreeRTOS/port.c ****  */
+ 157:..\FreeRTOS/port.c **** void xPortPendSVHandler( void ) __attribute__ (( naked ));
+ 158:..\FreeRTOS/port.c **** void xPortSysTickHandler( void );
+ 159:..\FreeRTOS/port.c **** void vPortSVCHandler( void ) __attribute__ (( naked ));
+ 160:..\FreeRTOS/port.c **** 
+ 161:..\FreeRTOS/port.c **** /*
+ 162:..\FreeRTOS/port.c ****  * Start first task is a separate function so it can be tested in isolation.
+ 163:..\FreeRTOS/port.c ****  */
+ 164:..\FreeRTOS/port.c **** static void prvPortStartFirstTask( void ) __attribute__ (( naked ));
+ 165:..\FreeRTOS/port.c **** 
+ 166:..\FreeRTOS/port.c **** /*
+ 167:..\FreeRTOS/port.c ****  * Used to catch tasks that attempt to return from their implementing function.
+ 168:..\FreeRTOS/port.c ****  */
+ 169:..\FreeRTOS/port.c **** static void prvTaskExitError( void );
+ 170:..\FreeRTOS/port.c **** 
+ 171:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 172:..\FreeRTOS/port.c **** 
+ 173:..\FreeRTOS/port.c **** /*
+ 174:..\FreeRTOS/port.c ****  * The number of SysTick increments that make up one tick period.
+ 175:..\FreeRTOS/port.c ****  */
+ 176:..\FreeRTOS/port.c **** #if configUSE_TICKLESS_IDLE == 1
+ 177:..\FreeRTOS/port.c **** 	static uint32_t ulTimerCountsForOneTick = 0;
+ 178:..\FreeRTOS/port.c **** #endif /* configUSE_TICKLESS_IDLE */
+ 179:..\FreeRTOS/port.c **** 
+ 180:..\FreeRTOS/port.c **** /*
+ 181:..\FreeRTOS/port.c ****  * The maximum number of tick periods that can be suppressed is limited by the
+ 182:..\FreeRTOS/port.c ****  * 24 bit resolution of the SysTick timer.
+ 183:..\FreeRTOS/port.c ****  */
+ 184:..\FreeRTOS/port.c **** #if configUSE_TICKLESS_IDLE == 1
+ 185:..\FreeRTOS/port.c **** 	static uint32_t xMaximumPossibleSuppressedTicks = 0;
+ 186:..\FreeRTOS/port.c **** #endif /* configUSE_TICKLESS_IDLE */
+ 187:..\FreeRTOS/port.c **** 
+ 188:..\FreeRTOS/port.c **** /*
+ 189:..\FreeRTOS/port.c ****  * Compensate for the CPU cycles that pass while the SysTick is stopped (low
+ 190:..\FreeRTOS/port.c ****  * power functionality only.
+ 191:..\FreeRTOS/port.c ****  */
+ 192:..\FreeRTOS/port.c **** #if configUSE_TICKLESS_IDLE == 1
+ 193:..\FreeRTOS/port.c **** 	static uint32_t ulStoppedTimerCompensation = 0;
+ 194:..\FreeRTOS/port.c **** #endif /* configUSE_TICKLESS_IDLE */
+ 195:..\FreeRTOS/port.c **** 
+ 196:..\FreeRTOS/port.c **** /*
+ 197:..\FreeRTOS/port.c ****  * Used by the portASSERT_IF_INTERRUPT_PRIORITY_INVALID() macro to ensure
+ 198:..\FreeRTOS/port.c ****  * FreeRTOS API functions are not called from interrupts that have been assigned
+ 199:..\FreeRTOS/port.c ****  * a priority above configMAX_SYSCALL_INTERRUPT_PRIORITY.
+ 200:..\FreeRTOS/port.c ****  */
+ 201:..\FreeRTOS/port.c **** #if ( configASSERT_DEFINED == 1 )
+ 202:..\FreeRTOS/port.c **** 	 static uint8_t ucMaxSysCallPriority = 0;
+ 203:..\FreeRTOS/port.c **** 	 static uint32_t ulMaxPRIGROUPValue = 0;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 5
+
+
+ 204:..\FreeRTOS/port.c **** 	 static const volatile uint8_t * const pcInterruptPriorityRegisters = ( const volatile uint8_t * c
+ 205:..\FreeRTOS/port.c **** #endif /* configASSERT_DEFINED */
+ 206:..\FreeRTOS/port.c **** 
+ 207:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 208:..\FreeRTOS/port.c **** 
+ 209:..\FreeRTOS/port.c **** /*
+ 210:..\FreeRTOS/port.c ****  * See header file for description.
+ 211:..\FreeRTOS/port.c ****  */
+ 212:..\FreeRTOS/port.c **** StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParam
+ 213:..\FreeRTOS/port.c **** {
+ 214:..\FreeRTOS/port.c **** 	/* Simulate the stack frame as it would be created by a context switch
+ 215:..\FreeRTOS/port.c **** 	interrupt. */
+ 216:..\FreeRTOS/port.c **** 	pxTopOfStack--; /* Offset added to account for the way the MCU uses the stack on entry/exit of int
+ 217:..\FreeRTOS/port.c **** 	*pxTopOfStack = portINITIAL_XPSR;	/* xPSR */
+ 218:..\FreeRTOS/port.c **** 	pxTopOfStack--;
+ 219:..\FreeRTOS/port.c **** 	*pxTopOfStack = ( StackType_t ) pxCode;	/* PC */
+ 220:..\FreeRTOS/port.c **** 	pxTopOfStack--;
+ 221:..\FreeRTOS/port.c **** 	*pxTopOfStack = ( StackType_t ) portTASK_RETURN_ADDRESS;	/* LR */
+ 222:..\FreeRTOS/port.c **** 	pxTopOfStack -= 5;	/* R12, R3, R2 and R1. */
+ 223:..\FreeRTOS/port.c **** 	*pxTopOfStack = ( StackType_t ) pvParameters;	/* R0 */
+ 224:..\FreeRTOS/port.c **** 	pxTopOfStack -= 8;	/* R11, R10, R9, R8, R7, R6, R5 and R4. */
+ 225:..\FreeRTOS/port.c **** 
+ 226:..\FreeRTOS/port.c **** 	return pxTopOfStack;
+ 227:..\FreeRTOS/port.c **** }
+ 228:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 229:..\FreeRTOS/port.c **** 
+ 230:..\FreeRTOS/port.c **** static void prvTaskExitError( void )
+ 231:..\FreeRTOS/port.c **** {
+ 232:..\FreeRTOS/port.c **** 	/* A function that implements a task must not exit or attempt to return to
+ 233:..\FreeRTOS/port.c **** 	its caller as there is nothing to return to.  If a task wants to exit it
+ 234:..\FreeRTOS/port.c **** 	should instead call vTaskDelete( NULL ).
+ 235:..\FreeRTOS/port.c **** 
+ 236:..\FreeRTOS/port.c **** 	Artificially force an assert() to be triggered if configASSERT() is
+ 237:..\FreeRTOS/port.c **** 	defined, then stop here so application writers can catch the error. */
+ 238:..\FreeRTOS/port.c **** 	configASSERT( uxCriticalNesting == ~0UL );
+ 239:..\FreeRTOS/port.c **** 	portDISABLE_INTERRUPTS();
+ 240:..\FreeRTOS/port.c **** 	for( ;; );
+ 241:..\FreeRTOS/port.c **** }
+ 242:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 243:..\FreeRTOS/port.c **** 
+ 244:..\FreeRTOS/port.c **** void vPortSVCHandler( void )
+ 245:..\FreeRTOS/port.c **** {
+ 246:..\FreeRTOS/port.c **** 	__asm volatile (
+ 247:..\FreeRTOS/port.c **** 					"	ldr	r3, pxCurrentTCBConst2		\n" /* Restore the context. */
+ 248:..\FreeRTOS/port.c **** 					"	ldr r1, [r3]					\n" /* Use pxCurrentTCBConst to get the pxCurrentTCB address. */
+ 249:..\FreeRTOS/port.c **** 					"	ldr r0, [r1]					\n" /* The first item in pxCurrentTCB is the task top of stack. */
+ 250:..\FreeRTOS/port.c **** 					"	ldmia r0!, {r4-r11}				\n" /* Pop the registers that are not automatically saved on exceptio
+ 251:..\FreeRTOS/port.c **** 					"	msr psp, r0						\n" /* Restore the task stack pointer. */
+ 252:..\FreeRTOS/port.c **** 					"	isb								\n"
+ 253:..\FreeRTOS/port.c **** 					"	mov r0, #0 						\n"
+ 254:..\FreeRTOS/port.c **** 					"	msr	basepri, r0					\n"
+ 255:..\FreeRTOS/port.c **** 					"	orr r14, #0xd					\n"
+ 256:..\FreeRTOS/port.c **** 					"	bx r14							\n"
+ 257:..\FreeRTOS/port.c **** 					"									\n"
+ 258:..\FreeRTOS/port.c **** 					"	.align 2						\n"
+ 259:..\FreeRTOS/port.c **** 					"pxCurrentTCBConst2: .word pxCurrentTCB				\n"
+ 260:..\FreeRTOS/port.c **** 				);
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 6
+
+
+ 261:..\FreeRTOS/port.c **** }
+ 262:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 263:..\FreeRTOS/port.c **** 
+ 264:..\FreeRTOS/port.c **** static void prvPortStartFirstTask( void )
+ 265:..\FreeRTOS/port.c **** {
+  26              		.loc 1 265 0
+  27              		.cfi_startproc
+  28              		@ Naked Function: prologue and epilogue provided by programmer.
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+ 266:..\FreeRTOS/port.c **** 	__asm volatile(
+  31              		.loc 1 266 0
+  32              	@ 266 "..\FreeRTOS\port.c" 1
+  33 0000 0648     		 ldr r0, =0xE000ED08 	
+  34 0002 0068     	 ldr r0, [r0] 			
+  35 0004 0068     	 ldr r0, [r0] 			
+  36 0006 80F30888 	 msr msp, r0			
+  37 000a 62B6     	 cpsie i				
+  38 000c 61B6     	 cpsie f				
+  39 000e BFF34F8F 	 dsb					
+  40 0012 BFF36F8F 	 isb					
+  41 0016 00DF     	 svc 0					
+  42 0018 00BF     	 nop					
+  43              	
+  44              	@ 0 "" 2
+ 267:..\FreeRTOS/port.c **** 					" ldr r0, =0xE000ED08 	\n" /* Use the NVIC offset register to locate the stack. */
+ 268:..\FreeRTOS/port.c **** 					" ldr r0, [r0] 			\n"
+ 269:..\FreeRTOS/port.c **** 					" ldr r0, [r0] 			\n"
+ 270:..\FreeRTOS/port.c **** 					" msr msp, r0			\n" /* Set the msp back to the start of the stack. */
+ 271:..\FreeRTOS/port.c **** 					" cpsie i				\n" /* Globally enable interrupts. */
+ 272:..\FreeRTOS/port.c **** 					" cpsie f				\n"
+ 273:..\FreeRTOS/port.c **** 					" dsb					\n"
+ 274:..\FreeRTOS/port.c **** 					" isb					\n"
+ 275:..\FreeRTOS/port.c **** 					" svc 0					\n" /* System call to start first task. */
+ 276:..\FreeRTOS/port.c **** 					" nop					\n"
+ 277:..\FreeRTOS/port.c **** 				);
+ 278:..\FreeRTOS/port.c **** }
+  45              		.loc 1 278 0
+  46              		.thumb
+  47              		.cfi_endproc
+  48              	.LFE67:
+  49              		.size	prvPortStartFirstTask, .-prvPortStartFirstTask
+  50 001a 0000     		.section	.text.pxPortInitialiseStack,"ax",%progbits
+  51              		.align	2
+  52              		.global	pxPortInitialiseStack
+  53              		.thumb
+  54              		.thumb_func
+  55              		.type	pxPortInitialiseStack, %function
+  56              	pxPortInitialiseStack:
+  57              	.LFB64:
+ 213:..\FreeRTOS/port.c **** 	/* Simulate the stack frame as it would be created by a context switch
+  58              		.loc 1 213 0
+  59              		.cfi_startproc
+  60              		@ args = 0, pretend = 0, frame = 0
+  61              		@ frame_needed = 0, uses_anonymous_args = 0
+  62              		@ link register save eliminated.
+  63              	.LVL0:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 7
+
+
+ 217:..\FreeRTOS/port.c **** 	pxTopOfStack--;
+  64              		.loc 1 217 0
+  65 0000 4FF08073 		mov	r3, #16777216
+  66 0004 40F8043C 		str	r3, [r0, #-4]
+  67              	.LVL1:
+ 219:..\FreeRTOS/port.c **** 	pxTopOfStack--;
+  68              		.loc 1 219 0
+  69 0008 40F8081C 		str	r1, [r0, #-8]
+  70              	.LVL2:
+ 221:..\FreeRTOS/port.c **** 	pxTopOfStack -= 5;	/* R12, R3, R2 and R1. */
+  71              		.loc 1 221 0
+  72 000c 034B     		ldr	r3, .L3
+  73 000e 40F80C3C 		str	r3, [r0, #-12]
+  74              	.LVL3:
+ 223:..\FreeRTOS/port.c **** 	pxTopOfStack -= 8;	/* R11, R10, R9, R8, R7, R6, R5 and R4. */
+  75              		.loc 1 223 0
+  76 0012 40F8202C 		str	r2, [r0, #-32]
+  77              	.LVL4:
+ 227:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+  78              		.loc 1 227 0
+  79 0016 4038     		subs	r0, r0, #64
+  80              	.LVL5:
+  81 0018 7047     		bx	lr
+  82              	.L4:
+  83 001a 00BF     		.align	2
+  84              	.L3:
+  85 001c 00000000 		.word	prvTaskExitError
+  86              		.cfi_endproc
+  87              	.LFE64:
+  88              		.size	pxPortInitialiseStack, .-pxPortInitialiseStack
+  89              		.section	.text.vPortSVCHandler,"ax",%progbits
+  90              		.align	2
+  91              		.global	vPortSVCHandler
+  92              		.thumb
+  93              		.thumb_func
+  94              		.type	vPortSVCHandler, %function
+  95              	vPortSVCHandler:
+  96              	.LFB66:
+ 245:..\FreeRTOS/port.c **** 	__asm volatile (
+  97              		.loc 1 245 0
+  98              		.cfi_startproc
+  99              		@ Naked Function: prologue and epilogue provided by programmer.
+ 100              		@ args = 0, pretend = 0, frame = 0
+ 101              		@ frame_needed = 0, uses_anonymous_args = 0
+ 246:..\FreeRTOS/port.c **** 					"	ldr	r3, pxCurrentTCBConst2		\n" /* Restore the context. */
+ 102              		.loc 1 246 0
+ 103              	@ 246 "..\FreeRTOS\port.c" 1
+ 104 0000 074B     			ldr	r3, pxCurrentTCBConst2		
+ 105 0002 1968     		ldr r1, [r3]					
+ 106 0004 0868     		ldr r0, [r1]					
+ 107 0006 B0E8F00F 		ldmia r0!, {r4-r11}				
+ 108 000a 80F30988 		msr psp, r0						
+ 109 000e BFF36F8F 		isb								
+ 110 0012 4FF00000 		mov r0, #0 						
+ 111 0016 80F31188 		msr	basepri, r0					
+ 112 001a 4EF00D0E 		orr r14, #0xd					
+ 113 001e 7047     		bx r14							
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 8
+
+
+ 114              										
+ 115              		.align 2						
+ 116 0020 00000000 	pxCurrentTCBConst2: .word pxCurrentTCB				
+ 117              	
+ 118              	@ 0 "" 2
+ 261:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 119              		.loc 1 261 0
+ 120              		.thumb
+ 121              		.cfi_endproc
+ 122              	.LFE66:
+ 123              		.size	vPortSVCHandler, .-vPortSVCHandler
+ 124              		.section	.text.vPortEndScheduler,"ax",%progbits
+ 125              		.align	2
+ 126              		.global	vPortEndScheduler
+ 127              		.thumb
+ 128              		.thumb_func
+ 129              		.type	vPortEndScheduler, %function
+ 130              	vPortEndScheduler:
+ 131              	.LFB69:
+ 279:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 280:..\FreeRTOS/port.c **** 
+ 281:..\FreeRTOS/port.c **** /*
+ 282:..\FreeRTOS/port.c ****  * See header file for description.
+ 283:..\FreeRTOS/port.c ****  */
+ 284:..\FreeRTOS/port.c **** BaseType_t xPortStartScheduler( void )
+ 285:..\FreeRTOS/port.c **** {
+ 286:..\FreeRTOS/port.c **** 	/* configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to 0.
+ 287:..\FreeRTOS/port.c **** 	See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html */
+ 288:..\FreeRTOS/port.c **** 	configASSERT( configMAX_SYSCALL_INTERRUPT_PRIORITY );
+ 289:..\FreeRTOS/port.c **** 
+ 290:..\FreeRTOS/port.c **** 	#if( configASSERT_DEFINED == 1 )
+ 291:..\FreeRTOS/port.c **** 	{
+ 292:..\FreeRTOS/port.c **** 		volatile uint32_t ulOriginalPriority;
+ 293:..\FreeRTOS/port.c **** 		volatile uint8_t * const pucFirstUserPriorityRegister = ( volatile uint8_t * const ) ( portNVIC_I
+ 294:..\FreeRTOS/port.c **** 		volatile uint8_t ucMaxPriorityValue;
+ 295:..\FreeRTOS/port.c **** 
+ 296:..\FreeRTOS/port.c **** 		/* Determine the maximum priority from which ISR safe FreeRTOS API
+ 297:..\FreeRTOS/port.c **** 		functions can be called.  ISR safe functions are those that end in
+ 298:..\FreeRTOS/port.c **** 		"FromISR".  FreeRTOS maintains separate thread and ISR API functions to
+ 299:..\FreeRTOS/port.c **** 		ensure interrupt entry is as fast and simple as possible.
+ 300:..\FreeRTOS/port.c **** 
+ 301:..\FreeRTOS/port.c **** 		Save the interrupt priority value that is about to be clobbered. */
+ 302:..\FreeRTOS/port.c **** 		ulOriginalPriority = *pucFirstUserPriorityRegister;
+ 303:..\FreeRTOS/port.c **** 
+ 304:..\FreeRTOS/port.c **** 		/* Determine the number of priority bits available.  First write to all
+ 305:..\FreeRTOS/port.c **** 		possible bits. */
+ 306:..\FreeRTOS/port.c **** 		*pucFirstUserPriorityRegister = portMAX_8_BIT_VALUE;
+ 307:..\FreeRTOS/port.c **** 
+ 308:..\FreeRTOS/port.c **** 		/* Read the value back to see how many bits stuck. */
+ 309:..\FreeRTOS/port.c **** 		ucMaxPriorityValue = *pucFirstUserPriorityRegister;
+ 310:..\FreeRTOS/port.c **** 
+ 311:..\FreeRTOS/port.c **** 		/* Use the same mask on the maximum system call priority. */
+ 312:..\FreeRTOS/port.c **** 		ucMaxSysCallPriority = configMAX_SYSCALL_INTERRUPT_PRIORITY & ucMaxPriorityValue;
+ 313:..\FreeRTOS/port.c **** 
+ 314:..\FreeRTOS/port.c **** 		/* Calculate the maximum acceptable priority group value for the number
+ 315:..\FreeRTOS/port.c **** 		of bits read back. */
+ 316:..\FreeRTOS/port.c **** 		ulMaxPRIGROUPValue = portMAX_PRIGROUP_BITS;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 9
+
+
+ 317:..\FreeRTOS/port.c **** 		while( ( ucMaxPriorityValue & portTOP_BIT_OF_BYTE ) == portTOP_BIT_OF_BYTE )
+ 318:..\FreeRTOS/port.c **** 		{
+ 319:..\FreeRTOS/port.c **** 			ulMaxPRIGROUPValue--;
+ 320:..\FreeRTOS/port.c **** 			ucMaxPriorityValue <<= ( uint8_t ) 0x01;
+ 321:..\FreeRTOS/port.c **** 		}
+ 322:..\FreeRTOS/port.c **** 
+ 323:..\FreeRTOS/port.c **** 		/* Shift the priority group value back to its position within the AIRCR
+ 324:..\FreeRTOS/port.c **** 		register. */
+ 325:..\FreeRTOS/port.c **** 		ulMaxPRIGROUPValue <<= portPRIGROUP_SHIFT;
+ 326:..\FreeRTOS/port.c **** 		ulMaxPRIGROUPValue &= portPRIORITY_GROUP_MASK;
+ 327:..\FreeRTOS/port.c **** 
+ 328:..\FreeRTOS/port.c **** 		/* Restore the clobbered interrupt priority register to its original
+ 329:..\FreeRTOS/port.c **** 		value. */
+ 330:..\FreeRTOS/port.c **** 		*pucFirstUserPriorityRegister = ulOriginalPriority;
+ 331:..\FreeRTOS/port.c **** 	}
+ 332:..\FreeRTOS/port.c **** 	#endif /* conifgASSERT_DEFINED */
+ 333:..\FreeRTOS/port.c **** 
+ 334:..\FreeRTOS/port.c **** 	/* Make PendSV and SysTick the lowest priority interrupts. */
+ 335:..\FreeRTOS/port.c **** 	portNVIC_SYSPRI2_REG |= portNVIC_PENDSV_PRI;
+ 336:..\FreeRTOS/port.c **** 	portNVIC_SYSPRI2_REG |= portNVIC_SYSTICK_PRI;
+ 337:..\FreeRTOS/port.c **** 
+ 338:..\FreeRTOS/port.c **** 	/* Start the timer that generates the tick ISR.  Interrupts are disabled
+ 339:..\FreeRTOS/port.c **** 	here already. */
+ 340:..\FreeRTOS/port.c **** 	vPortSetupTimerInterrupt();
+ 341:..\FreeRTOS/port.c **** 
+ 342:..\FreeRTOS/port.c **** 	/* Initialise the critical nesting count ready for the first task. */
+ 343:..\FreeRTOS/port.c **** 	uxCriticalNesting = 0;
+ 344:..\FreeRTOS/port.c **** 
+ 345:..\FreeRTOS/port.c **** 	/* Start the first task. */
+ 346:..\FreeRTOS/port.c **** 	prvPortStartFirstTask();
+ 347:..\FreeRTOS/port.c **** 
+ 348:..\FreeRTOS/port.c **** 	/* Should never get here as the tasks will now be executing!  Call the task
+ 349:..\FreeRTOS/port.c **** 	exit error function to prevent compiler warnings about a static function
+ 350:..\FreeRTOS/port.c **** 	not being called in the case that the application writer overrides this
+ 351:..\FreeRTOS/port.c **** 	functionality by defining configTASK_RETURN_ADDRESS. */
+ 352:..\FreeRTOS/port.c **** 	prvTaskExitError();
+ 353:..\FreeRTOS/port.c **** 
+ 354:..\FreeRTOS/port.c **** 	/* Should not get here! */
+ 355:..\FreeRTOS/port.c **** 	return 0;
+ 356:..\FreeRTOS/port.c **** }
+ 357:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 358:..\FreeRTOS/port.c **** 
+ 359:..\FreeRTOS/port.c **** void vPortEndScheduler( void )
+ 360:..\FreeRTOS/port.c **** {
+ 132              		.loc 1 360 0
+ 133              		.cfi_startproc
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136              		@ link register save eliminated.
+ 137 0000 7047     		bx	lr
+ 138              		.cfi_endproc
+ 139              	.LFE69:
+ 140              		.size	vPortEndScheduler, .-vPortEndScheduler
+ 141 0002 00BF     		.section	.text.vPortYield,"ax",%progbits
+ 142              		.align	2
+ 143              		.global	vPortYield
+ 144              		.thumb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 10
+
+
+ 145              		.thumb_func
+ 146              		.type	vPortYield, %function
+ 147              	vPortYield:
+ 148              	.LFB70:
+ 361:..\FreeRTOS/port.c **** 	/* Not implemented in ports where there is nothing to return to.
+ 362:..\FreeRTOS/port.c **** 	Artificially force an assert. */
+ 363:..\FreeRTOS/port.c **** 	configASSERT( uxCriticalNesting == 1000UL );
+ 364:..\FreeRTOS/port.c **** }
+ 365:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 366:..\FreeRTOS/port.c **** 
+ 367:..\FreeRTOS/port.c **** void vPortYield( void )
+ 368:..\FreeRTOS/port.c **** {
+ 149              		.loc 1 368 0
+ 150              		.cfi_startproc
+ 151              		@ args = 0, pretend = 0, frame = 0
+ 152              		@ frame_needed = 0, uses_anonymous_args = 0
+ 153              		@ link register save eliminated.
+ 369:..\FreeRTOS/port.c **** 	/* Set a PendSV to request a context switch. */
+ 370:..\FreeRTOS/port.c **** 	portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
+ 154              		.loc 1 370 0
+ 155 0000 4FF08052 		mov	r2, #268435456
+ 156 0004 034B     		ldr	r3, .L8
+ 157 0006 1A60     		str	r2, [r3]
+ 371:..\FreeRTOS/port.c **** 
+ 372:..\FreeRTOS/port.c **** 	/* Barriers are normally not required but do ensure the code is completely
+ 373:..\FreeRTOS/port.c **** 	within the specified behaviour for the architecture. */
+ 374:..\FreeRTOS/port.c **** 	__asm volatile( "dsb" );
+ 158              		.loc 1 374 0
+ 159              	@ 374 "..\FreeRTOS\port.c" 1
+ 160 0008 BFF34F8F 		dsb
+ 161              	@ 0 "" 2
+ 375:..\FreeRTOS/port.c **** 	__asm volatile( "isb" );
+ 162              		.loc 1 375 0
+ 163              	@ 375 "..\FreeRTOS\port.c" 1
+ 164 000c BFF36F8F 		isb
+ 165              	@ 0 "" 2
+ 166              		.thumb
+ 167 0010 7047     		bx	lr
+ 168              	.L9:
+ 169 0012 00BF     		.align	2
+ 170              	.L8:
+ 171 0014 04ED00E0 		.word	-536810236
+ 172              		.cfi_endproc
+ 173              	.LFE70:
+ 174              		.size	vPortYield, .-vPortYield
+ 175              		.section	.text.ulPortSetInterruptMask,"ax",%progbits
+ 176              		.align	2
+ 177              		.global	ulPortSetInterruptMask
+ 178              		.thumb
+ 179              		.thumb_func
+ 180              		.type	ulPortSetInterruptMask, %function
+ 181              	ulPortSetInterruptMask:
+ 182              	.LFB73:
+ 376:..\FreeRTOS/port.c **** }
+ 377:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 378:..\FreeRTOS/port.c **** 
+ 379:..\FreeRTOS/port.c **** void vPortEnterCritical( void )
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 11
+
+
+ 380:..\FreeRTOS/port.c **** {
+ 381:..\FreeRTOS/port.c **** 	portDISABLE_INTERRUPTS();
+ 382:..\FreeRTOS/port.c **** 	uxCriticalNesting++;
+ 383:..\FreeRTOS/port.c **** 	__asm volatile( "dsb" );
+ 384:..\FreeRTOS/port.c **** 	__asm volatile( "isb" );
+ 385:..\FreeRTOS/port.c **** 	
+ 386:..\FreeRTOS/port.c **** 	/* This is not the interrupt safe version of the enter critical function so
+ 387:..\FreeRTOS/port.c **** 	assert() if it is being called from an interrupt context.  Only API 
+ 388:..\FreeRTOS/port.c **** 	functions that end in "FromISR" can be used in an interrupt.  Only assert if
+ 389:..\FreeRTOS/port.c **** 	the critical nesting count is 1 to protect against recursive calls if the
+ 390:..\FreeRTOS/port.c **** 	assert function also uses a critical section. */
+ 391:..\FreeRTOS/port.c **** 	if( uxCriticalNesting == 1 )
+ 392:..\FreeRTOS/port.c **** 	{
+ 393:..\FreeRTOS/port.c **** 		configASSERT( ( portNVIC_INT_CTRL_REG & portVECTACTIVE_MASK ) == 0 );
+ 394:..\FreeRTOS/port.c **** 	}
+ 395:..\FreeRTOS/port.c **** }
+ 396:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 397:..\FreeRTOS/port.c **** 
+ 398:..\FreeRTOS/port.c **** void vPortExitCritical( void )
+ 399:..\FreeRTOS/port.c **** {
+ 400:..\FreeRTOS/port.c **** 	configASSERT( uxCriticalNesting );
+ 401:..\FreeRTOS/port.c **** 	uxCriticalNesting--;
+ 402:..\FreeRTOS/port.c **** 	if( uxCriticalNesting == 0 )
+ 403:..\FreeRTOS/port.c **** 	{
+ 404:..\FreeRTOS/port.c **** 		portENABLE_INTERRUPTS();
+ 405:..\FreeRTOS/port.c **** 	}
+ 406:..\FreeRTOS/port.c **** }
+ 407:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 408:..\FreeRTOS/port.c **** 
+ 409:..\FreeRTOS/port.c **** __attribute__(( naked )) uint32_t ulPortSetInterruptMask( void )
+ 410:..\FreeRTOS/port.c **** {
+ 183              		.loc 1 410 0
+ 184              		.cfi_startproc
+ 185              		@ Naked Function: prologue and epilogue provided by programmer.
+ 186              		@ args = 0, pretend = 0, frame = 0
+ 187              		@ frame_needed = 0, uses_anonymous_args = 0
+ 411:..\FreeRTOS/port.c **** 	__asm volatile														\
+ 188              		.loc 1 411 0
+ 189              	@ 411 "..\FreeRTOS\port.c" 1
+ 190 0000 EFF31180 			mrs r0, basepri											
+ 191 0004 4FF0A001 		mov r1, #160												
+ 192 0008 81F31188 		msr basepri, r1											
+ 193 000c 7047     		bx lr													
+ 194              	
+ 195              	@ 0 "" 2
+ 412:..\FreeRTOS/port.c **** 	(																	\
+ 413:..\FreeRTOS/port.c **** 		"	mrs r0, basepri											\n" \
+ 414:..\FreeRTOS/port.c **** 		"	mov r1, %0												\n"	\
+ 415:..\FreeRTOS/port.c **** 		"	msr basepri, r1											\n" \
+ 416:..\FreeRTOS/port.c **** 		"	bx lr													\n" \
+ 417:..\FreeRTOS/port.c **** 		:: "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY ) : "r0", "r1"	\
+ 418:..\FreeRTOS/port.c **** 	);
+ 419:..\FreeRTOS/port.c **** 
+ 420:..\FreeRTOS/port.c **** 	/* This return will not be reached but is necessary to prevent compiler
+ 421:..\FreeRTOS/port.c **** 	warnings. */
+ 422:..\FreeRTOS/port.c **** 	return 0;
+ 423:..\FreeRTOS/port.c **** }
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 12
+
+
+ 196              		.loc 1 423 0
+ 197              		.thumb
+ 198 000e 0020     		movs	r0, #0
+ 199              		.cfi_endproc
+ 200              	.LFE73:
+ 201              		.size	ulPortSetInterruptMask, .-ulPortSetInterruptMask
+ 202              		.section	.text.prvTaskExitError,"ax",%progbits
+ 203              		.align	2
+ 204              		.thumb
+ 205              		.thumb_func
+ 206              		.type	prvTaskExitError, %function
+ 207              	prvTaskExitError:
+ 208              	.LFB65:
+ 231:..\FreeRTOS/port.c **** 	/* A function that implements a task must not exit or attempt to return to
+ 209              		.loc 1 231 0
+ 210              		.cfi_startproc
+ 211              		@ Volatile: function does not return.
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214 0000 08B5     		push	{r3, lr}
+ 215              		.cfi_def_cfa_offset 8
+ 216              		.cfi_offset 3, -8
+ 217              		.cfi_offset 14, -4
+ 239:..\FreeRTOS/port.c **** 	for( ;; );
+ 218              		.loc 1 239 0
+ 219 0002 FFF7FEFF 		bl	ulPortSetInterruptMask
+ 220              	.LVL6:
+ 221              	.L12:
+ 240:..\FreeRTOS/port.c **** }
+ 222              		.loc 1 240 0 discriminator 1
+ 223 0006 FEE7     		b	.L12
+ 224              		.cfi_endproc
+ 225              	.LFE65:
+ 226              		.size	prvTaskExitError, .-prvTaskExitError
+ 227              		.section	.text.vPortEnterCritical,"ax",%progbits
+ 228              		.align	2
+ 229              		.global	vPortEnterCritical
+ 230              		.thumb
+ 231              		.thumb_func
+ 232              		.type	vPortEnterCritical, %function
+ 233              	vPortEnterCritical:
+ 234              	.LFB71:
+ 380:..\FreeRTOS/port.c **** 	portDISABLE_INTERRUPTS();
+ 235              		.loc 1 380 0
+ 236              		.cfi_startproc
+ 237              		@ args = 0, pretend = 0, frame = 0
+ 238              		@ frame_needed = 0, uses_anonymous_args = 0
+ 239 0000 08B5     		push	{r3, lr}
+ 240              		.cfi_def_cfa_offset 8
+ 241              		.cfi_offset 3, -8
+ 242              		.cfi_offset 14, -4
+ 381:..\FreeRTOS/port.c **** 	uxCriticalNesting++;
+ 243              		.loc 1 381 0
+ 244 0002 FFF7FEFF 		bl	ulPortSetInterruptMask
+ 245              	.LVL7:
+ 382:..\FreeRTOS/port.c **** 	__asm volatile( "dsb" );
+ 246              		.loc 1 382 0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 13
+
+
+ 247 0006 044A     		ldr	r2, .L16
+ 248 0008 1368     		ldr	r3, [r2]
+ 249 000a 0133     		adds	r3, r3, #1
+ 250 000c 1360     		str	r3, [r2]
+ 383:..\FreeRTOS/port.c **** 	__asm volatile( "isb" );
+ 251              		.loc 1 383 0
+ 252              	@ 383 "..\FreeRTOS\port.c" 1
+ 253 000e BFF34F8F 		dsb
+ 254              	@ 0 "" 2
+ 384:..\FreeRTOS/port.c **** 	
+ 255              		.loc 1 384 0
+ 256              	@ 384 "..\FreeRTOS\port.c" 1
+ 257 0012 BFF36F8F 		isb
+ 258              	@ 0 "" 2
+ 259              		.thumb
+ 260 0016 08BD     		pop	{r3, pc}
+ 261              	.L17:
+ 262              		.align	2
+ 263              	.L16:
+ 264 0018 00000000 		.word	.LANCHOR0
+ 265              		.cfi_endproc
+ 266              	.LFE71:
+ 267              		.size	vPortEnterCritical, .-vPortEnterCritical
+ 268              		.section	.text.vPortClearInterruptMask,"ax",%progbits
+ 269              		.align	2
+ 270              		.global	vPortClearInterruptMask
+ 271              		.thumb
+ 272              		.thumb_func
+ 273              		.type	vPortClearInterruptMask, %function
+ 274              	vPortClearInterruptMask:
+ 275              	.LFB74:
+ 424:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 425:..\FreeRTOS/port.c **** 
+ 426:..\FreeRTOS/port.c **** __attribute__(( naked )) void vPortClearInterruptMask( uint32_t ulNewMaskValue )
+ 427:..\FreeRTOS/port.c **** {
+ 276              		.loc 1 427 0
+ 277              		.cfi_startproc
+ 278              		@ Naked Function: prologue and epilogue provided by programmer.
+ 279              		@ args = 0, pretend = 0, frame = 0
+ 280              		@ frame_needed = 0, uses_anonymous_args = 0
+ 281              	.LVL8:
+ 428:..\FreeRTOS/port.c **** 	__asm volatile													\
+ 282              		.loc 1 428 0
+ 283              	@ 428 "..\FreeRTOS\port.c" 1
+ 284 0000 80F31188 			msr basepri, r0										
+ 285 0004 7047     		bx lr												
+ 286              	
+ 287              	@ 0 "" 2
+ 288              	.LVL9:
+ 429:..\FreeRTOS/port.c **** 	(																\
+ 430:..\FreeRTOS/port.c **** 		"	msr basepri, r0										\n"	\
+ 431:..\FreeRTOS/port.c **** 		"	bx lr												\n" \
+ 432:..\FreeRTOS/port.c **** 		:::"r0"														\
+ 433:..\FreeRTOS/port.c **** 	);
+ 434:..\FreeRTOS/port.c **** 
+ 435:..\FreeRTOS/port.c **** 	/* Just to avoid compiler warnings. */
+ 436:..\FreeRTOS/port.c **** 	( void ) ulNewMaskValue;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 14
+
+
+ 437:..\FreeRTOS/port.c **** }
+ 289              		.loc 1 437 0
+ 290              		.thumb
+ 291              		.cfi_endproc
+ 292              	.LFE74:
+ 293              		.size	vPortClearInterruptMask, .-vPortClearInterruptMask
+ 294 0006 00BF     		.section	.text.vPortExitCritical,"ax",%progbits
+ 295              		.align	2
+ 296              		.global	vPortExitCritical
+ 297              		.thumb
+ 298              		.thumb_func
+ 299              		.type	vPortExitCritical, %function
+ 300              	vPortExitCritical:
+ 301              	.LFB72:
+ 399:..\FreeRTOS/port.c **** 	configASSERT( uxCriticalNesting );
+ 302              		.loc 1 399 0
+ 303              		.cfi_startproc
+ 304              		@ args = 0, pretend = 0, frame = 0
+ 305              		@ frame_needed = 0, uses_anonymous_args = 0
+ 306 0000 08B5     		push	{r3, lr}
+ 307              		.cfi_def_cfa_offset 8
+ 308              		.cfi_offset 3, -8
+ 309              		.cfi_offset 14, -4
+ 401:..\FreeRTOS/port.c **** 	if( uxCriticalNesting == 0 )
+ 310              		.loc 1 401 0
+ 311 0002 044A     		ldr	r2, .L22
+ 312 0004 1368     		ldr	r3, [r2]
+ 313 0006 013B     		subs	r3, r3, #1
+ 314 0008 1360     		str	r3, [r2]
+ 402:..\FreeRTOS/port.c **** 	{
+ 315              		.loc 1 402 0
+ 316 000a 13B9     		cbnz	r3, .L19
+ 404:..\FreeRTOS/port.c **** 	}
+ 317              		.loc 1 404 0
+ 318 000c 0020     		movs	r0, #0
+ 319 000e FFF7FEFF 		bl	vPortClearInterruptMask
+ 320              	.LVL10:
+ 321              	.L19:
+ 322 0012 08BD     		pop	{r3, pc}
+ 323              	.L23:
+ 324              		.align	2
+ 325              	.L22:
+ 326 0014 00000000 		.word	.LANCHOR0
+ 327              		.cfi_endproc
+ 328              	.LFE72:
+ 329              		.size	vPortExitCritical, .-vPortExitCritical
+ 330              		.section	.text.xPortPendSVHandler,"ax",%progbits
+ 331              		.align	2
+ 332              		.global	xPortPendSVHandler
+ 333              		.thumb
+ 334              		.thumb_func
+ 335              		.type	xPortPendSVHandler, %function
+ 336              	xPortPendSVHandler:
+ 337              	.LFB75:
+ 438:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 439:..\FreeRTOS/port.c **** 
+ 440:..\FreeRTOS/port.c **** void xPortPendSVHandler( void )
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 15
+
+
+ 441:..\FreeRTOS/port.c **** {
+ 338              		.loc 1 441 0
+ 339              		.cfi_startproc
+ 340              		@ Naked Function: prologue and epilogue provided by programmer.
+ 341              		@ args = 0, pretend = 0, frame = 0
+ 342              		@ frame_needed = 0, uses_anonymous_args = 0
+ 442:..\FreeRTOS/port.c **** 	/* This is a naked function. */
+ 443:..\FreeRTOS/port.c **** 
+ 444:..\FreeRTOS/port.c **** 	__asm volatile
+ 343              		.loc 1 444 0
+ 344              	@ 444 "..\FreeRTOS\port.c" 1
+ 345 0000 EFF30980 			mrs r0, psp							
+ 346 0004 BFF36F8F 		isb									
+ 347              											
+ 348 0008 0D4B     		ldr	r3, pxCurrentTCBConst			
+ 349 000a 1A68     		ldr	r2, [r3]						
+ 350              											
+ 351 000c 20E9F00F 		stmdb r0!, {r4-r11}					
+ 352 0010 1060     		str r0, [r2]						
+ 353              											
+ 354 0012 2DE90840 		stmdb sp!, {r3, r14}				
+ 355 0016 4FF0A000 		mov r0, #160							
+ 356 001a 80F31188 		msr basepri, r0						
+ 357 001e FFF7FEFF 		bl vTaskSwitchContext				
+ 358 0022 4FF00000 		mov r0, #0							
+ 359 0026 80F31188 		msr basepri, r0						
+ 360 002a BDE80840 		ldmia sp!, {r3, r14}				
+ 361              											
+ 362 002e 1968     		ldr r1, [r3]						
+ 363 0030 0868     		ldr r0, [r1]						
+ 364 0032 B0E8F00F 		ldmia r0!, {r4-r11}					
+ 365 0036 80F30988 		msr psp, r0							
+ 366 003a BFF36F8F 		isb									
+ 367 003e 7047     		bx r14								
+ 368              											
+ 369              		.align 2							
+ 370 0040 00000000 	pxCurrentTCBConst: .word pxCurrentTCB	
+ 371              	
+ 372              	@ 0 "" 2
+ 445:..\FreeRTOS/port.c **** 	(
+ 446:..\FreeRTOS/port.c **** 	"	mrs r0, psp							\n"
+ 447:..\FreeRTOS/port.c **** 	"	isb									\n"
+ 448:..\FreeRTOS/port.c **** 	"										\n"
+ 449:..\FreeRTOS/port.c **** 	"	ldr	r3, pxCurrentTCBConst			\n" /* Get the location of the current TCB. */
+ 450:..\FreeRTOS/port.c **** 	"	ldr	r2, [r3]						\n"
+ 451:..\FreeRTOS/port.c **** 	"										\n"
+ 452:..\FreeRTOS/port.c **** 	"	stmdb r0!, {r4-r11}					\n" /* Save the remaining registers. */
+ 453:..\FreeRTOS/port.c **** 	"	str r0, [r2]						\n" /* Save the new top of stack into the first member of the TCB. */
+ 454:..\FreeRTOS/port.c **** 	"										\n"
+ 455:..\FreeRTOS/port.c **** 	"	stmdb sp!, {r3, r14}				\n"
+ 456:..\FreeRTOS/port.c **** 	"	mov r0, %0							\n"
+ 457:..\FreeRTOS/port.c **** 	"	msr basepri, r0						\n"
+ 458:..\FreeRTOS/port.c **** 	"	bl vTaskSwitchContext				\n"
+ 459:..\FreeRTOS/port.c **** 	"	mov r0, #0							\n"
+ 460:..\FreeRTOS/port.c **** 	"	msr basepri, r0						\n"
+ 461:..\FreeRTOS/port.c **** 	"	ldmia sp!, {r3, r14}				\n"
+ 462:..\FreeRTOS/port.c **** 	"										\n"	/* Restore the context, including the critical nesting count. */
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 16
+
+
+ 463:..\FreeRTOS/port.c **** 	"	ldr r1, [r3]						\n"
+ 464:..\FreeRTOS/port.c **** 	"	ldr r0, [r1]						\n" /* The first item in pxCurrentTCB is the task top of stack. */
+ 465:..\FreeRTOS/port.c **** 	"	ldmia r0!, {r4-r11}					\n" /* Pop the registers. */
+ 466:..\FreeRTOS/port.c **** 	"	msr psp, r0							\n"
+ 467:..\FreeRTOS/port.c **** 	"	isb									\n"
+ 468:..\FreeRTOS/port.c **** 	"	bx r14								\n"
+ 469:..\FreeRTOS/port.c **** 	"										\n"
+ 470:..\FreeRTOS/port.c **** 	"	.align 2							\n"
+ 471:..\FreeRTOS/port.c **** 	"pxCurrentTCBConst: .word pxCurrentTCB	\n"
+ 472:..\FreeRTOS/port.c **** 	::"i"(configMAX_SYSCALL_INTERRUPT_PRIORITY)
+ 473:..\FreeRTOS/port.c **** 	);
+ 474:..\FreeRTOS/port.c **** }
+ 373              		.loc 1 474 0
+ 374              		.thumb
+ 375              		.cfi_endproc
+ 376              	.LFE75:
+ 377              		.size	xPortPendSVHandler, .-xPortPendSVHandler
+ 378              		.section	.text.xPortSysTickHandler,"ax",%progbits
+ 379              		.align	2
+ 380              		.global	xPortSysTickHandler
+ 381              		.thumb
+ 382              		.thumb_func
+ 383              		.type	xPortSysTickHandler, %function
+ 384              	xPortSysTickHandler:
+ 385              	.LFB76:
+ 475:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 476:..\FreeRTOS/port.c **** 
+ 477:..\FreeRTOS/port.c **** void xPortSysTickHandler( void )
+ 478:..\FreeRTOS/port.c **** {
+ 386              		.loc 1 478 0
+ 387              		.cfi_startproc
+ 388              		@ args = 0, pretend = 0, frame = 0
+ 389              		@ frame_needed = 0, uses_anonymous_args = 0
+ 390 0000 08B5     		push	{r3, lr}
+ 391              		.cfi_def_cfa_offset 8
+ 392              		.cfi_offset 3, -8
+ 393              		.cfi_offset 14, -4
+ 479:..\FreeRTOS/port.c **** 	/* The SysTick runs at the lowest interrupt priority, so when this interrupt
+ 480:..\FreeRTOS/port.c **** 	executes all interrupts must be unmasked.  There is therefore no need to
+ 481:..\FreeRTOS/port.c **** 	save and then restore the interrupt mask value as its value is already
+ 482:..\FreeRTOS/port.c **** 	known. */
+ 483:..\FreeRTOS/port.c **** 	( void ) portSET_INTERRUPT_MASK_FROM_ISR();
+ 394              		.loc 1 483 0
+ 395 0002 FFF7FEFF 		bl	ulPortSetInterruptMask
+ 396              	.LVL11:
+ 484:..\FreeRTOS/port.c **** 	{
+ 485:..\FreeRTOS/port.c **** 		/* Increment the RTOS tick. */
+ 486:..\FreeRTOS/port.c **** 		if( xTaskIncrementTick() != pdFALSE )
+ 397              		.loc 1 486 0
+ 398 0006 FFF7FEFF 		bl	xTaskIncrementTick
+ 399              	.LVL12:
+ 400 000a 18B1     		cbz	r0, .L26
+ 487:..\FreeRTOS/port.c **** 		{
+ 488:..\FreeRTOS/port.c **** 			/* A context switch is required.  Context switching is performed in
+ 489:..\FreeRTOS/port.c **** 			the PendSV interrupt.  Pend the PendSV interrupt. */
+ 490:..\FreeRTOS/port.c **** 			portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
+ 401              		.loc 1 490 0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 17
+
+
+ 402 000c 4FF08052 		mov	r2, #268435456
+ 403 0010 024B     		ldr	r3, .L28
+ 404 0012 1A60     		str	r2, [r3]
+ 405              	.L26:
+ 491:..\FreeRTOS/port.c **** 		}
+ 492:..\FreeRTOS/port.c **** 	}
+ 493:..\FreeRTOS/port.c **** 	portCLEAR_INTERRUPT_MASK_FROM_ISR( 0 );
+ 406              		.loc 1 493 0
+ 407 0014 0020     		movs	r0, #0
+ 408 0016 FFF7FEFF 		bl	vPortClearInterruptMask
+ 409              	.LVL13:
+ 410 001a 08BD     		pop	{r3, pc}
+ 411              	.L29:
+ 412              		.align	2
+ 413              	.L28:
+ 414 001c 04ED00E0 		.word	-536810236
+ 415              		.cfi_endproc
+ 416              	.LFE76:
+ 417              		.size	xPortSysTickHandler, .-xPortSysTickHandler
+ 418              		.section	.text.vPortSetupTimerInterrupt,"ax",%progbits
+ 419              		.align	2
+ 420              		.weak	vPortSetupTimerInterrupt
+ 421              		.thumb
+ 422              		.thumb_func
+ 423              		.type	vPortSetupTimerInterrupt, %function
+ 424              	vPortSetupTimerInterrupt:
+ 425              	.LFB77:
+ 494:..\FreeRTOS/port.c **** }
+ 495:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 496:..\FreeRTOS/port.c **** 
+ 497:..\FreeRTOS/port.c **** #if configUSE_TICKLESS_IDLE == 1
+ 498:..\FreeRTOS/port.c **** 
+ 499:..\FreeRTOS/port.c **** 	__attribute__((weak)) void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
+ 500:..\FreeRTOS/port.c **** 	{
+ 501:..\FreeRTOS/port.c **** 	uint32_t ulReloadValue, ulCompleteTickPeriods, ulCompletedSysTickDecrements, ulSysTickCTRL;
+ 502:..\FreeRTOS/port.c **** 	TickType_t xModifiableIdleTime;
+ 503:..\FreeRTOS/port.c **** 
+ 504:..\FreeRTOS/port.c **** 		/* Make sure the SysTick reload value does not overflow the counter. */
+ 505:..\FreeRTOS/port.c **** 		if( xExpectedIdleTime > xMaximumPossibleSuppressedTicks )
+ 506:..\FreeRTOS/port.c **** 		{
+ 507:..\FreeRTOS/port.c **** 			xExpectedIdleTime = xMaximumPossibleSuppressedTicks;
+ 508:..\FreeRTOS/port.c **** 		}
+ 509:..\FreeRTOS/port.c **** 
+ 510:..\FreeRTOS/port.c **** 		/* Stop the SysTick momentarily.  The time the SysTick is stopped for
+ 511:..\FreeRTOS/port.c **** 		is accounted for as best it can be, but using the tickless mode will
+ 512:..\FreeRTOS/port.c **** 		inevitably result in some tiny drift of the time maintained by the
+ 513:..\FreeRTOS/port.c **** 		kernel with respect to calendar time. */
+ 514:..\FreeRTOS/port.c **** 		portNVIC_SYSTICK_CTRL_REG &= ~portNVIC_SYSTICK_ENABLE_BIT;
+ 515:..\FreeRTOS/port.c **** 
+ 516:..\FreeRTOS/port.c **** 		/* Calculate the reload value required to wait xExpectedIdleTime
+ 517:..\FreeRTOS/port.c **** 		tick periods.  -1 is used because this code will execute part way
+ 518:..\FreeRTOS/port.c **** 		through one of the tick periods. */
+ 519:..\FreeRTOS/port.c **** 		ulReloadValue = portNVIC_SYSTICK_CURRENT_VALUE_REG + ( ulTimerCountsForOneTick * ( xExpectedIdleT
+ 520:..\FreeRTOS/port.c **** 		if( ulReloadValue > ulStoppedTimerCompensation )
+ 521:..\FreeRTOS/port.c **** 		{
+ 522:..\FreeRTOS/port.c **** 			ulReloadValue -= ulStoppedTimerCompensation;
+ 523:..\FreeRTOS/port.c **** 		}
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 18
+
+
+ 524:..\FreeRTOS/port.c **** 
+ 525:..\FreeRTOS/port.c **** 		/* Enter a critical section but don't use the taskENTER_CRITICAL()
+ 526:..\FreeRTOS/port.c **** 		method as that will mask interrupts that should exit sleep mode. */
+ 527:..\FreeRTOS/port.c **** 		__asm volatile( "cpsid i" );
+ 528:..\FreeRTOS/port.c **** 
+ 529:..\FreeRTOS/port.c **** 		/* If a context switch is pending or a task is waiting for the scheduler
+ 530:..\FreeRTOS/port.c **** 		to be unsuspended then abandon the low power entry. */
+ 531:..\FreeRTOS/port.c **** 		if( eTaskConfirmSleepModeStatus() == eAbortSleep )
+ 532:..\FreeRTOS/port.c **** 		{
+ 533:..\FreeRTOS/port.c **** 			/* Restart from whatever is left in the count register to complete
+ 534:..\FreeRTOS/port.c **** 			this tick period. */
+ 535:..\FreeRTOS/port.c **** 			portNVIC_SYSTICK_LOAD_REG = portNVIC_SYSTICK_CURRENT_VALUE_REG;
+ 536:..\FreeRTOS/port.c **** 
+ 537:..\FreeRTOS/port.c **** 			/* Restart SysTick. */
+ 538:..\FreeRTOS/port.c **** 			portNVIC_SYSTICK_CTRL_REG |= portNVIC_SYSTICK_ENABLE_BIT;
+ 539:..\FreeRTOS/port.c **** 
+ 540:..\FreeRTOS/port.c **** 			/* Reset the reload register to the value required for normal tick
+ 541:..\FreeRTOS/port.c **** 			periods. */
+ 542:..\FreeRTOS/port.c **** 			portNVIC_SYSTICK_LOAD_REG = ulTimerCountsForOneTick - 1UL;
+ 543:..\FreeRTOS/port.c **** 
+ 544:..\FreeRTOS/port.c **** 			/* Re-enable interrupts - see comments above the cpsid instruction()
+ 545:..\FreeRTOS/port.c **** 			above. */
+ 546:..\FreeRTOS/port.c **** 			__asm volatile( "cpsie i" );
+ 547:..\FreeRTOS/port.c **** 		}
+ 548:..\FreeRTOS/port.c **** 		else
+ 549:..\FreeRTOS/port.c **** 		{
+ 550:..\FreeRTOS/port.c **** 			/* Set the new reload value. */
+ 551:..\FreeRTOS/port.c **** 			portNVIC_SYSTICK_LOAD_REG = ulReloadValue;
+ 552:..\FreeRTOS/port.c **** 
+ 553:..\FreeRTOS/port.c **** 			/* Clear the SysTick count flag and set the count value back to
+ 554:..\FreeRTOS/port.c **** 			zero. */
+ 555:..\FreeRTOS/port.c **** 			portNVIC_SYSTICK_CURRENT_VALUE_REG = 0UL;
+ 556:..\FreeRTOS/port.c **** 
+ 557:..\FreeRTOS/port.c **** 			/* Restart SysTick. */
+ 558:..\FreeRTOS/port.c **** 			portNVIC_SYSTICK_CTRL_REG |= portNVIC_SYSTICK_ENABLE_BIT;
+ 559:..\FreeRTOS/port.c **** 
+ 560:..\FreeRTOS/port.c **** 			/* Sleep until something happens.  configPRE_SLEEP_PROCESSING() can
+ 561:..\FreeRTOS/port.c **** 			set its parameter to 0 to indicate that its implementation contains
+ 562:..\FreeRTOS/port.c **** 			its own wait for interrupt or wait for event instruction, and so wfi
+ 563:..\FreeRTOS/port.c **** 			should not be executed again.  However, the original expected idle
+ 564:..\FreeRTOS/port.c **** 			time variable must remain unmodified, so a copy is taken. */
+ 565:..\FreeRTOS/port.c **** 			xModifiableIdleTime = xExpectedIdleTime;
+ 566:..\FreeRTOS/port.c **** 			configPRE_SLEEP_PROCESSING( xModifiableIdleTime );
+ 567:..\FreeRTOS/port.c **** 			if( xModifiableIdleTime > 0 )
+ 568:..\FreeRTOS/port.c **** 			{
+ 569:..\FreeRTOS/port.c **** 				__asm volatile( "dsb" );
+ 570:..\FreeRTOS/port.c **** 				__asm volatile( "wfi" );
+ 571:..\FreeRTOS/port.c **** 				__asm volatile( "isb" );
+ 572:..\FreeRTOS/port.c **** 			}
+ 573:..\FreeRTOS/port.c **** 			configPOST_SLEEP_PROCESSING( xExpectedIdleTime );
+ 574:..\FreeRTOS/port.c **** 
+ 575:..\FreeRTOS/port.c **** 			/* Stop SysTick.  Again, the time the SysTick is stopped for is
+ 576:..\FreeRTOS/port.c **** 			accounted for as best it can be, but using the tickless mode will
+ 577:..\FreeRTOS/port.c **** 			inevitably result in some tiny drift of the time maintained by the
+ 578:..\FreeRTOS/port.c **** 			kernel with respect to calendar time. */
+ 579:..\FreeRTOS/port.c **** 			ulSysTickCTRL = portNVIC_SYSTICK_CTRL_REG;
+ 580:..\FreeRTOS/port.c **** 			portNVIC_SYSTICK_CTRL_REG = ( ulSysTickCTRL & ~portNVIC_SYSTICK_ENABLE_BIT );
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 19
+
+
+ 581:..\FreeRTOS/port.c **** 
+ 582:..\FreeRTOS/port.c **** 			/* Re-enable interrupts - see comments above the cpsid instruction()
+ 583:..\FreeRTOS/port.c **** 			above. */
+ 584:..\FreeRTOS/port.c **** 			__asm volatile( "cpsie i" );
+ 585:..\FreeRTOS/port.c **** 
+ 586:..\FreeRTOS/port.c **** 			if( ( ulSysTickCTRL & portNVIC_SYSTICK_COUNT_FLAG_BIT ) != 0 )
+ 587:..\FreeRTOS/port.c **** 			{
+ 588:..\FreeRTOS/port.c **** 				uint32_t ulCalculatedLoadValue;
+ 589:..\FreeRTOS/port.c **** 
+ 590:..\FreeRTOS/port.c **** 				/* The tick interrupt has already executed, and the SysTick
+ 591:..\FreeRTOS/port.c **** 				count reloaded with ulReloadValue.  Reset the
+ 592:..\FreeRTOS/port.c **** 				portNVIC_SYSTICK_LOAD_REG with whatever remains of this tick
+ 593:..\FreeRTOS/port.c **** 				period. */
+ 594:..\FreeRTOS/port.c **** 				ulCalculatedLoadValue = ( ulTimerCountsForOneTick - 1UL ) - ( ulReloadValue - portNVIC_SYSTICK_
+ 595:..\FreeRTOS/port.c **** 
+ 596:..\FreeRTOS/port.c **** 				/* Don't allow a tiny value, or values that have somehow
+ 597:..\FreeRTOS/port.c **** 				underflowed because the post sleep hook did something
+ 598:..\FreeRTOS/port.c **** 				that took too long. */
+ 599:..\FreeRTOS/port.c **** 				if( ( ulCalculatedLoadValue < ulStoppedTimerCompensation ) || ( ulCalculatedLoadValue > ulTimer
+ 600:..\FreeRTOS/port.c **** 				{
+ 601:..\FreeRTOS/port.c **** 					ulCalculatedLoadValue = ( ulTimerCountsForOneTick - 1UL );
+ 602:..\FreeRTOS/port.c **** 				}
+ 603:..\FreeRTOS/port.c **** 
+ 604:..\FreeRTOS/port.c **** 				portNVIC_SYSTICK_LOAD_REG = ulCalculatedLoadValue;
+ 605:..\FreeRTOS/port.c **** 
+ 606:..\FreeRTOS/port.c **** 				/* The tick interrupt handler will already have pended the tick
+ 607:..\FreeRTOS/port.c **** 				processing in the kernel.  As the pending tick will be
+ 608:..\FreeRTOS/port.c **** 				processed as soon as this function exits, the tick value
+ 609:..\FreeRTOS/port.c **** 				maintained by the tick is stepped forward by one less than the
+ 610:..\FreeRTOS/port.c **** 				time spent waiting. */
+ 611:..\FreeRTOS/port.c **** 				ulCompleteTickPeriods = xExpectedIdleTime - 1UL;
+ 612:..\FreeRTOS/port.c **** 			}
+ 613:..\FreeRTOS/port.c **** 			else
+ 614:..\FreeRTOS/port.c **** 			{
+ 615:..\FreeRTOS/port.c **** 				/* Something other than the tick interrupt ended the sleep.
+ 616:..\FreeRTOS/port.c **** 				Work out how long the sleep lasted rounded to complete tick
+ 617:..\FreeRTOS/port.c **** 				periods (not the ulReload value which accounted for part
+ 618:..\FreeRTOS/port.c **** 				ticks). */
+ 619:..\FreeRTOS/port.c **** 				ulCompletedSysTickDecrements = ( xExpectedIdleTime * ulTimerCountsForOneTick ) - portNVIC_SYSTI
+ 620:..\FreeRTOS/port.c **** 
+ 621:..\FreeRTOS/port.c **** 				/* How many complete tick periods passed while the processor
+ 622:..\FreeRTOS/port.c **** 				was waiting? */
+ 623:..\FreeRTOS/port.c **** 				ulCompleteTickPeriods = ulCompletedSysTickDecrements / ulTimerCountsForOneTick;
+ 624:..\FreeRTOS/port.c **** 
+ 625:..\FreeRTOS/port.c **** 				/* The reload value is set to whatever fraction of a single tick
+ 626:..\FreeRTOS/port.c **** 				period remains. */
+ 627:..\FreeRTOS/port.c **** 				portNVIC_SYSTICK_LOAD_REG = ( ( ulCompleteTickPeriods + 1 ) * ulTimerCountsForOneTick ) - ulCom
+ 628:..\FreeRTOS/port.c **** 			}
+ 629:..\FreeRTOS/port.c **** 
+ 630:..\FreeRTOS/port.c **** 			/* Restart SysTick so it runs from portNVIC_SYSTICK_LOAD_REG
+ 631:..\FreeRTOS/port.c **** 			again, then set portNVIC_SYSTICK_LOAD_REG back to its standard
+ 632:..\FreeRTOS/port.c **** 			value.  The critical section is used to ensure the tick interrupt
+ 633:..\FreeRTOS/port.c **** 			can only execute once in the case that the reload register is near
+ 634:..\FreeRTOS/port.c **** 			zero. */
+ 635:..\FreeRTOS/port.c **** 			portNVIC_SYSTICK_CURRENT_VALUE_REG = 0UL;
+ 636:..\FreeRTOS/port.c **** 			portENTER_CRITICAL();
+ 637:..\FreeRTOS/port.c **** 			{
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 20
+
+
+ 638:..\FreeRTOS/port.c **** 				portNVIC_SYSTICK_CTRL_REG |= portNVIC_SYSTICK_ENABLE_BIT;
+ 639:..\FreeRTOS/port.c **** 				vTaskStepTick( ulCompleteTickPeriods );
+ 640:..\FreeRTOS/port.c **** 				portNVIC_SYSTICK_LOAD_REG = ulTimerCountsForOneTick - 1UL;
+ 641:..\FreeRTOS/port.c **** 			}
+ 642:..\FreeRTOS/port.c **** 			portEXIT_CRITICAL();
+ 643:..\FreeRTOS/port.c **** 		}
+ 644:..\FreeRTOS/port.c **** 	}
+ 645:..\FreeRTOS/port.c **** 
+ 646:..\FreeRTOS/port.c **** #endif /* #if configUSE_TICKLESS_IDLE */
+ 647:..\FreeRTOS/port.c **** /*-----------------------------------------------------------*/
+ 648:..\FreeRTOS/port.c **** 
+ 649:..\FreeRTOS/port.c **** /*
+ 650:..\FreeRTOS/port.c ****  * Setup the systick timer to generate the tick interrupts at the required
+ 651:..\FreeRTOS/port.c ****  * frequency.
+ 652:..\FreeRTOS/port.c ****  */
+ 653:..\FreeRTOS/port.c **** __attribute__(( weak )) void vPortSetupTimerInterrupt( void )
+ 654:..\FreeRTOS/port.c **** {
+ 426              		.loc 1 654 0
+ 427              		.cfi_startproc
+ 428              		@ args = 0, pretend = 0, frame = 0
+ 429              		@ frame_needed = 0, uses_anonymous_args = 0
+ 430              		@ link register save eliminated.
+ 655:..\FreeRTOS/port.c **** 	/* Calculate the constants required to configure the tick interrupt. */
+ 656:..\FreeRTOS/port.c **** 	#if configUSE_TICKLESS_IDLE == 1
+ 657:..\FreeRTOS/port.c **** 	{
+ 658:..\FreeRTOS/port.c **** 		ulTimerCountsForOneTick = ( configSYSTICK_CLOCK_HZ / configTICK_RATE_HZ );
+ 659:..\FreeRTOS/port.c **** 		xMaximumPossibleSuppressedTicks = portMAX_24_BIT_NUMBER / ulTimerCountsForOneTick;
+ 660:..\FreeRTOS/port.c **** 		ulStoppedTimerCompensation = portMISSED_COUNTS_FACTOR / ( configCPU_CLOCK_HZ / configSYSTICK_CLOC
+ 661:..\FreeRTOS/port.c **** 	}
+ 662:..\FreeRTOS/port.c **** 	#endif /* configUSE_TICKLESS_IDLE */
+ 663:..\FreeRTOS/port.c **** 
+ 664:..\FreeRTOS/port.c **** 	/* Configure SysTick to interrupt at the requested rate. */
+ 665:..\FreeRTOS/port.c **** 	portNVIC_SYSTICK_LOAD_REG = ( configSYSTICK_CLOCK_HZ / configTICK_RATE_HZ ) - 1UL;
+ 431              		.loc 1 665 0
+ 432 0000 034A     		ldr	r2, .L31
+ 433 0002 044B     		ldr	r3, .L31+4
+ 434 0004 1A60     		str	r2, [r3]
+ 666:..\FreeRTOS/port.c **** 	portNVIC_SYSTICK_CTRL_REG = ( portNVIC_SYSTICK_CLK_BIT | portNVIC_SYSTICK_INT_BIT | portNVIC_SYSTI
+ 435              		.loc 1 666 0
+ 436 0006 0722     		movs	r2, #7
+ 437 0008 043B     		subs	r3, r3, #4
+ 438 000a 1A60     		str	r2, [r3]
+ 439 000c 7047     		bx	lr
+ 440              	.L32:
+ 441 000e 00BF     		.align	2
+ 442              	.L31:
+ 443 0010 CF010100 		.word	65999
+ 444 0014 14E000E0 		.word	-536813548
+ 445              		.cfi_endproc
+ 446              	.LFE77:
+ 447              		.size	vPortSetupTimerInterrupt, .-vPortSetupTimerInterrupt
+ 448              		.section	.text.xPortStartScheduler,"ax",%progbits
+ 449              		.align	2
+ 450              		.global	xPortStartScheduler
+ 451              		.thumb
+ 452              		.thumb_func
+ 453              		.type	xPortStartScheduler, %function
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 21
+
+
+ 454              	xPortStartScheduler:
+ 455              	.LFB68:
+ 285:..\FreeRTOS/port.c **** 	/* configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to 0.
+ 456              		.loc 1 285 0
+ 457              		.cfi_startproc
+ 458              		@ Volatile: function does not return.
+ 459              		@ args = 0, pretend = 0, frame = 0
+ 460              		@ frame_needed = 0, uses_anonymous_args = 0
+ 461 0000 08B5     		push	{r3, lr}
+ 462              		.cfi_def_cfa_offset 8
+ 463              		.cfi_offset 3, -8
+ 464              		.cfi_offset 14, -4
+ 335:..\FreeRTOS/port.c **** 	portNVIC_SYSPRI2_REG |= portNVIC_SYSTICK_PRI;
+ 465              		.loc 1 335 0
+ 466 0002 094B     		ldr	r3, .L35
+ 467 0004 1A68     		ldr	r2, [r3]
+ 468 0006 42F46002 		orr	r2, r2, #14680064
+ 469 000a 1A60     		str	r2, [r3]
+ 336:..\FreeRTOS/port.c **** 
+ 470              		.loc 1 336 0
+ 471 000c 1A68     		ldr	r2, [r3]
+ 472 000e 42F06042 		orr	r2, r2, #-536870912
+ 473 0012 1A60     		str	r2, [r3]
+ 340:..\FreeRTOS/port.c **** 
+ 474              		.loc 1 340 0
+ 475 0014 FFF7FEFF 		bl	vPortSetupTimerInterrupt
+ 476              	.LVL14:
+ 343:..\FreeRTOS/port.c **** 
+ 477              		.loc 1 343 0
+ 478 0018 0022     		movs	r2, #0
+ 479 001a 044B     		ldr	r3, .L35+4
+ 480 001c 1A60     		str	r2, [r3]
+ 346:..\FreeRTOS/port.c **** 
+ 481              		.loc 1 346 0
+ 482 001e FFF7FEFF 		bl	prvPortStartFirstTask
+ 483              	.LVL15:
+ 352:..\FreeRTOS/port.c **** 
+ 484              		.loc 1 352 0
+ 485 0022 FFF7FEFF 		bl	prvTaskExitError
+ 486              	.LVL16:
+ 487              	.L36:
+ 488 0026 00BF     		.align	2
+ 489              	.L35:
+ 490 0028 20ED00E0 		.word	-536810208
+ 491 002c 00000000 		.word	.LANCHOR0
+ 492              		.cfi_endproc
+ 493              	.LFE68:
+ 494              		.size	xPortStartScheduler, .-xPortStartScheduler
+ 495              		.data
+ 496              		.align	2
+ 497              		.set	.LANCHOR0,. + 0
+ 498              		.type	uxCriticalNesting, %object
+ 499              		.size	uxCriticalNesting, 4
+ 500              	uxCriticalNesting:
+ 501 0000 AAAAAAAA 		.word	-1431655766
+ 502              		.text
+ 503              	.Letext0:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 22
+
+
+ 504              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 505              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 506              		.file 4 "..\\FreeRTOS\\projdefs.h"
+ 507              		.file 5 "..\\FreeRTOS\\portmacro.h"
+ 508              		.file 6 "Generated_Source\\PSoC5/core_cm3.h"
+ 509              		.file 7 "..\\FreeRTOS\\task.h"
+ 510              		.section	.debug_info,"",%progbits
+ 511              	.Ldebug_info0:
+ 512 0000 EC020000 		.4byte	0x2ec
+ 513 0004 0400     		.2byte	0x4
+ 514 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 515 000a 04       		.byte	0x4
+ 516 000b 01       		.uleb128 0x1
+ 517 000c 22010000 		.4byte	.LASF37
+ 518 0010 01       		.byte	0x1
+ 519 0011 22030000 		.4byte	.LASF38
+ 520 0015 04020000 		.4byte	.LASF39
+ 521 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 522 001d 00000000 		.4byte	0
+ 523 0021 00000000 		.4byte	.Ldebug_line0
+ 524 0025 02       		.uleb128 0x2
+ 525 0026 04       		.byte	0x4
+ 526 0027 05       		.byte	0x5
+ 527 0028 696E7400 		.ascii	"int\000"
+ 528 002c 03       		.uleb128 0x3
+ 529 002d 04       		.byte	0x4
+ 530 002e 07       		.byte	0x7
+ 531 002f 5C000000 		.4byte	.LASF0
+ 532 0033 03       		.uleb128 0x3
+ 533 0034 01       		.byte	0x1
+ 534 0035 06       		.byte	0x6
+ 535 0036 16030000 		.4byte	.LASF1
+ 536 003a 03       		.uleb128 0x3
+ 537 003b 01       		.byte	0x1
+ 538 003c 08       		.byte	0x8
+ 539 003d B0000000 		.4byte	.LASF2
+ 540 0041 03       		.uleb128 0x3
+ 541 0042 02       		.byte	0x2
+ 542 0043 05       		.byte	0x5
+ 543 0044 C1020000 		.4byte	.LASF3
+ 544 0048 03       		.uleb128 0x3
+ 545 0049 02       		.byte	0x2
+ 546 004a 07       		.byte	0x7
+ 547 004b D0000000 		.4byte	.LASF4
+ 548 004f 04       		.uleb128 0x4
+ 549 0050 49000000 		.4byte	.LASF6
+ 550 0054 02       		.byte	0x2
+ 551 0055 3F       		.byte	0x3f
+ 552 0056 5A000000 		.4byte	0x5a
+ 553 005a 03       		.uleb128 0x3
+ 554 005b 04       		.byte	0x4
+ 555 005c 05       		.byte	0x5
+ 556 005d 53000000 		.4byte	.LASF5
+ 557 0061 04       		.uleb128 0x4
+ 558 0062 F7000000 		.4byte	.LASF7
+ 559 0066 02       		.byte	0x2
+ 560 0067 41       		.byte	0x41
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 23
+
+
+ 561 0068 6C000000 		.4byte	0x6c
+ 562 006c 03       		.uleb128 0x3
+ 563 006d 04       		.byte	0x4
+ 564 006e 07       		.byte	0x7
+ 565 006f BE000000 		.4byte	.LASF8
+ 566 0073 03       		.uleb128 0x3
+ 567 0074 08       		.byte	0x8
+ 568 0075 05       		.byte	0x5
+ 569 0076 7A020000 		.4byte	.LASF9
+ 570 007a 03       		.uleb128 0x3
+ 571 007b 08       		.byte	0x8
+ 572 007c 07       		.byte	0x7
+ 573 007d DC010000 		.4byte	.LASF10
+ 574 0081 04       		.uleb128 0x4
+ 575 0082 A2000000 		.4byte	.LASF11
+ 576 0086 03       		.byte	0x3
+ 577 0087 2C       		.byte	0x2c
+ 578 0088 4F000000 		.4byte	0x4f
+ 579 008c 04       		.uleb128 0x4
+ 580 008d DD020000 		.4byte	.LASF12
+ 581 0091 03       		.byte	0x3
+ 582 0092 2D       		.byte	0x2d
+ 583 0093 61000000 		.4byte	0x61
+ 584 0097 03       		.uleb128 0x3
+ 585 0098 04       		.byte	0x4
+ 586 0099 04       		.byte	0x4
+ 587 009a AA000000 		.4byte	.LASF13
+ 588 009e 03       		.uleb128 0x3
+ 589 009f 08       		.byte	0x8
+ 590 00a0 04       		.byte	0x4
+ 591 00a1 F0000000 		.4byte	.LASF14
+ 592 00a5 03       		.uleb128 0x3
+ 593 00a6 01       		.byte	0x1
+ 594 00a7 08       		.byte	0x8
+ 595 00a8 A0020000 		.4byte	.LASF15
+ 596 00ac 03       		.uleb128 0x3
+ 597 00ad 04       		.byte	0x4
+ 598 00ae 07       		.byte	0x7
+ 599 00af 71020000 		.4byte	.LASF16
+ 600 00b3 05       		.uleb128 0x5
+ 601 00b4 04       		.byte	0x4
+ 602 00b5 04       		.uleb128 0x4
+ 603 00b6 93000000 		.4byte	.LASF17
+ 604 00ba 04       		.byte	0x4
+ 605 00bb 4D       		.byte	0x4d
+ 606 00bc C0000000 		.4byte	0xc0
+ 607 00c0 06       		.uleb128 0x6
+ 608 00c1 04       		.byte	0x4
+ 609 00c2 C6000000 		.4byte	0xc6
+ 610 00c6 07       		.uleb128 0x7
+ 611 00c7 D1000000 		.4byte	0xd1
+ 612 00cb 08       		.uleb128 0x8
+ 613 00cc B3000000 		.4byte	0xb3
+ 614 00d0 00       		.byte	0
+ 615 00d1 04       		.uleb128 0x4
+ 616 00d2 A5020000 		.4byte	.LASF18
+ 617 00d6 05       		.byte	0x5
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 24
+
+
+ 618 00d7 61       		.byte	0x61
+ 619 00d8 8C000000 		.4byte	0x8c
+ 620 00dc 04       		.uleb128 0x4
+ 621 00dd F5020000 		.4byte	.LASF19
+ 622 00e1 05       		.byte	0x5
+ 623 00e2 62       		.byte	0x62
+ 624 00e3 5A000000 		.4byte	0x5a
+ 625 00e7 04       		.uleb128 0x4
+ 626 00e8 49030000 		.4byte	.LASF20
+ 627 00ec 05       		.byte	0x5
+ 628 00ed 63       		.byte	0x63
+ 629 00ee 6C000000 		.4byte	0x6c
+ 630 00f2 04       		.uleb128 0x4
+ 631 00f3 3E000000 		.4byte	.LASF21
+ 632 00f7 05       		.byte	0x5
+ 633 00f8 69       		.byte	0x69
+ 634 00f9 8C000000 		.4byte	0x8c
+ 635 00fd 06       		.uleb128 0x6
+ 636 00fe 04       		.byte	0x4
+ 637 00ff D1000000 		.4byte	0xd1
+ 638 0103 09       		.uleb128 0x9
+ 639 0104 00030000 		.4byte	.LASF40
+ 640 0108 01       		.byte	0x1
+ 641 0109 0801     		.2byte	0x108
+ 642 010b 00000000 		.4byte	.LFB67
+ 643 010f 1A000000 		.4byte	.LFE67-.LFB67
+ 644 0113 01       		.uleb128 0x1
+ 645 0114 9C       		.byte	0x9c
+ 646 0115 0A       		.uleb128 0xa
+ 647 0116 55030000 		.4byte	.LASF35
+ 648 011a 01       		.byte	0x1
+ 649 011b D4       		.byte	0xd4
+ 650 011c FD000000 		.4byte	0xfd
+ 651 0120 00000000 		.4byte	.LFB64
+ 652 0124 20000000 		.4byte	.LFE64-.LFB64
+ 653 0128 01       		.uleb128 0x1
+ 654 0129 9C       		.byte	0x9c
+ 655 012a 58010000 		.4byte	0x158
+ 656 012e 0B       		.uleb128 0xb
+ 657 012f CF010000 		.4byte	.LASF22
+ 658 0133 01       		.byte	0x1
+ 659 0134 D4       		.byte	0xd4
+ 660 0135 FD000000 		.4byte	0xfd
+ 661 0139 00000000 		.4byte	.LLST0
+ 662 013d 0C       		.uleb128 0xc
+ 663 013e 25000000 		.4byte	.LASF23
+ 664 0142 01       		.byte	0x1
+ 665 0143 D4       		.byte	0xd4
+ 666 0144 B5000000 		.4byte	0xb5
+ 667 0148 01       		.uleb128 0x1
+ 668 0149 51       		.byte	0x51
+ 669 014a 0C       		.uleb128 0xc
+ 670 014b 02010000 		.4byte	.LASF24
+ 671 014f 01       		.byte	0x1
+ 672 0150 D4       		.byte	0xd4
+ 673 0151 B3000000 		.4byte	0xb3
+ 674 0155 01       		.uleb128 0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 25
+
+
+ 675 0156 52       		.byte	0x52
+ 676 0157 00       		.byte	0
+ 677 0158 0D       		.uleb128 0xd
+ 678 0159 B1020000 		.4byte	.LASF25
+ 679 015d 01       		.byte	0x1
+ 680 015e F4       		.byte	0xf4
+ 681 015f 00000000 		.4byte	.LFB66
+ 682 0163 24000000 		.4byte	.LFE66-.LFB66
+ 683 0167 01       		.uleb128 0x1
+ 684 0168 9C       		.byte	0x9c
+ 685 0169 0E       		.uleb128 0xe
+ 686 016a 2C000000 		.4byte	.LASF26
+ 687 016e 01       		.byte	0x1
+ 688 016f 6701     		.2byte	0x167
+ 689 0171 00000000 		.4byte	.LFB69
+ 690 0175 02000000 		.4byte	.LFE69-.LFB69
+ 691 0179 01       		.uleb128 0x1
+ 692 017a 9C       		.byte	0x9c
+ 693 017b 0E       		.uleb128 0xe
+ 694 017c C4010000 		.4byte	.LASF27
+ 695 0180 01       		.byte	0x1
+ 696 0181 6F01     		.2byte	0x16f
+ 697 0183 00000000 		.4byte	.LFB70
+ 698 0187 18000000 		.4byte	.LFE70-.LFB70
+ 699 018b 01       		.uleb128 0x1
+ 700 018c 9C       		.byte	0x9c
+ 701 018d 0F       		.uleb128 0xf
+ 702 018e 7C000000 		.4byte	.LASF41
+ 703 0192 01       		.byte	0x1
+ 704 0193 9901     		.2byte	0x199
+ 705 0195 8C000000 		.4byte	0x8c
+ 706 0199 00000000 		.4byte	.LFB73
+ 707 019d 10000000 		.4byte	.LFE73-.LFB73
+ 708 01a1 01       		.uleb128 0x1
+ 709 01a2 9C       		.byte	0x9c
+ 710 01a3 10       		.uleb128 0x10
+ 711 01a4 F3010000 		.4byte	.LASF42
+ 712 01a8 01       		.byte	0x1
+ 713 01a9 E6       		.byte	0xe6
+ 714 01aa 00000000 		.4byte	.LFB65
+ 715 01ae 08000000 		.4byte	.LFE65-.LFB65
+ 716 01b2 01       		.uleb128 0x1
+ 717 01b3 9C       		.byte	0x9c
+ 718 01b4 C2010000 		.4byte	0x1c2
+ 719 01b8 11       		.uleb128 0x11
+ 720 01b9 06000000 		.4byte	.LVL6
+ 721 01bd 8D010000 		.4byte	0x18d
+ 722 01c1 00       		.byte	0
+ 723 01c2 12       		.uleb128 0x12
+ 724 01c3 12000000 		.4byte	.LASF28
+ 725 01c7 01       		.byte	0x1
+ 726 01c8 7B01     		.2byte	0x17b
+ 727 01ca 00000000 		.4byte	.LFB71
+ 728 01ce 1C000000 		.4byte	.LFE71-.LFB71
+ 729 01d2 01       		.uleb128 0x1
+ 730 01d3 9C       		.byte	0x9c
+ 731 01d4 E2010000 		.4byte	0x1e2
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 26
+
+
+ 732 01d8 11       		.uleb128 0x11
+ 733 01d9 06000000 		.4byte	.LVL7
+ 734 01dd 8D010000 		.4byte	0x18d
+ 735 01e1 00       		.byte	0
+ 736 01e2 12       		.uleb128 0x12
+ 737 01e3 88020000 		.4byte	.LASF29
+ 738 01e7 01       		.byte	0x1
+ 739 01e8 AA01     		.2byte	0x1aa
+ 740 01ea 00000000 		.4byte	.LFB74
+ 741 01ee 06000000 		.4byte	.LFE74-.LFB74
+ 742 01f2 01       		.uleb128 0x1
+ 743 01f3 9C       		.byte	0x9c
+ 744 01f4 09020000 		.4byte	0x209
+ 745 01f8 13       		.uleb128 0x13
+ 746 01f9 E6020000 		.4byte	.LASF30
+ 747 01fd 01       		.byte	0x1
+ 748 01fe AA01     		.2byte	0x1aa
+ 749 0200 8C000000 		.4byte	0x8c
+ 750 0204 5F000000 		.4byte	.LLST1
+ 751 0208 00       		.byte	0
+ 752 0209 12       		.uleb128 0x12
+ 753 020a CB020000 		.4byte	.LASF31
+ 754 020e 01       		.byte	0x1
+ 755 020f 8E01     		.2byte	0x18e
+ 756 0211 00000000 		.4byte	.LFB72
+ 757 0215 18000000 		.4byte	.LFE72-.LFB72
+ 758 0219 01       		.uleb128 0x1
+ 759 021a 9C       		.byte	0x9c
+ 760 021b 2F020000 		.4byte	0x22f
+ 761 021f 14       		.uleb128 0x14
+ 762 0220 12000000 		.4byte	.LVL10
+ 763 0224 E2010000 		.4byte	0x1e2
+ 764 0228 15       		.uleb128 0x15
+ 765 0229 01       		.uleb128 0x1
+ 766 022a 50       		.byte	0x50
+ 767 022b 01       		.uleb128 0x1
+ 768 022c 30       		.byte	0x30
+ 769 022d 00       		.byte	0
+ 770 022e 00       		.byte	0
+ 771 022f 0E       		.uleb128 0xe
+ 772 0230 69000000 		.4byte	.LASF32
+ 773 0234 01       		.byte	0x1
+ 774 0235 B801     		.2byte	0x1b8
+ 775 0237 00000000 		.4byte	.LFB75
+ 776 023b 44000000 		.4byte	.LFE75-.LFB75
+ 777 023f 01       		.uleb128 0x1
+ 778 0240 9C       		.byte	0x9c
+ 779 0241 12       		.uleb128 0x12
+ 780 0242 B0010000 		.4byte	.LASF33
+ 781 0246 01       		.byte	0x1
+ 782 0247 DD01     		.2byte	0x1dd
+ 783 0249 00000000 		.4byte	.LFB76
+ 784 024d 20000000 		.4byte	.LFE76-.LFB76
+ 785 0251 01       		.uleb128 0x1
+ 786 0252 9C       		.byte	0x9c
+ 787 0253 79020000 		.4byte	0x279
+ 788 0257 11       		.uleb128 0x11
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 27
+
+
+ 789 0258 06000000 		.4byte	.LVL11
+ 790 025c 8D010000 		.4byte	0x18d
+ 791 0260 11       		.uleb128 0x11
+ 792 0261 0A000000 		.4byte	.LVL12
+ 793 0265 E3020000 		.4byte	0x2e3
+ 794 0269 14       		.uleb128 0x14
+ 795 026a 1A000000 		.4byte	.LVL13
+ 796 026e E2010000 		.4byte	0x1e2
+ 797 0272 15       		.uleb128 0x15
+ 798 0273 01       		.uleb128 0x1
+ 799 0274 50       		.byte	0x50
+ 800 0275 01       		.uleb128 0x1
+ 801 0276 30       		.byte	0x30
+ 802 0277 00       		.byte	0
+ 803 0278 00       		.byte	0
+ 804 0279 0E       		.uleb128 0xe
+ 805 027a 58020000 		.4byte	.LASF34
+ 806 027e 01       		.byte	0x1
+ 807 027f 8D02     		.2byte	0x28d
+ 808 0281 00000000 		.4byte	.LFB77
+ 809 0285 18000000 		.4byte	.LFE77-.LFB77
+ 810 0289 01       		.uleb128 0x1
+ 811 028a 9C       		.byte	0x9c
+ 812 028b 16       		.uleb128 0x16
+ 813 028c 35030000 		.4byte	.LASF36
+ 814 0290 01       		.byte	0x1
+ 815 0291 1C01     		.2byte	0x11c
+ 816 0293 DC000000 		.4byte	0xdc
+ 817 0297 00000000 		.4byte	.LFB68
+ 818 029b 30000000 		.4byte	.LFE68-.LFB68
+ 819 029f 01       		.uleb128 0x1
+ 820 02a0 9C       		.byte	0x9c
+ 821 02a1 C1020000 		.4byte	0x2c1
+ 822 02a5 11       		.uleb128 0x11
+ 823 02a6 18000000 		.4byte	.LVL14
+ 824 02aa 79020000 		.4byte	0x279
+ 825 02ae 11       		.uleb128 0x11
+ 826 02af 22000000 		.4byte	.LVL15
+ 827 02b3 03010000 		.4byte	0x103
+ 828 02b7 11       		.uleb128 0x11
+ 829 02b8 26000000 		.4byte	.LVL16
+ 830 02bc A3010000 		.4byte	0x1a3
+ 831 02c0 00       		.byte	0
+ 832 02c1 17       		.uleb128 0x17
+ 833 02c2 00000000 		.4byte	.LASF43
+ 834 02c6 01       		.byte	0x1
+ 835 02c7 91       		.byte	0x91
+ 836 02c8 E7000000 		.4byte	0xe7
+ 837 02cc 05       		.uleb128 0x5
+ 838 02cd 03       		.byte	0x3
+ 839 02ce 00000000 		.4byte	uxCriticalNesting
+ 840 02d2 18       		.uleb128 0x18
+ 841 02d3 E3000000 		.4byte	.LASF44
+ 842 02d7 06       		.byte	0x6
+ 843 02d8 5506     		.2byte	0x655
+ 844 02da DE020000 		.4byte	0x2de
+ 845 02de 19       		.uleb128 0x19
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 28
+
+
+ 846 02df 81000000 		.4byte	0x81
+ 847 02e3 1A       		.uleb128 0x1a
+ 848 02e4 0F010000 		.4byte	.LASF45
+ 849 02e8 07       		.byte	0x7
+ 850 02e9 3A07     		.2byte	0x73a
+ 851 02eb DC000000 		.4byte	0xdc
+ 852 02ef 00       		.byte	0
+ 853              		.section	.debug_abbrev,"",%progbits
+ 854              	.Ldebug_abbrev0:
+ 855 0000 01       		.uleb128 0x1
+ 856 0001 11       		.uleb128 0x11
+ 857 0002 01       		.byte	0x1
+ 858 0003 25       		.uleb128 0x25
+ 859 0004 0E       		.uleb128 0xe
+ 860 0005 13       		.uleb128 0x13
+ 861 0006 0B       		.uleb128 0xb
+ 862 0007 03       		.uleb128 0x3
+ 863 0008 0E       		.uleb128 0xe
+ 864 0009 1B       		.uleb128 0x1b
+ 865 000a 0E       		.uleb128 0xe
+ 866 000b 55       		.uleb128 0x55
+ 867 000c 17       		.uleb128 0x17
+ 868 000d 11       		.uleb128 0x11
+ 869 000e 01       		.uleb128 0x1
+ 870 000f 10       		.uleb128 0x10
+ 871 0010 17       		.uleb128 0x17
+ 872 0011 00       		.byte	0
+ 873 0012 00       		.byte	0
+ 874 0013 02       		.uleb128 0x2
+ 875 0014 24       		.uleb128 0x24
+ 876 0015 00       		.byte	0
+ 877 0016 0B       		.uleb128 0xb
+ 878 0017 0B       		.uleb128 0xb
+ 879 0018 3E       		.uleb128 0x3e
+ 880 0019 0B       		.uleb128 0xb
+ 881 001a 03       		.uleb128 0x3
+ 882 001b 08       		.uleb128 0x8
+ 883 001c 00       		.byte	0
+ 884 001d 00       		.byte	0
+ 885 001e 03       		.uleb128 0x3
+ 886 001f 24       		.uleb128 0x24
+ 887 0020 00       		.byte	0
+ 888 0021 0B       		.uleb128 0xb
+ 889 0022 0B       		.uleb128 0xb
+ 890 0023 3E       		.uleb128 0x3e
+ 891 0024 0B       		.uleb128 0xb
+ 892 0025 03       		.uleb128 0x3
+ 893 0026 0E       		.uleb128 0xe
+ 894 0027 00       		.byte	0
+ 895 0028 00       		.byte	0
+ 896 0029 04       		.uleb128 0x4
+ 897 002a 16       		.uleb128 0x16
+ 898 002b 00       		.byte	0
+ 899 002c 03       		.uleb128 0x3
+ 900 002d 0E       		.uleb128 0xe
+ 901 002e 3A       		.uleb128 0x3a
+ 902 002f 0B       		.uleb128 0xb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 29
+
+
+ 903 0030 3B       		.uleb128 0x3b
+ 904 0031 0B       		.uleb128 0xb
+ 905 0032 49       		.uleb128 0x49
+ 906 0033 13       		.uleb128 0x13
+ 907 0034 00       		.byte	0
+ 908 0035 00       		.byte	0
+ 909 0036 05       		.uleb128 0x5
+ 910 0037 0F       		.uleb128 0xf
+ 911 0038 00       		.byte	0
+ 912 0039 0B       		.uleb128 0xb
+ 913 003a 0B       		.uleb128 0xb
+ 914 003b 00       		.byte	0
+ 915 003c 00       		.byte	0
+ 916 003d 06       		.uleb128 0x6
+ 917 003e 0F       		.uleb128 0xf
+ 918 003f 00       		.byte	0
+ 919 0040 0B       		.uleb128 0xb
+ 920 0041 0B       		.uleb128 0xb
+ 921 0042 49       		.uleb128 0x49
+ 922 0043 13       		.uleb128 0x13
+ 923 0044 00       		.byte	0
+ 924 0045 00       		.byte	0
+ 925 0046 07       		.uleb128 0x7
+ 926 0047 15       		.uleb128 0x15
+ 927 0048 01       		.byte	0x1
+ 928 0049 27       		.uleb128 0x27
+ 929 004a 19       		.uleb128 0x19
+ 930 004b 01       		.uleb128 0x1
+ 931 004c 13       		.uleb128 0x13
+ 932 004d 00       		.byte	0
+ 933 004e 00       		.byte	0
+ 934 004f 08       		.uleb128 0x8
+ 935 0050 05       		.uleb128 0x5
+ 936 0051 00       		.byte	0
+ 937 0052 49       		.uleb128 0x49
+ 938 0053 13       		.uleb128 0x13
+ 939 0054 00       		.byte	0
+ 940 0055 00       		.byte	0
+ 941 0056 09       		.uleb128 0x9
+ 942 0057 2E       		.uleb128 0x2e
+ 943 0058 00       		.byte	0
+ 944 0059 03       		.uleb128 0x3
+ 945 005a 0E       		.uleb128 0xe
+ 946 005b 3A       		.uleb128 0x3a
+ 947 005c 0B       		.uleb128 0xb
+ 948 005d 3B       		.uleb128 0x3b
+ 949 005e 05       		.uleb128 0x5
+ 950 005f 27       		.uleb128 0x27
+ 951 0060 19       		.uleb128 0x19
+ 952 0061 11       		.uleb128 0x11
+ 953 0062 01       		.uleb128 0x1
+ 954 0063 12       		.uleb128 0x12
+ 955 0064 06       		.uleb128 0x6
+ 956 0065 40       		.uleb128 0x40
+ 957 0066 18       		.uleb128 0x18
+ 958 0067 9742     		.uleb128 0x2117
+ 959 0069 19       		.uleb128 0x19
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 30
+
+
+ 960 006a 00       		.byte	0
+ 961 006b 00       		.byte	0
+ 962 006c 0A       		.uleb128 0xa
+ 963 006d 2E       		.uleb128 0x2e
+ 964 006e 01       		.byte	0x1
+ 965 006f 3F       		.uleb128 0x3f
+ 966 0070 19       		.uleb128 0x19
+ 967 0071 03       		.uleb128 0x3
+ 968 0072 0E       		.uleb128 0xe
+ 969 0073 3A       		.uleb128 0x3a
+ 970 0074 0B       		.uleb128 0xb
+ 971 0075 3B       		.uleb128 0x3b
+ 972 0076 0B       		.uleb128 0xb
+ 973 0077 27       		.uleb128 0x27
+ 974 0078 19       		.uleb128 0x19
+ 975 0079 49       		.uleb128 0x49
+ 976 007a 13       		.uleb128 0x13
+ 977 007b 11       		.uleb128 0x11
+ 978 007c 01       		.uleb128 0x1
+ 979 007d 12       		.uleb128 0x12
+ 980 007e 06       		.uleb128 0x6
+ 981 007f 40       		.uleb128 0x40
+ 982 0080 18       		.uleb128 0x18
+ 983 0081 9742     		.uleb128 0x2117
+ 984 0083 19       		.uleb128 0x19
+ 985 0084 01       		.uleb128 0x1
+ 986 0085 13       		.uleb128 0x13
+ 987 0086 00       		.byte	0
+ 988 0087 00       		.byte	0
+ 989 0088 0B       		.uleb128 0xb
+ 990 0089 05       		.uleb128 0x5
+ 991 008a 00       		.byte	0
+ 992 008b 03       		.uleb128 0x3
+ 993 008c 0E       		.uleb128 0xe
+ 994 008d 3A       		.uleb128 0x3a
+ 995 008e 0B       		.uleb128 0xb
+ 996 008f 3B       		.uleb128 0x3b
+ 997 0090 0B       		.uleb128 0xb
+ 998 0091 49       		.uleb128 0x49
+ 999 0092 13       		.uleb128 0x13
+ 1000 0093 02       		.uleb128 0x2
+ 1001 0094 17       		.uleb128 0x17
+ 1002 0095 00       		.byte	0
+ 1003 0096 00       		.byte	0
+ 1004 0097 0C       		.uleb128 0xc
+ 1005 0098 05       		.uleb128 0x5
+ 1006 0099 00       		.byte	0
+ 1007 009a 03       		.uleb128 0x3
+ 1008 009b 0E       		.uleb128 0xe
+ 1009 009c 3A       		.uleb128 0x3a
+ 1010 009d 0B       		.uleb128 0xb
+ 1011 009e 3B       		.uleb128 0x3b
+ 1012 009f 0B       		.uleb128 0xb
+ 1013 00a0 49       		.uleb128 0x49
+ 1014 00a1 13       		.uleb128 0x13
+ 1015 00a2 02       		.uleb128 0x2
+ 1016 00a3 18       		.uleb128 0x18
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 31
+
+
+ 1017 00a4 00       		.byte	0
+ 1018 00a5 00       		.byte	0
+ 1019 00a6 0D       		.uleb128 0xd
+ 1020 00a7 2E       		.uleb128 0x2e
+ 1021 00a8 00       		.byte	0
+ 1022 00a9 3F       		.uleb128 0x3f
+ 1023 00aa 19       		.uleb128 0x19
+ 1024 00ab 03       		.uleb128 0x3
+ 1025 00ac 0E       		.uleb128 0xe
+ 1026 00ad 3A       		.uleb128 0x3a
+ 1027 00ae 0B       		.uleb128 0xb
+ 1028 00af 3B       		.uleb128 0x3b
+ 1029 00b0 0B       		.uleb128 0xb
+ 1030 00b1 27       		.uleb128 0x27
+ 1031 00b2 19       		.uleb128 0x19
+ 1032 00b3 11       		.uleb128 0x11
+ 1033 00b4 01       		.uleb128 0x1
+ 1034 00b5 12       		.uleb128 0x12
+ 1035 00b6 06       		.uleb128 0x6
+ 1036 00b7 40       		.uleb128 0x40
+ 1037 00b8 18       		.uleb128 0x18
+ 1038 00b9 9742     		.uleb128 0x2117
+ 1039 00bb 19       		.uleb128 0x19
+ 1040 00bc 00       		.byte	0
+ 1041 00bd 00       		.byte	0
+ 1042 00be 0E       		.uleb128 0xe
+ 1043 00bf 2E       		.uleb128 0x2e
+ 1044 00c0 00       		.byte	0
+ 1045 00c1 3F       		.uleb128 0x3f
+ 1046 00c2 19       		.uleb128 0x19
+ 1047 00c3 03       		.uleb128 0x3
+ 1048 00c4 0E       		.uleb128 0xe
+ 1049 00c5 3A       		.uleb128 0x3a
+ 1050 00c6 0B       		.uleb128 0xb
+ 1051 00c7 3B       		.uleb128 0x3b
+ 1052 00c8 05       		.uleb128 0x5
+ 1053 00c9 27       		.uleb128 0x27
+ 1054 00ca 19       		.uleb128 0x19
+ 1055 00cb 11       		.uleb128 0x11
+ 1056 00cc 01       		.uleb128 0x1
+ 1057 00cd 12       		.uleb128 0x12
+ 1058 00ce 06       		.uleb128 0x6
+ 1059 00cf 40       		.uleb128 0x40
+ 1060 00d0 18       		.uleb128 0x18
+ 1061 00d1 9742     		.uleb128 0x2117
+ 1062 00d3 19       		.uleb128 0x19
+ 1063 00d4 00       		.byte	0
+ 1064 00d5 00       		.byte	0
+ 1065 00d6 0F       		.uleb128 0xf
+ 1066 00d7 2E       		.uleb128 0x2e
+ 1067 00d8 00       		.byte	0
+ 1068 00d9 3F       		.uleb128 0x3f
+ 1069 00da 19       		.uleb128 0x19
+ 1070 00db 03       		.uleb128 0x3
+ 1071 00dc 0E       		.uleb128 0xe
+ 1072 00dd 3A       		.uleb128 0x3a
+ 1073 00de 0B       		.uleb128 0xb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 32
+
+
+ 1074 00df 3B       		.uleb128 0x3b
+ 1075 00e0 05       		.uleb128 0x5
+ 1076 00e1 27       		.uleb128 0x27
+ 1077 00e2 19       		.uleb128 0x19
+ 1078 00e3 49       		.uleb128 0x49
+ 1079 00e4 13       		.uleb128 0x13
+ 1080 00e5 11       		.uleb128 0x11
+ 1081 00e6 01       		.uleb128 0x1
+ 1082 00e7 12       		.uleb128 0x12
+ 1083 00e8 06       		.uleb128 0x6
+ 1084 00e9 40       		.uleb128 0x40
+ 1085 00ea 18       		.uleb128 0x18
+ 1086 00eb 9742     		.uleb128 0x2117
+ 1087 00ed 19       		.uleb128 0x19
+ 1088 00ee 00       		.byte	0
+ 1089 00ef 00       		.byte	0
+ 1090 00f0 10       		.uleb128 0x10
+ 1091 00f1 2E       		.uleb128 0x2e
+ 1092 00f2 01       		.byte	0x1
+ 1093 00f3 03       		.uleb128 0x3
+ 1094 00f4 0E       		.uleb128 0xe
+ 1095 00f5 3A       		.uleb128 0x3a
+ 1096 00f6 0B       		.uleb128 0xb
+ 1097 00f7 3B       		.uleb128 0x3b
+ 1098 00f8 0B       		.uleb128 0xb
+ 1099 00f9 27       		.uleb128 0x27
+ 1100 00fa 19       		.uleb128 0x19
+ 1101 00fb 11       		.uleb128 0x11
+ 1102 00fc 01       		.uleb128 0x1
+ 1103 00fd 12       		.uleb128 0x12
+ 1104 00fe 06       		.uleb128 0x6
+ 1105 00ff 40       		.uleb128 0x40
+ 1106 0100 18       		.uleb128 0x18
+ 1107 0101 9742     		.uleb128 0x2117
+ 1108 0103 19       		.uleb128 0x19
+ 1109 0104 01       		.uleb128 0x1
+ 1110 0105 13       		.uleb128 0x13
+ 1111 0106 00       		.byte	0
+ 1112 0107 00       		.byte	0
+ 1113 0108 11       		.uleb128 0x11
+ 1114 0109 898201   		.uleb128 0x4109
+ 1115 010c 00       		.byte	0
+ 1116 010d 11       		.uleb128 0x11
+ 1117 010e 01       		.uleb128 0x1
+ 1118 010f 31       		.uleb128 0x31
+ 1119 0110 13       		.uleb128 0x13
+ 1120 0111 00       		.byte	0
+ 1121 0112 00       		.byte	0
+ 1122 0113 12       		.uleb128 0x12
+ 1123 0114 2E       		.uleb128 0x2e
+ 1124 0115 01       		.byte	0x1
+ 1125 0116 3F       		.uleb128 0x3f
+ 1126 0117 19       		.uleb128 0x19
+ 1127 0118 03       		.uleb128 0x3
+ 1128 0119 0E       		.uleb128 0xe
+ 1129 011a 3A       		.uleb128 0x3a
+ 1130 011b 0B       		.uleb128 0xb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 33
+
+
+ 1131 011c 3B       		.uleb128 0x3b
+ 1132 011d 05       		.uleb128 0x5
+ 1133 011e 27       		.uleb128 0x27
+ 1134 011f 19       		.uleb128 0x19
+ 1135 0120 11       		.uleb128 0x11
+ 1136 0121 01       		.uleb128 0x1
+ 1137 0122 12       		.uleb128 0x12
+ 1138 0123 06       		.uleb128 0x6
+ 1139 0124 40       		.uleb128 0x40
+ 1140 0125 18       		.uleb128 0x18
+ 1141 0126 9742     		.uleb128 0x2117
+ 1142 0128 19       		.uleb128 0x19
+ 1143 0129 01       		.uleb128 0x1
+ 1144 012a 13       		.uleb128 0x13
+ 1145 012b 00       		.byte	0
+ 1146 012c 00       		.byte	0
+ 1147 012d 13       		.uleb128 0x13
+ 1148 012e 05       		.uleb128 0x5
+ 1149 012f 00       		.byte	0
+ 1150 0130 03       		.uleb128 0x3
+ 1151 0131 0E       		.uleb128 0xe
+ 1152 0132 3A       		.uleb128 0x3a
+ 1153 0133 0B       		.uleb128 0xb
+ 1154 0134 3B       		.uleb128 0x3b
+ 1155 0135 05       		.uleb128 0x5
+ 1156 0136 49       		.uleb128 0x49
+ 1157 0137 13       		.uleb128 0x13
+ 1158 0138 02       		.uleb128 0x2
+ 1159 0139 17       		.uleb128 0x17
+ 1160 013a 00       		.byte	0
+ 1161 013b 00       		.byte	0
+ 1162 013c 14       		.uleb128 0x14
+ 1163 013d 898201   		.uleb128 0x4109
+ 1164 0140 01       		.byte	0x1
+ 1165 0141 11       		.uleb128 0x11
+ 1166 0142 01       		.uleb128 0x1
+ 1167 0143 31       		.uleb128 0x31
+ 1168 0144 13       		.uleb128 0x13
+ 1169 0145 00       		.byte	0
+ 1170 0146 00       		.byte	0
+ 1171 0147 15       		.uleb128 0x15
+ 1172 0148 8A8201   		.uleb128 0x410a
+ 1173 014b 00       		.byte	0
+ 1174 014c 02       		.uleb128 0x2
+ 1175 014d 18       		.uleb128 0x18
+ 1176 014e 9142     		.uleb128 0x2111
+ 1177 0150 18       		.uleb128 0x18
+ 1178 0151 00       		.byte	0
+ 1179 0152 00       		.byte	0
+ 1180 0153 16       		.uleb128 0x16
+ 1181 0154 2E       		.uleb128 0x2e
+ 1182 0155 01       		.byte	0x1
+ 1183 0156 3F       		.uleb128 0x3f
+ 1184 0157 19       		.uleb128 0x19
+ 1185 0158 03       		.uleb128 0x3
+ 1186 0159 0E       		.uleb128 0xe
+ 1187 015a 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 34
+
+
+ 1188 015b 0B       		.uleb128 0xb
+ 1189 015c 3B       		.uleb128 0x3b
+ 1190 015d 05       		.uleb128 0x5
+ 1191 015e 27       		.uleb128 0x27
+ 1192 015f 19       		.uleb128 0x19
+ 1193 0160 49       		.uleb128 0x49
+ 1194 0161 13       		.uleb128 0x13
+ 1195 0162 11       		.uleb128 0x11
+ 1196 0163 01       		.uleb128 0x1
+ 1197 0164 12       		.uleb128 0x12
+ 1198 0165 06       		.uleb128 0x6
+ 1199 0166 40       		.uleb128 0x40
+ 1200 0167 18       		.uleb128 0x18
+ 1201 0168 9742     		.uleb128 0x2117
+ 1202 016a 19       		.uleb128 0x19
+ 1203 016b 01       		.uleb128 0x1
+ 1204 016c 13       		.uleb128 0x13
+ 1205 016d 00       		.byte	0
+ 1206 016e 00       		.byte	0
+ 1207 016f 17       		.uleb128 0x17
+ 1208 0170 34       		.uleb128 0x34
+ 1209 0171 00       		.byte	0
+ 1210 0172 03       		.uleb128 0x3
+ 1211 0173 0E       		.uleb128 0xe
+ 1212 0174 3A       		.uleb128 0x3a
+ 1213 0175 0B       		.uleb128 0xb
+ 1214 0176 3B       		.uleb128 0x3b
+ 1215 0177 0B       		.uleb128 0xb
+ 1216 0178 49       		.uleb128 0x49
+ 1217 0179 13       		.uleb128 0x13
+ 1218 017a 02       		.uleb128 0x2
+ 1219 017b 18       		.uleb128 0x18
+ 1220 017c 00       		.byte	0
+ 1221 017d 00       		.byte	0
+ 1222 017e 18       		.uleb128 0x18
+ 1223 017f 34       		.uleb128 0x34
+ 1224 0180 00       		.byte	0
+ 1225 0181 03       		.uleb128 0x3
+ 1226 0182 0E       		.uleb128 0xe
+ 1227 0183 3A       		.uleb128 0x3a
+ 1228 0184 0B       		.uleb128 0xb
+ 1229 0185 3B       		.uleb128 0x3b
+ 1230 0186 05       		.uleb128 0x5
+ 1231 0187 49       		.uleb128 0x49
+ 1232 0188 13       		.uleb128 0x13
+ 1233 0189 3F       		.uleb128 0x3f
+ 1234 018a 19       		.uleb128 0x19
+ 1235 018b 3C       		.uleb128 0x3c
+ 1236 018c 19       		.uleb128 0x19
+ 1237 018d 00       		.byte	0
+ 1238 018e 00       		.byte	0
+ 1239 018f 19       		.uleb128 0x19
+ 1240 0190 35       		.uleb128 0x35
+ 1241 0191 00       		.byte	0
+ 1242 0192 49       		.uleb128 0x49
+ 1243 0193 13       		.uleb128 0x13
+ 1244 0194 00       		.byte	0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 35
+
+
+ 1245 0195 00       		.byte	0
+ 1246 0196 1A       		.uleb128 0x1a
+ 1247 0197 2E       		.uleb128 0x2e
+ 1248 0198 00       		.byte	0
+ 1249 0199 3F       		.uleb128 0x3f
+ 1250 019a 19       		.uleb128 0x19
+ 1251 019b 03       		.uleb128 0x3
+ 1252 019c 0E       		.uleb128 0xe
+ 1253 019d 3A       		.uleb128 0x3a
+ 1254 019e 0B       		.uleb128 0xb
+ 1255 019f 3B       		.uleb128 0x3b
+ 1256 01a0 05       		.uleb128 0x5
+ 1257 01a1 27       		.uleb128 0x27
+ 1258 01a2 19       		.uleb128 0x19
+ 1259 01a3 49       		.uleb128 0x49
+ 1260 01a4 13       		.uleb128 0x13
+ 1261 01a5 3C       		.uleb128 0x3c
+ 1262 01a6 19       		.uleb128 0x19
+ 1263 01a7 00       		.byte	0
+ 1264 01a8 00       		.byte	0
+ 1265 01a9 00       		.byte	0
+ 1266              		.section	.debug_loc,"",%progbits
+ 1267              	.Ldebug_loc0:
+ 1268              	.LLST0:
+ 1269 0000 00000000 		.4byte	.LVL0
+ 1270 0004 00000000 		.4byte	.LVL0
+ 1271 0008 0100     		.2byte	0x1
+ 1272 000a 50       		.byte	0x50
+ 1273 000b 00000000 		.4byte	.LVL0
+ 1274 000f 08000000 		.4byte	.LVL1
+ 1275 0013 0300     		.2byte	0x3
+ 1276 0015 70       		.byte	0x70
+ 1277 0016 7C       		.sleb128 -4
+ 1278 0017 9F       		.byte	0x9f
+ 1279 0018 08000000 		.4byte	.LVL1
+ 1280 001c 0C000000 		.4byte	.LVL2
+ 1281 0020 0300     		.2byte	0x3
+ 1282 0022 70       		.byte	0x70
+ 1283 0023 78       		.sleb128 -8
+ 1284 0024 9F       		.byte	0x9f
+ 1285 0025 0C000000 		.4byte	.LVL2
+ 1286 0029 12000000 		.4byte	.LVL3
+ 1287 002d 0300     		.2byte	0x3
+ 1288 002f 70       		.byte	0x70
+ 1289 0030 74       		.sleb128 -12
+ 1290 0031 9F       		.byte	0x9f
+ 1291 0032 12000000 		.4byte	.LVL3
+ 1292 0036 16000000 		.4byte	.LVL4
+ 1293 003a 0300     		.2byte	0x3
+ 1294 003c 70       		.byte	0x70
+ 1295 003d 60       		.sleb128 -32
+ 1296 003e 9F       		.byte	0x9f
+ 1297 003f 16000000 		.4byte	.LVL4
+ 1298 0043 18000000 		.4byte	.LVL5
+ 1299 0047 0300     		.2byte	0x3
+ 1300 0049 70       		.byte	0x70
+ 1301 004a 40       		.sleb128 -64
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 36
+
+
+ 1302 004b 9F       		.byte	0x9f
+ 1303 004c 18000000 		.4byte	.LVL5
+ 1304 0050 20000000 		.4byte	.LFE64
+ 1305 0054 0100     		.2byte	0x1
+ 1306 0056 50       		.byte	0x50
+ 1307 0057 00000000 		.4byte	0
+ 1308 005b 00000000 		.4byte	0
+ 1309              	.LLST1:
+ 1310 005f 00000000 		.4byte	.LVL8
+ 1311 0063 06000000 		.4byte	.LVL9
+ 1312 0067 0100     		.2byte	0x1
+ 1313 0069 50       		.byte	0x50
+ 1314 006a 06000000 		.4byte	.LVL9
+ 1315 006e 06000000 		.4byte	.LFE74
+ 1316 0072 0400     		.2byte	0x4
+ 1317 0074 F3       		.byte	0xf3
+ 1318 0075 01       		.uleb128 0x1
+ 1319 0076 50       		.byte	0x50
+ 1320 0077 9F       		.byte	0x9f
+ 1321 0078 00000000 		.4byte	0
+ 1322 007c 00000000 		.4byte	0
+ 1323              		.section	.debug_aranges,"",%progbits
+ 1324 0000 84000000 		.4byte	0x84
+ 1325 0004 0200     		.2byte	0x2
+ 1326 0006 00000000 		.4byte	.Ldebug_info0
+ 1327 000a 04       		.byte	0x4
+ 1328 000b 00       		.byte	0
+ 1329 000c 0000     		.2byte	0
+ 1330 000e 0000     		.2byte	0
+ 1331 0010 00000000 		.4byte	.LFB67
+ 1332 0014 1A000000 		.4byte	.LFE67-.LFB67
+ 1333 0018 00000000 		.4byte	.LFB64
+ 1334 001c 20000000 		.4byte	.LFE64-.LFB64
+ 1335 0020 00000000 		.4byte	.LFB66
+ 1336 0024 24000000 		.4byte	.LFE66-.LFB66
+ 1337 0028 00000000 		.4byte	.LFB69
+ 1338 002c 02000000 		.4byte	.LFE69-.LFB69
+ 1339 0030 00000000 		.4byte	.LFB70
+ 1340 0034 18000000 		.4byte	.LFE70-.LFB70
+ 1341 0038 00000000 		.4byte	.LFB73
+ 1342 003c 10000000 		.4byte	.LFE73-.LFB73
+ 1343 0040 00000000 		.4byte	.LFB65
+ 1344 0044 08000000 		.4byte	.LFE65-.LFB65
+ 1345 0048 00000000 		.4byte	.LFB71
+ 1346 004c 1C000000 		.4byte	.LFE71-.LFB71
+ 1347 0050 00000000 		.4byte	.LFB74
+ 1348 0054 06000000 		.4byte	.LFE74-.LFB74
+ 1349 0058 00000000 		.4byte	.LFB72
+ 1350 005c 18000000 		.4byte	.LFE72-.LFB72
+ 1351 0060 00000000 		.4byte	.LFB75
+ 1352 0064 44000000 		.4byte	.LFE75-.LFB75
+ 1353 0068 00000000 		.4byte	.LFB76
+ 1354 006c 20000000 		.4byte	.LFE76-.LFB76
+ 1355 0070 00000000 		.4byte	.LFB77
+ 1356 0074 18000000 		.4byte	.LFE77-.LFB77
+ 1357 0078 00000000 		.4byte	.LFB68
+ 1358 007c 30000000 		.4byte	.LFE68-.LFB68
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 37
+
+
+ 1359 0080 00000000 		.4byte	0
+ 1360 0084 00000000 		.4byte	0
+ 1361              		.section	.debug_ranges,"",%progbits
+ 1362              	.Ldebug_ranges0:
+ 1363 0000 00000000 		.4byte	.LFB67
+ 1364 0004 1A000000 		.4byte	.LFE67
+ 1365 0008 00000000 		.4byte	.LFB64
+ 1366 000c 20000000 		.4byte	.LFE64
+ 1367 0010 00000000 		.4byte	.LFB66
+ 1368 0014 24000000 		.4byte	.LFE66
+ 1369 0018 00000000 		.4byte	.LFB69
+ 1370 001c 02000000 		.4byte	.LFE69
+ 1371 0020 00000000 		.4byte	.LFB70
+ 1372 0024 18000000 		.4byte	.LFE70
+ 1373 0028 00000000 		.4byte	.LFB73
+ 1374 002c 10000000 		.4byte	.LFE73
+ 1375 0030 00000000 		.4byte	.LFB65
+ 1376 0034 08000000 		.4byte	.LFE65
+ 1377 0038 00000000 		.4byte	.LFB71
+ 1378 003c 1C000000 		.4byte	.LFE71
+ 1379 0040 00000000 		.4byte	.LFB74
+ 1380 0044 06000000 		.4byte	.LFE74
+ 1381 0048 00000000 		.4byte	.LFB72
+ 1382 004c 18000000 		.4byte	.LFE72
+ 1383 0050 00000000 		.4byte	.LFB75
+ 1384 0054 44000000 		.4byte	.LFE75
+ 1385 0058 00000000 		.4byte	.LFB76
+ 1386 005c 20000000 		.4byte	.LFE76
+ 1387 0060 00000000 		.4byte	.LFB77
+ 1388 0064 18000000 		.4byte	.LFE77
+ 1389 0068 00000000 		.4byte	.LFB68
+ 1390 006c 30000000 		.4byte	.LFE68
+ 1391 0070 00000000 		.4byte	0
+ 1392 0074 00000000 		.4byte	0
+ 1393              		.section	.debug_line,"",%progbits
+ 1394              	.Ldebug_line0:
+ 1395 0000 8C020000 		.section	.debug_str,"MS",%progbits,1
+ 1395      02006D01 
+ 1395      00000201 
+ 1395      FB0E0D00 
+ 1395      01010101 
+ 1396              	.LASF43:
+ 1397 0000 75784372 		.ascii	"uxCriticalNesting\000"
+ 1397      69746963 
+ 1397      616C4E65 
+ 1397      7374696E 
+ 1397      6700
+ 1398              	.LASF28:
+ 1399 0012 76506F72 		.ascii	"vPortEnterCritical\000"
+ 1399      74456E74 
+ 1399      65724372 
+ 1399      69746963 
+ 1399      616C00
+ 1400              	.LASF23:
+ 1401 0025 7078436F 		.ascii	"pxCode\000"
+ 1401      646500
+ 1402              	.LASF26:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 38
+
+
+ 1403 002c 76506F72 		.ascii	"vPortEndScheduler\000"
+ 1403      74456E64 
+ 1403      53636865 
+ 1403      64756C65 
+ 1403      7200
+ 1404              	.LASF21:
+ 1405 003e 5469636B 		.ascii	"TickType_t\000"
+ 1405      54797065 
+ 1405      5F7400
+ 1406              	.LASF6:
+ 1407 0049 5F5F696E 		.ascii	"__int32_t\000"
+ 1407      7433325F 
+ 1407      7400
+ 1408              	.LASF5:
+ 1409 0053 6C6F6E67 		.ascii	"long int\000"
+ 1409      20696E74 
+ 1409      00
+ 1410              	.LASF0:
+ 1411 005c 756E7369 		.ascii	"unsigned int\000"
+ 1411      676E6564 
+ 1411      20696E74 
+ 1411      00
+ 1412              	.LASF32:
+ 1413 0069 78506F72 		.ascii	"xPortPendSVHandler\000"
+ 1413      7450656E 
+ 1413      64535648 
+ 1413      616E646C 
+ 1413      657200
+ 1414              	.LASF41:
+ 1415 007c 756C506F 		.ascii	"ulPortSetInterruptMask\000"
+ 1415      72745365 
+ 1415      74496E74 
+ 1415      65727275 
+ 1415      70744D61 
+ 1416              	.LASF17:
+ 1417 0093 5461736B 		.ascii	"TaskFunction_t\000"
+ 1417      46756E63 
+ 1417      74696F6E 
+ 1417      5F7400
+ 1418              	.LASF11:
+ 1419 00a2 696E7433 		.ascii	"int32_t\000"
+ 1419      325F7400 
+ 1420              	.LASF13:
+ 1421 00aa 666C6F61 		.ascii	"float\000"
+ 1421      7400
+ 1422              	.LASF2:
+ 1423 00b0 756E7369 		.ascii	"unsigned char\000"
+ 1423      676E6564 
+ 1423      20636861 
+ 1423      7200
+ 1424              	.LASF8:
+ 1425 00be 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1425      20756E73 
+ 1425      69676E65 
+ 1425      6420696E 
+ 1425      7400
+ 1426              	.LASF4:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 39
+
+
+ 1427 00d0 73686F72 		.ascii	"short unsigned int\000"
+ 1427      7420756E 
+ 1427      7369676E 
+ 1427      65642069 
+ 1427      6E7400
+ 1428              	.LASF44:
+ 1429 00e3 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1429      52784275 
+ 1429      66666572 
+ 1429      00
+ 1430              	.LASF14:
+ 1431 00f0 646F7562 		.ascii	"double\000"
+ 1431      6C6500
+ 1432              	.LASF7:
+ 1433 00f7 5F5F7569 		.ascii	"__uint32_t\000"
+ 1433      6E743332 
+ 1433      5F7400
+ 1434              	.LASF24:
+ 1435 0102 70765061 		.ascii	"pvParameters\000"
+ 1435      72616D65 
+ 1435      74657273 
+ 1435      00
+ 1436              	.LASF45:
+ 1437 010f 78546173 		.ascii	"xTaskIncrementTick\000"
+ 1437      6B496E63 
+ 1437      72656D65 
+ 1437      6E745469 
+ 1437      636B00
+ 1438              	.LASF37:
+ 1439 0122 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1439      4320342E 
+ 1439      392E3320 
+ 1439      32303135 
+ 1439      30333033 
+ 1440 0155 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1440      20726576 
+ 1440      6973696F 
+ 1440      6E203232 
+ 1440      31323230 
+ 1441 0188 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1441      66756E63 
+ 1441      74696F6E 
+ 1441      2D736563 
+ 1441      74696F6E 
+ 1442              	.LASF33:
+ 1443 01b0 78506F72 		.ascii	"xPortSysTickHandler\000"
+ 1443      74537973 
+ 1443      5469636B 
+ 1443      48616E64 
+ 1443      6C657200 
+ 1444              	.LASF27:
+ 1445 01c4 76506F72 		.ascii	"vPortYield\000"
+ 1445      74596965 
+ 1445      6C6400
+ 1446              	.LASF22:
+ 1447 01cf 7078546F 		.ascii	"pxTopOfStack\000"
+ 1447      704F6653 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 40
+
+
+ 1447      7461636B 
+ 1447      00
+ 1448              	.LASF10:
+ 1449 01dc 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1449      206C6F6E 
+ 1449      6720756E 
+ 1449      7369676E 
+ 1449      65642069 
+ 1450              	.LASF42:
+ 1451 01f3 70727654 		.ascii	"prvTaskExitError\000"
+ 1451      61736B45 
+ 1451      78697445 
+ 1451      72726F72 
+ 1451      00
+ 1452              	.LASF39:
+ 1453 0204 453A5C50 		.ascii	"E:\\PSoC_Creator\\CY8CKIT-059\\CY8CKIT-059_JJY_Race"
+ 1453      536F435F 
+ 1453      43726561 
+ 1453      746F725C 
+ 1453      43593843 
+ 1454 0234 69766572 		.ascii	"iver\\CY8CKIT-059_JJY_Raceiver.cydsn\000"
+ 1454      5C435938 
+ 1454      434B4954 
+ 1454      2D303539 
+ 1454      5F4A4A59 
+ 1455              	.LASF34:
+ 1456 0258 76506F72 		.ascii	"vPortSetupTimerInterrupt\000"
+ 1456      74536574 
+ 1456      75705469 
+ 1456      6D657249 
+ 1456      6E746572 
+ 1457              	.LASF16:
+ 1458 0271 73697A65 		.ascii	"sizetype\000"
+ 1458      74797065 
+ 1458      00
+ 1459              	.LASF9:
+ 1460 027a 6C6F6E67 		.ascii	"long long int\000"
+ 1460      206C6F6E 
+ 1460      6720696E 
+ 1460      7400
+ 1461              	.LASF29:
+ 1462 0288 76506F72 		.ascii	"vPortClearInterruptMask\000"
+ 1462      74436C65 
+ 1462      6172496E 
+ 1462      74657272 
+ 1462      7570744D 
+ 1463              	.LASF15:
+ 1464 02a0 63686172 		.ascii	"char\000"
+ 1464      00
+ 1465              	.LASF18:
+ 1466 02a5 53746163 		.ascii	"StackType_t\000"
+ 1466      6B547970 
+ 1466      655F7400 
+ 1467              	.LASF25:
+ 1468 02b1 76506F72 		.ascii	"vPortSVCHandler\000"
+ 1468      74535643 
+ 1468      48616E64 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 41
+
+
+ 1468      6C657200 
+ 1469              	.LASF3:
+ 1470 02c1 73686F72 		.ascii	"short int\000"
+ 1470      7420696E 
+ 1470      7400
+ 1471              	.LASF31:
+ 1472 02cb 76506F72 		.ascii	"vPortExitCritical\000"
+ 1472      74457869 
+ 1472      74437269 
+ 1472      74696361 
+ 1472      6C00
+ 1473              	.LASF12:
+ 1474 02dd 75696E74 		.ascii	"uint32_t\000"
+ 1474      33325F74 
+ 1474      00
+ 1475              	.LASF30:
+ 1476 02e6 756C4E65 		.ascii	"ulNewMaskValue\000"
+ 1476      774D6173 
+ 1476      6B56616C 
+ 1476      756500
+ 1477              	.LASF19:
+ 1478 02f5 42617365 		.ascii	"BaseType_t\000"
+ 1478      54797065 
+ 1478      5F7400
+ 1479              	.LASF40:
+ 1480 0300 70727650 		.ascii	"prvPortStartFirstTask\000"
+ 1480      6F727453 
+ 1480      74617274 
+ 1480      46697273 
+ 1480      74546173 
+ 1481              	.LASF1:
+ 1482 0316 7369676E 		.ascii	"signed char\000"
+ 1482      65642063 
+ 1482      68617200 
+ 1483              	.LASF38:
+ 1484 0322 2E2E5C46 		.ascii	"..\\FreeRTOS\\port.c\000"
+ 1484      72656552 
+ 1484      544F535C 
+ 1484      706F7274 
+ 1484      2E6300
+ 1485              	.LASF36:
+ 1486 0335 78506F72 		.ascii	"xPortStartScheduler\000"
+ 1486      74537461 
+ 1486      72745363 
+ 1486      68656475 
+ 1486      6C657200 
+ 1487              	.LASF20:
+ 1488 0349 55426173 		.ascii	"UBaseType_t\000"
+ 1488      65547970 
+ 1488      655F7400 
+ 1489              	.LASF35:
+ 1490 0355 7078506F 		.ascii	"pxPortInitialiseStack\000"
+ 1490      7274496E 
+ 1490      69746961 
+ 1490      6C697365 
+ 1490      53746163 
+ 1491              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccxOZMio.s 			page 42
+
+

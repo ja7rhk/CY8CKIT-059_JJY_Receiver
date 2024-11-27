@@ -1,0 +1,2193 @@
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"heap_2.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.prvHeapInit,"ax",%progbits
+  19              		.align	2
+  20              		.thumb
+  21              		.thumb_func
+  22              		.type	prvHeapInit, %function
+  23              	prvHeapInit:
+  24              	.LFB68:
+  25              		.file 1 "..\\FreeRTOS\\heap_2.c"
+   1:..\FreeRTOS/heap_2.c **** /*
+   2:..\FreeRTOS/heap_2.c ****     FreeRTOS V8.2.3 - Copyright (C) 2015 Real Time Engineers Ltd.
+   3:..\FreeRTOS/heap_2.c ****     All rights reserved
+   4:..\FreeRTOS/heap_2.c **** 
+   5:..\FreeRTOS/heap_2.c ****     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
+   6:..\FreeRTOS/heap_2.c **** 
+   7:..\FreeRTOS/heap_2.c ****     This file is part of the FreeRTOS distribution.
+   8:..\FreeRTOS/heap_2.c **** 
+   9:..\FreeRTOS/heap_2.c ****     FreeRTOS is free software; you can redistribute it and/or modify it under
+  10:..\FreeRTOS/heap_2.c ****     the terms of the GNU General Public License (version 2) as published by the
+  11:..\FreeRTOS/heap_2.c ****     Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
+  12:..\FreeRTOS/heap_2.c **** 
+  13:..\FreeRTOS/heap_2.c ****     ***************************************************************************
+  14:..\FreeRTOS/heap_2.c ****     >>!   NOTE: The modification to the GPL is included to allow you to     !<<
+  15:..\FreeRTOS/heap_2.c ****     >>!   distribute a combined work that includes FreeRTOS without being   !<<
+  16:..\FreeRTOS/heap_2.c ****     >>!   obliged to provide the source code for proprietary components     !<<
+  17:..\FreeRTOS/heap_2.c ****     >>!   outside of the FreeRTOS kernel.                                   !<<
+  18:..\FreeRTOS/heap_2.c ****     ***************************************************************************
+  19:..\FreeRTOS/heap_2.c **** 
+  20:..\FreeRTOS/heap_2.c ****     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
+  21:..\FreeRTOS/heap_2.c ****     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  22:..\FreeRTOS/heap_2.c ****     FOR A PARTICULAR PURPOSE.  Full license text is available on the following
+  23:..\FreeRTOS/heap_2.c ****     link: http://www.freertos.org/a00114.html
+  24:..\FreeRTOS/heap_2.c **** 
+  25:..\FreeRTOS/heap_2.c ****     ***************************************************************************
+  26:..\FreeRTOS/heap_2.c ****      *                                                                       *
+  27:..\FreeRTOS/heap_2.c ****      *    FreeRTOS provides completely free yet professionally developed,    *
+  28:..\FreeRTOS/heap_2.c ****      *    robust, strictly quality controlled, supported, and cross          *
+  29:..\FreeRTOS/heap_2.c ****      *    platform software that is more than just the market leader, it     *
+  30:..\FreeRTOS/heap_2.c ****      *    is the industry's de facto standard.                               *
+  31:..\FreeRTOS/heap_2.c ****      *                                                                       *
+  32:..\FreeRTOS/heap_2.c ****      *    Help yourself get started quickly while simultaneously helping     *
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 2
+
+
+  33:..\FreeRTOS/heap_2.c ****      *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+  34:..\FreeRTOS/heap_2.c ****      *    tutorial book, reference manual, or both:                          *
+  35:..\FreeRTOS/heap_2.c ****      *    http://www.FreeRTOS.org/Documentation                              *
+  36:..\FreeRTOS/heap_2.c ****      *                                                                       *
+  37:..\FreeRTOS/heap_2.c ****     ***************************************************************************
+  38:..\FreeRTOS/heap_2.c **** 
+  39:..\FreeRTOS/heap_2.c ****     http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
+  40:..\FreeRTOS/heap_2.c ****     the FAQ page "My application does not run, what could be wrong?".  Have you
+  41:..\FreeRTOS/heap_2.c ****     defined configASSERT()?
+  42:..\FreeRTOS/heap_2.c **** 
+  43:..\FreeRTOS/heap_2.c ****     http://www.FreeRTOS.org/support - In return for receiving this top quality
+  44:..\FreeRTOS/heap_2.c ****     embedded software for free we request you assist our global community by
+  45:..\FreeRTOS/heap_2.c ****     participating in the support forum.
+  46:..\FreeRTOS/heap_2.c **** 
+  47:..\FreeRTOS/heap_2.c ****     http://www.FreeRTOS.org/training - Investing in training allows your team to
+  48:..\FreeRTOS/heap_2.c ****     be as productive as possible as early as possible.  Now you can receive
+  49:..\FreeRTOS/heap_2.c ****     FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+  50:..\FreeRTOS/heap_2.c ****     Ltd, and the world's leading authority on the world's leading RTOS.
+  51:..\FreeRTOS/heap_2.c **** 
+  52:..\FreeRTOS/heap_2.c ****     http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
+  53:..\FreeRTOS/heap_2.c ****     including FreeRTOS+Trace - an indispensable productivity tool, a DOS
+  54:..\FreeRTOS/heap_2.c ****     compatible FAT file system, and our tiny thread aware UDP/IP stack.
+  55:..\FreeRTOS/heap_2.c **** 
+  56:..\FreeRTOS/heap_2.c ****     http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+  57:..\FreeRTOS/heap_2.c ****     Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+  58:..\FreeRTOS/heap_2.c **** 
+  59:..\FreeRTOS/heap_2.c ****     http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
+  60:..\FreeRTOS/heap_2.c ****     Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+  61:..\FreeRTOS/heap_2.c ****     licenses offer ticketed support, indemnification and commercial middleware.
+  62:..\FreeRTOS/heap_2.c **** 
+  63:..\FreeRTOS/heap_2.c ****     http://www.SafeRTOS.com - High Integrity Systems also provide a safety
+  64:..\FreeRTOS/heap_2.c ****     engineered and independently SIL3 certified version for use in safety and
+  65:..\FreeRTOS/heap_2.c ****     mission critical applications that require provable dependability.
+  66:..\FreeRTOS/heap_2.c **** 
+  67:..\FreeRTOS/heap_2.c ****     1 tab == 4 spaces!
+  68:..\FreeRTOS/heap_2.c **** */
+  69:..\FreeRTOS/heap_2.c **** 
+  70:..\FreeRTOS/heap_2.c **** /*
+  71:..\FreeRTOS/heap_2.c ****  * A sample implementation of pvPortMalloc() and vPortFree() that permits
+  72:..\FreeRTOS/heap_2.c ****  * allocated blocks to be freed, but does not combine adjacent free blocks
+  73:..\FreeRTOS/heap_2.c ****  * into a single larger block (and so will fragment memory).  See heap_4.c for
+  74:..\FreeRTOS/heap_2.c ****  * an equivalent that does combine adjacent blocks into single larger blocks.
+  75:..\FreeRTOS/heap_2.c ****  *
+  76:..\FreeRTOS/heap_2.c ****  * See heap_1.c, heap_3.c and heap_4.c for alternative implementations, and the
+  77:..\FreeRTOS/heap_2.c ****  * memory management pages of http://www.FreeRTOS.org for more information.
+  78:..\FreeRTOS/heap_2.c ****  */
+  79:..\FreeRTOS/heap_2.c **** #include <stdlib.h>
+  80:..\FreeRTOS/heap_2.c **** 
+  81:..\FreeRTOS/heap_2.c **** /* Defining MPU_WRAPPERS_INCLUDED_FROM_API_FILE prevents task.h from redefining
+  82:..\FreeRTOS/heap_2.c **** all the API functions to use the MPU wrappers.  That should only be done when
+  83:..\FreeRTOS/heap_2.c **** task.h is included from an application file. */
+  84:..\FreeRTOS/heap_2.c **** #define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+  85:..\FreeRTOS/heap_2.c **** 
+  86:..\FreeRTOS/heap_2.c **** #include "FreeRTOS.h"
+  87:..\FreeRTOS/heap_2.c **** #include "task.h"
+  88:..\FreeRTOS/heap_2.c **** 
+  89:..\FreeRTOS/heap_2.c **** #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 3
+
+
+  90:..\FreeRTOS/heap_2.c **** 
+  91:..\FreeRTOS/heap_2.c **** /* A few bytes might be lost to byte aligning the heap start address. */
+  92:..\FreeRTOS/heap_2.c **** #define configADJUSTED_HEAP_SIZE	( configTOTAL_HEAP_SIZE - portBYTE_ALIGNMENT )
+  93:..\FreeRTOS/heap_2.c **** 
+  94:..\FreeRTOS/heap_2.c **** /*
+  95:..\FreeRTOS/heap_2.c ****  * Initialises the heap structures before their first use.
+  96:..\FreeRTOS/heap_2.c ****  */
+  97:..\FreeRTOS/heap_2.c **** static void prvHeapInit( void );
+  98:..\FreeRTOS/heap_2.c **** 
+  99:..\FreeRTOS/heap_2.c **** /* Allocate the memory for the heap. */
+ 100:..\FreeRTOS/heap_2.c **** static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
+ 101:..\FreeRTOS/heap_2.c **** 
+ 102:..\FreeRTOS/heap_2.c **** /* Define the linked list structure.  This is used to link free blocks in order
+ 103:..\FreeRTOS/heap_2.c **** of their size. */
+ 104:..\FreeRTOS/heap_2.c **** typedef struct A_BLOCK_LINK
+ 105:..\FreeRTOS/heap_2.c **** {
+ 106:..\FreeRTOS/heap_2.c **** 	struct A_BLOCK_LINK *pxNextFreeBlock;	/*<< The next free block in the list. */
+ 107:..\FreeRTOS/heap_2.c **** 	size_t xBlockSize;						/*<< The size of the free block. */
+ 108:..\FreeRTOS/heap_2.c **** } BlockLink_t;
+ 109:..\FreeRTOS/heap_2.c **** 
+ 110:..\FreeRTOS/heap_2.c **** 
+ 111:..\FreeRTOS/heap_2.c **** static const uint16_t heapSTRUCT_SIZE	= ( ( sizeof ( BlockLink_t ) + ( portBYTE_ALIGNMENT - 1 ) ) &
+ 112:..\FreeRTOS/heap_2.c **** #define heapMINIMUM_BLOCK_SIZE	( ( size_t ) ( heapSTRUCT_SIZE * 2 ) )
+ 113:..\FreeRTOS/heap_2.c **** 
+ 114:..\FreeRTOS/heap_2.c **** /* Create a couple of list links to mark the start and end of the list. */
+ 115:..\FreeRTOS/heap_2.c **** static BlockLink_t xStart, xEnd;
+ 116:..\FreeRTOS/heap_2.c **** 
+ 117:..\FreeRTOS/heap_2.c **** /* Keeps track of the number of free bytes remaining, but says nothing about
+ 118:..\FreeRTOS/heap_2.c **** fragmentation. */
+ 119:..\FreeRTOS/heap_2.c **** static size_t xFreeBytesRemaining = configADJUSTED_HEAP_SIZE;
+ 120:..\FreeRTOS/heap_2.c **** 
+ 121:..\FreeRTOS/heap_2.c **** /* STATIC FUNCTIONS ARE DEFINED AS MACROS TO MINIMIZE THE FUNCTION CALL DEPTH. */
+ 122:..\FreeRTOS/heap_2.c **** 
+ 123:..\FreeRTOS/heap_2.c **** /*
+ 124:..\FreeRTOS/heap_2.c ****  * Insert a block into the list of free blocks - which is ordered by size of
+ 125:..\FreeRTOS/heap_2.c ****  * the block.  Small blocks at the start of the list and large blocks at the end
+ 126:..\FreeRTOS/heap_2.c ****  * of the list.
+ 127:..\FreeRTOS/heap_2.c ****  */
+ 128:..\FreeRTOS/heap_2.c **** #define prvInsertBlockIntoFreeList( pxBlockToInsert )								\
+ 129:..\FreeRTOS/heap_2.c **** {																					\
+ 130:..\FreeRTOS/heap_2.c **** BlockLink_t *pxIterator;																\
+ 131:..\FreeRTOS/heap_2.c **** size_t xBlockSize;																	\
+ 132:..\FreeRTOS/heap_2.c **** 																					\
+ 133:..\FreeRTOS/heap_2.c **** 	xBlockSize = pxBlockToInsert->xBlockSize;										\
+ 134:..\FreeRTOS/heap_2.c **** 																					\
+ 135:..\FreeRTOS/heap_2.c **** 	/* Iterate through the list until a block is found that has a larger size */	\
+ 136:..\FreeRTOS/heap_2.c **** 	/* than the block we are inserting. */											\
+ 137:..\FreeRTOS/heap_2.c **** 	for( pxIterator = &xStart; pxIterator->pxNextFreeBlock->xBlockSize < xBlockSize; pxIterator = pxIt
+ 138:..\FreeRTOS/heap_2.c **** 	{																				\
+ 139:..\FreeRTOS/heap_2.c **** 		/* There is nothing to do here - just iterate to the correct position. */	\
+ 140:..\FreeRTOS/heap_2.c **** 	}																				\
+ 141:..\FreeRTOS/heap_2.c **** 																					\
+ 142:..\FreeRTOS/heap_2.c **** 	/* Update the list to include the block being inserted in the correct */		\
+ 143:..\FreeRTOS/heap_2.c **** 	/* position. */																	\
+ 144:..\FreeRTOS/heap_2.c **** 	pxBlockToInsert->pxNextFreeBlock = pxIterator->pxNextFreeBlock;					\
+ 145:..\FreeRTOS/heap_2.c **** 	pxIterator->pxNextFreeBlock = pxBlockToInsert;									\
+ 146:..\FreeRTOS/heap_2.c **** }
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 4
+
+
+ 147:..\FreeRTOS/heap_2.c **** /*-----------------------------------------------------------*/
+ 148:..\FreeRTOS/heap_2.c **** 
+ 149:..\FreeRTOS/heap_2.c **** void *pvPortMalloc( size_t xWantedSize )
+ 150:..\FreeRTOS/heap_2.c **** {
+ 151:..\FreeRTOS/heap_2.c **** BlockLink_t *pxBlock, *pxPreviousBlock, *pxNewBlockLink;
+ 152:..\FreeRTOS/heap_2.c **** static BaseType_t xHeapHasBeenInitialised = pdFALSE;
+ 153:..\FreeRTOS/heap_2.c **** void *pvReturn = NULL;
+ 154:..\FreeRTOS/heap_2.c **** 
+ 155:..\FreeRTOS/heap_2.c **** 	vTaskSuspendAll();
+ 156:..\FreeRTOS/heap_2.c **** 	{
+ 157:..\FreeRTOS/heap_2.c **** 		/* If this is the first call to malloc then the heap will require
+ 158:..\FreeRTOS/heap_2.c **** 		initialisation to setup the list of free blocks. */
+ 159:..\FreeRTOS/heap_2.c **** 		if( xHeapHasBeenInitialised == pdFALSE )
+ 160:..\FreeRTOS/heap_2.c **** 		{
+ 161:..\FreeRTOS/heap_2.c **** 			prvHeapInit();
+ 162:..\FreeRTOS/heap_2.c **** 			xHeapHasBeenInitialised = pdTRUE;
+ 163:..\FreeRTOS/heap_2.c **** 		}
+ 164:..\FreeRTOS/heap_2.c **** 
+ 165:..\FreeRTOS/heap_2.c **** 		/* The wanted size is increased so it can contain a BlockLink_t
+ 166:..\FreeRTOS/heap_2.c **** 		structure in addition to the requested amount of bytes. */
+ 167:..\FreeRTOS/heap_2.c **** 		if( xWantedSize > 0 )
+ 168:..\FreeRTOS/heap_2.c **** 		{
+ 169:..\FreeRTOS/heap_2.c **** 			xWantedSize += heapSTRUCT_SIZE;
+ 170:..\FreeRTOS/heap_2.c **** 
+ 171:..\FreeRTOS/heap_2.c **** 			/* Ensure that blocks are always aligned to the required number of bytes. */
+ 172:..\FreeRTOS/heap_2.c **** 			if( ( xWantedSize & portBYTE_ALIGNMENT_MASK ) != 0 )
+ 173:..\FreeRTOS/heap_2.c **** 			{
+ 174:..\FreeRTOS/heap_2.c **** 				/* Byte alignment required. */
+ 175:..\FreeRTOS/heap_2.c **** 				xWantedSize += ( portBYTE_ALIGNMENT - ( xWantedSize & portBYTE_ALIGNMENT_MASK ) );
+ 176:..\FreeRTOS/heap_2.c **** 			}
+ 177:..\FreeRTOS/heap_2.c **** 		}
+ 178:..\FreeRTOS/heap_2.c **** 
+ 179:..\FreeRTOS/heap_2.c **** 		if( ( xWantedSize > 0 ) && ( xWantedSize < configADJUSTED_HEAP_SIZE ) )
+ 180:..\FreeRTOS/heap_2.c **** 		{
+ 181:..\FreeRTOS/heap_2.c **** 			/* Blocks are stored in byte order - traverse the list from the start
+ 182:..\FreeRTOS/heap_2.c **** 			(smallest) block until one of adequate size is found. */
+ 183:..\FreeRTOS/heap_2.c **** 			pxPreviousBlock = &xStart;
+ 184:..\FreeRTOS/heap_2.c **** 			pxBlock = xStart.pxNextFreeBlock;
+ 185:..\FreeRTOS/heap_2.c **** 			while( ( pxBlock->xBlockSize < xWantedSize ) && ( pxBlock->pxNextFreeBlock != NULL ) )
+ 186:..\FreeRTOS/heap_2.c **** 			{
+ 187:..\FreeRTOS/heap_2.c **** 				pxPreviousBlock = pxBlock;
+ 188:..\FreeRTOS/heap_2.c **** 				pxBlock = pxBlock->pxNextFreeBlock;
+ 189:..\FreeRTOS/heap_2.c **** 			}
+ 190:..\FreeRTOS/heap_2.c **** 
+ 191:..\FreeRTOS/heap_2.c **** 			/* If we found the end marker then a block of adequate size was not found. */
+ 192:..\FreeRTOS/heap_2.c **** 			if( pxBlock != &xEnd )
+ 193:..\FreeRTOS/heap_2.c **** 			{
+ 194:..\FreeRTOS/heap_2.c **** 				/* Return the memory space - jumping over the BlockLink_t structure
+ 195:..\FreeRTOS/heap_2.c **** 				at its start. */
+ 196:..\FreeRTOS/heap_2.c **** 				pvReturn = ( void * ) ( ( ( uint8_t * ) pxPreviousBlock->pxNextFreeBlock ) + heapSTRUCT_SIZE );
+ 197:..\FreeRTOS/heap_2.c **** 
+ 198:..\FreeRTOS/heap_2.c **** 				/* This block is being returned for use so must be taken out of the
+ 199:..\FreeRTOS/heap_2.c **** 				list of free blocks. */
+ 200:..\FreeRTOS/heap_2.c **** 				pxPreviousBlock->pxNextFreeBlock = pxBlock->pxNextFreeBlock;
+ 201:..\FreeRTOS/heap_2.c **** 
+ 202:..\FreeRTOS/heap_2.c **** 				/* If the block is larger than required it can be split into two. */
+ 203:..\FreeRTOS/heap_2.c **** 				if( ( pxBlock->xBlockSize - xWantedSize ) > heapMINIMUM_BLOCK_SIZE )
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 5
+
+
+ 204:..\FreeRTOS/heap_2.c **** 				{
+ 205:..\FreeRTOS/heap_2.c **** 					/* This block is to be split into two.  Create a new block
+ 206:..\FreeRTOS/heap_2.c **** 					following the number of bytes requested. The void cast is
+ 207:..\FreeRTOS/heap_2.c **** 					used to prevent byte alignment warnings from the compiler. */
+ 208:..\FreeRTOS/heap_2.c **** 					pxNewBlockLink = ( void * ) ( ( ( uint8_t * ) pxBlock ) + xWantedSize );
+ 209:..\FreeRTOS/heap_2.c **** 
+ 210:..\FreeRTOS/heap_2.c **** 					/* Calculate the sizes of two blocks split from the single
+ 211:..\FreeRTOS/heap_2.c **** 					block. */
+ 212:..\FreeRTOS/heap_2.c **** 					pxNewBlockLink->xBlockSize = pxBlock->xBlockSize - xWantedSize;
+ 213:..\FreeRTOS/heap_2.c **** 					pxBlock->xBlockSize = xWantedSize;
+ 214:..\FreeRTOS/heap_2.c **** 
+ 215:..\FreeRTOS/heap_2.c **** 					/* Insert the new block into the list of free blocks. */
+ 216:..\FreeRTOS/heap_2.c **** 					prvInsertBlockIntoFreeList( ( pxNewBlockLink ) );
+ 217:..\FreeRTOS/heap_2.c **** 				}
+ 218:..\FreeRTOS/heap_2.c **** 
+ 219:..\FreeRTOS/heap_2.c **** 				xFreeBytesRemaining -= pxBlock->xBlockSize;
+ 220:..\FreeRTOS/heap_2.c **** 			}
+ 221:..\FreeRTOS/heap_2.c **** 		}
+ 222:..\FreeRTOS/heap_2.c **** 
+ 223:..\FreeRTOS/heap_2.c **** 		traceMALLOC( pvReturn, xWantedSize );
+ 224:..\FreeRTOS/heap_2.c **** 	}
+ 225:..\FreeRTOS/heap_2.c **** 	( void ) xTaskResumeAll();
+ 226:..\FreeRTOS/heap_2.c **** 
+ 227:..\FreeRTOS/heap_2.c **** 	#if( configUSE_MALLOC_FAILED_HOOK == 1 )
+ 228:..\FreeRTOS/heap_2.c **** 	{
+ 229:..\FreeRTOS/heap_2.c **** 		if( pvReturn == NULL )
+ 230:..\FreeRTOS/heap_2.c **** 		{
+ 231:..\FreeRTOS/heap_2.c **** 			extern void vApplicationMallocFailedHook( void );
+ 232:..\FreeRTOS/heap_2.c **** 			vApplicationMallocFailedHook();
+ 233:..\FreeRTOS/heap_2.c **** 		}
+ 234:..\FreeRTOS/heap_2.c **** 	}
+ 235:..\FreeRTOS/heap_2.c **** 	#endif
+ 236:..\FreeRTOS/heap_2.c **** 
+ 237:..\FreeRTOS/heap_2.c **** 	return pvReturn;
+ 238:..\FreeRTOS/heap_2.c **** }
+ 239:..\FreeRTOS/heap_2.c **** /*-----------------------------------------------------------*/
+ 240:..\FreeRTOS/heap_2.c **** 
+ 241:..\FreeRTOS/heap_2.c **** void vPortFree( void *pv )
+ 242:..\FreeRTOS/heap_2.c **** {
+ 243:..\FreeRTOS/heap_2.c **** uint8_t *puc = ( uint8_t * ) pv;
+ 244:..\FreeRTOS/heap_2.c **** BlockLink_t *pxLink;
+ 245:..\FreeRTOS/heap_2.c **** 
+ 246:..\FreeRTOS/heap_2.c **** 	if( pv != NULL )
+ 247:..\FreeRTOS/heap_2.c **** 	{
+ 248:..\FreeRTOS/heap_2.c **** 		/* The memory being freed will have an BlockLink_t structure immediately
+ 249:..\FreeRTOS/heap_2.c **** 		before it. */
+ 250:..\FreeRTOS/heap_2.c **** 		puc -= heapSTRUCT_SIZE;
+ 251:..\FreeRTOS/heap_2.c **** 
+ 252:..\FreeRTOS/heap_2.c **** 		/* This unexpected casting is to keep some compilers from issuing
+ 253:..\FreeRTOS/heap_2.c **** 		byte alignment warnings. */
+ 254:..\FreeRTOS/heap_2.c **** 		pxLink = ( void * ) puc;
+ 255:..\FreeRTOS/heap_2.c **** 
+ 256:..\FreeRTOS/heap_2.c **** 		vTaskSuspendAll();
+ 257:..\FreeRTOS/heap_2.c **** 		{
+ 258:..\FreeRTOS/heap_2.c **** 			/* Add this block to the list of free blocks. */
+ 259:..\FreeRTOS/heap_2.c **** 			prvInsertBlockIntoFreeList( ( ( BlockLink_t * ) pxLink ) );
+ 260:..\FreeRTOS/heap_2.c **** 			xFreeBytesRemaining += pxLink->xBlockSize;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 6
+
+
+ 261:..\FreeRTOS/heap_2.c **** 			traceFREE( pv, pxLink->xBlockSize );
+ 262:..\FreeRTOS/heap_2.c **** 		}
+ 263:..\FreeRTOS/heap_2.c **** 		( void ) xTaskResumeAll();
+ 264:..\FreeRTOS/heap_2.c **** 	}
+ 265:..\FreeRTOS/heap_2.c **** }
+ 266:..\FreeRTOS/heap_2.c **** /*-----------------------------------------------------------*/
+ 267:..\FreeRTOS/heap_2.c **** 
+ 268:..\FreeRTOS/heap_2.c **** size_t xPortGetFreeHeapSize( void )
+ 269:..\FreeRTOS/heap_2.c **** {
+ 270:..\FreeRTOS/heap_2.c **** 	return xFreeBytesRemaining;
+ 271:..\FreeRTOS/heap_2.c **** }
+ 272:..\FreeRTOS/heap_2.c **** /*-----------------------------------------------------------*/
+ 273:..\FreeRTOS/heap_2.c **** 
+ 274:..\FreeRTOS/heap_2.c **** void vPortInitialiseBlocks( void )
+ 275:..\FreeRTOS/heap_2.c **** {
+ 276:..\FreeRTOS/heap_2.c **** 	/* This just exists to keep the linker quiet. */
+ 277:..\FreeRTOS/heap_2.c **** }
+ 278:..\FreeRTOS/heap_2.c **** /*-----------------------------------------------------------*/
+ 279:..\FreeRTOS/heap_2.c **** 
+ 280:..\FreeRTOS/heap_2.c **** static void prvHeapInit( void )
+ 281:..\FreeRTOS/heap_2.c **** {
+  26              		.loc 1 281 0
+  27              		.cfi_startproc
+  28              		@ args = 0, pretend = 0, frame = 0
+  29              		@ frame_needed = 0, uses_anonymous_args = 0
+  30              		@ link register save eliminated.
+ 282:..\FreeRTOS/heap_2.c **** BlockLink_t *pxFirstFreeBlock;
+ 283:..\FreeRTOS/heap_2.c **** uint8_t *pucAlignedHeap;
+ 284:..\FreeRTOS/heap_2.c **** 
+ 285:..\FreeRTOS/heap_2.c **** 	/* Ensure the heap starts on a correctly aligned boundary. */
+ 286:..\FreeRTOS/heap_2.c **** 	pucAlignedHeap = ( uint8_t * ) ( ( ( portPOINTER_SIZE_TYPE ) &ucHeap[ portBYTE_ALIGNMENT ] ) & ( ~
+  31              		.loc 1 286 0
+  32 0000 094A     		ldr	r2, .L2
+  33 0002 22F00702 		bic	r2, r2, #7
+  34              	.LVL0:
+ 287:..\FreeRTOS/heap_2.c **** 
+ 288:..\FreeRTOS/heap_2.c **** 	/* xStart is used to hold a pointer to the first item in the list of free
+ 289:..\FreeRTOS/heap_2.c **** 	blocks.  The void cast is used to prevent compiler warnings. */
+ 290:..\FreeRTOS/heap_2.c **** 	xStart.pxNextFreeBlock = ( void * ) pucAlignedHeap;
+  35              		.loc 1 290 0
+  36 0006 094B     		ldr	r3, .L2+4
+  37 0008 C3F83829 		str	r2, [r3, #2360]
+ 291:..\FreeRTOS/heap_2.c **** 	xStart.xBlockSize = ( size_t ) 0;
+  38              		.loc 1 291 0
+  39 000c 0020     		movs	r0, #0
+  40 000e C3F83C09 		str	r0, [r3, #2364]
+ 292:..\FreeRTOS/heap_2.c **** 
+ 293:..\FreeRTOS/heap_2.c **** 	/* xEnd is used to mark the end of the list of free blocks. */
+ 294:..\FreeRTOS/heap_2.c **** 	xEnd.xBlockSize = configADJUSTED_HEAP_SIZE;
+  41              		.loc 1 294 0
+  42 0012 47F6F871 		movw	r1, #32760
+  43 0016 C3F84419 		str	r1, [r3, #2372]
+ 295:..\FreeRTOS/heap_2.c **** 	xEnd.pxNextFreeBlock = NULL;
+  44              		.loc 1 295 0
+  45 001a C3F84009 		str	r0, [r3, #2368]
+  46              	.LVL1:
+ 296:..\FreeRTOS/heap_2.c **** 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 7
+
+
+ 297:..\FreeRTOS/heap_2.c **** 	/* To start with there is a single free block that is sized to take up the
+ 298:..\FreeRTOS/heap_2.c **** 	entire heap space. */
+ 299:..\FreeRTOS/heap_2.c **** 	pxFirstFreeBlock = ( void * ) pucAlignedHeap;
+ 300:..\FreeRTOS/heap_2.c **** 	pxFirstFreeBlock->xBlockSize = configADJUSTED_HEAP_SIZE;
+  47              		.loc 1 300 0
+  48 001e 5160     		str	r1, [r2, #4]
+ 301:..\FreeRTOS/heap_2.c **** 	pxFirstFreeBlock->pxNextFreeBlock = &xEnd;
+  49              		.loc 1 301 0
+  50 0020 03F51463 		add	r3, r3, #2368
+  51 0024 1360     		str	r3, [r2]
+  52 0026 7047     		bx	lr
+  53              	.L3:
+  54              		.align	2
+  55              	.L2:
+  56 0028 08000000 		.word	.LANCHOR0+8
+  57 002c C8760000 		.word	.LANCHOR1
+  58              		.cfi_endproc
+  59              	.LFE68:
+  60              		.size	prvHeapInit, .-prvHeapInit
+  61              		.section	.text.pvPortMalloc,"ax",%progbits
+  62              		.align	2
+  63              		.global	pvPortMalloc
+  64              		.thumb
+  65              		.thumb_func
+  66              		.type	pvPortMalloc, %function
+  67              	pvPortMalloc:
+  68              	.LFB64:
+ 150:..\FreeRTOS/heap_2.c **** BlockLink_t *pxBlock, *pxPreviousBlock, *pxNewBlockLink;
+  69              		.loc 1 150 0
+  70              		.cfi_startproc
+  71              		@ args = 0, pretend = 0, frame = 0
+  72              		@ frame_needed = 0, uses_anonymous_args = 0
+  73              	.LVL2:
+  74 0000 70B5     		push	{r4, r5, r6, lr}
+  75              		.cfi_def_cfa_offset 16
+  76              		.cfi_offset 4, -16
+  77              		.cfi_offset 5, -12
+  78              		.cfi_offset 6, -8
+  79              		.cfi_offset 14, -4
+  80 0002 0446     		mov	r4, r0
+  81              	.LVL3:
+ 155:..\FreeRTOS/heap_2.c **** 	{
+  82              		.loc 1 155 0
+  83 0004 FFF7FEFF 		bl	vTaskSuspendAll
+  84              	.LVL4:
+ 159:..\FreeRTOS/heap_2.c **** 		{
+  85              		.loc 1 159 0
+  86 0008 264B     		ldr	r3, .L18
+  87 000a D3F84839 		ldr	r3, [r3, #2376]
+  88 000e 2BB9     		cbnz	r3, .L5
+ 161:..\FreeRTOS/heap_2.c **** 			xHeapHasBeenInitialised = pdTRUE;
+  89              		.loc 1 161 0
+  90 0010 FFF7FEFF 		bl	prvHeapInit
+  91              	.LVL5:
+ 162:..\FreeRTOS/heap_2.c **** 		}
+  92              		.loc 1 162 0
+  93 0014 0122     		movs	r2, #1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 8
+
+
+  94 0016 234B     		ldr	r3, .L18
+  95 0018 C3F84829 		str	r2, [r3, #2376]
+  96              	.L5:
+ 167:..\FreeRTOS/heap_2.c **** 		{
+  97              		.loc 1 167 0
+  98 001c 34B1     		cbz	r4, .L6
+ 169:..\FreeRTOS/heap_2.c **** 
+  99              		.loc 1 169 0
+ 100 001e 0834     		adds	r4, r4, #8
+ 101              	.LVL6:
+ 172:..\FreeRTOS/heap_2.c **** 			{
+ 102              		.loc 1 172 0
+ 103 0020 14F0070F 		tst	r4, #7
+ 104 0024 02D0     		beq	.L6
+ 175:..\FreeRTOS/heap_2.c **** 			}
+ 105              		.loc 1 175 0
+ 106 0026 24F00704 		bic	r4, r4, #7
+ 107              	.LVL7:
+ 108 002a 0834     		adds	r4, r4, #8
+ 109              	.LVL8:
+ 110              	.L6:
+ 179:..\FreeRTOS/heap_2.c **** 		{
+ 111              		.loc 1 179 0
+ 112 002c 621E     		subs	r2, r4, #1
+ 113 002e 47F6F673 		movw	r3, #32758
+ 114 0032 9A42     		cmp	r2, r3
+ 115 0034 2BD8     		bhi	.L13
+ 116              	.LVL9:
+ 184:..\FreeRTOS/heap_2.c **** 			while( ( pxBlock->xBlockSize < xWantedSize ) && ( pxBlock->pxNextFreeBlock != NULL ) )
+ 117              		.loc 1 184 0
+ 118 0036 1B49     		ldr	r1, .L18
+ 119 0038 D1F83839 		ldr	r3, [r1, #2360]
+ 120              	.LVL10:
+ 183:..\FreeRTOS/heap_2.c **** 			pxBlock = xStart.pxNextFreeBlock;
+ 121              		.loc 1 183 0
+ 122 003c 01F63811 		addw	r1, r1, #2360
+ 185:..\FreeRTOS/heap_2.c **** 			{
+ 123              		.loc 1 185 0
+ 124 0040 01E0     		b	.L9
+ 125              	.LVL11:
+ 126              	.L14:
+ 187:..\FreeRTOS/heap_2.c **** 				pxBlock = pxBlock->pxNextFreeBlock;
+ 127              		.loc 1 187 0
+ 128 0042 1946     		mov	r1, r3
+ 129              	.LVL12:
+ 188:..\FreeRTOS/heap_2.c **** 			}
+ 130              		.loc 1 188 0
+ 131 0044 1346     		mov	r3, r2
+ 132              	.LVL13:
+ 133              	.L9:
+ 185:..\FreeRTOS/heap_2.c **** 			{
+ 134              		.loc 1 185 0
+ 135 0046 5A68     		ldr	r2, [r3, #4]
+ 136 0048 A242     		cmp	r2, r4
+ 137 004a 02D2     		bcs	.L8
+ 185:..\FreeRTOS/heap_2.c **** 			{
+ 138              		.loc 1 185 0 is_stmt 0 discriminator 1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 9
+
+
+ 139 004c 1A68     		ldr	r2, [r3]
+ 140 004e 002A     		cmp	r2, #0
+ 141 0050 F7D1     		bne	.L14
+ 142              	.L8:
+ 192:..\FreeRTOS/heap_2.c **** 			{
+ 143              		.loc 1 192 0 is_stmt 1
+ 144 0052 154A     		ldr	r2, .L18+4
+ 145 0054 9342     		cmp	r3, r2
+ 146 0056 1CD0     		beq	.L15
+ 196:..\FreeRTOS/heap_2.c **** 
+ 147              		.loc 1 196 0
+ 148 0058 0D68     		ldr	r5, [r1]
+ 149 005a 0835     		adds	r5, r5, #8
+ 150              	.LVL14:
+ 200:..\FreeRTOS/heap_2.c **** 
+ 151              		.loc 1 200 0
+ 152 005c 1A68     		ldr	r2, [r3]
+ 153 005e 0A60     		str	r2, [r1]
+ 203:..\FreeRTOS/heap_2.c **** 				{
+ 154              		.loc 1 203 0
+ 155 0060 5A68     		ldr	r2, [r3, #4]
+ 156 0062 121B     		subs	r2, r2, r4
+ 157 0064 102A     		cmp	r2, #16
+ 158 0066 0CD9     		bls	.L10
+ 208:..\FreeRTOS/heap_2.c **** 
+ 159              		.loc 1 208 0
+ 160 0068 1E19     		adds	r6, r3, r4
+ 161              	.LVL15:
+ 212:..\FreeRTOS/heap_2.c **** 					pxBlock->xBlockSize = xWantedSize;
+ 162              		.loc 1 212 0
+ 163 006a 7260     		str	r2, [r6, #4]
+ 213:..\FreeRTOS/heap_2.c **** 
+ 164              		.loc 1 213 0
+ 165 006c 5C60     		str	r4, [r3, #4]
+ 166              	.LBB2:
+ 216:..\FreeRTOS/heap_2.c **** 				}
+ 167              		.loc 1 216 0
+ 168 006e 7468     		ldr	r4, [r6, #4]
+ 169              	.LVL16:
+ 170 0070 0E49     		ldr	r1, .L18+8
+ 171              	.LVL17:
+ 172 0072 00E0     		b	.L11
+ 173              	.LVL18:
+ 174              	.L16:
+ 175 0074 1146     		mov	r1, r2
+ 176              	.LVL19:
+ 177              	.L11:
+ 216:..\FreeRTOS/heap_2.c **** 				}
+ 178              		.loc 1 216 0 is_stmt 0 discriminator 1
+ 179 0076 0A68     		ldr	r2, [r1]
+ 180 0078 5068     		ldr	r0, [r2, #4]
+ 181 007a A042     		cmp	r0, r4
+ 182 007c FAD3     		bcc	.L16
+ 216:..\FreeRTOS/heap_2.c **** 				}
+ 183              		.loc 1 216 0 discriminator 4
+ 184 007e 3260     		str	r2, [r6]
+ 185              	.LVL20:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 10
+
+
+ 186 0080 0E60     		str	r6, [r1]
+ 187              	.LVL21:
+ 188              	.L10:
+ 189              	.LBE2:
+ 219:..\FreeRTOS/heap_2.c **** 			}
+ 190              		.loc 1 219 0 is_stmt 1
+ 191 0082 5968     		ldr	r1, [r3, #4]
+ 192 0084 0A4A     		ldr	r2, .L18+12
+ 193 0086 1368     		ldr	r3, [r2]
+ 194              	.LVL22:
+ 195 0088 5B1A     		subs	r3, r3, r1
+ 196 008a 1360     		str	r3, [r2]
+ 197 008c 02E0     		b	.L7
+ 198              	.LVL23:
+ 199              	.L13:
+ 153:..\FreeRTOS/heap_2.c **** 
+ 200              		.loc 1 153 0
+ 201 008e 0025     		movs	r5, #0
+ 202 0090 00E0     		b	.L7
+ 203              	.LVL24:
+ 204              	.L15:
+ 205 0092 0025     		movs	r5, #0
+ 206              	.LVL25:
+ 207              	.L7:
+ 225:..\FreeRTOS/heap_2.c **** 
+ 208              		.loc 1 225 0
+ 209 0094 FFF7FEFF 		bl	xTaskResumeAll
+ 210              	.LVL26:
+ 229:..\FreeRTOS/heap_2.c **** 		{
+ 211              		.loc 1 229 0
+ 212 0098 0DB9     		cbnz	r5, .L12
+ 213              	.LBB3:
+ 232:..\FreeRTOS/heap_2.c **** 		}
+ 214              		.loc 1 232 0
+ 215 009a FFF7FEFF 		bl	vApplicationMallocFailedHook
+ 216              	.LVL27:
+ 217              	.L12:
+ 218              	.LBE3:
+ 238:..\FreeRTOS/heap_2.c **** /*-----------------------------------------------------------*/
+ 219              		.loc 1 238 0
+ 220 009e 2846     		mov	r0, r5
+ 221 00a0 70BD     		pop	{r4, r5, r6, pc}
+ 222              	.LVL28:
+ 223              	.L19:
+ 224 00a2 00BF     		.align	2
+ 225              	.L18:
+ 226 00a4 C8760000 		.word	.LANCHOR1
+ 227 00a8 08800000 		.word	.LANCHOR1+2368
+ 228 00ac 00800000 		.word	.LANCHOR1+2360
+ 229 00b0 00000000 		.word	.LANCHOR2
+ 230              		.cfi_endproc
+ 231              	.LFE64:
+ 232              		.size	pvPortMalloc, .-pvPortMalloc
+ 233              		.section	.text.vPortFree,"ax",%progbits
+ 234              		.align	2
+ 235              		.global	vPortFree
+ 236              		.thumb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 11
+
+
+ 237              		.thumb_func
+ 238              		.type	vPortFree, %function
+ 239              	vPortFree:
+ 240              	.LFB65:
+ 242:..\FreeRTOS/heap_2.c **** uint8_t *puc = ( uint8_t * ) pv;
+ 241              		.loc 1 242 0
+ 242              		.cfi_startproc
+ 243              		@ args = 0, pretend = 0, frame = 0
+ 244              		@ frame_needed = 0, uses_anonymous_args = 0
+ 245              	.LVL29:
+ 246:..\FreeRTOS/heap_2.c **** 	{
+ 246              		.loc 1 246 0
+ 247 0000 D0B1     		cbz	r0, .L25
+ 242:..\FreeRTOS/heap_2.c **** uint8_t *puc = ( uint8_t * ) pv;
+ 248              		.loc 1 242 0
+ 249 0002 70B5     		push	{r4, r5, r6, lr}
+ 250              		.cfi_def_cfa_offset 16
+ 251              		.cfi_offset 4, -16
+ 252              		.cfi_offset 5, -12
+ 253              		.cfi_offset 6, -8
+ 254              		.cfi_offset 14, -4
+ 255 0004 0546     		mov	r5, r0
+ 250:..\FreeRTOS/heap_2.c **** 
+ 256              		.loc 1 250 0
+ 257 0006 A0F10806 		sub	r6, r0, #8
+ 258              	.LVL30:
+ 256:..\FreeRTOS/heap_2.c **** 		{
+ 259              		.loc 1 256 0
+ 260 000a FFF7FEFF 		bl	vTaskSuspendAll
+ 261              	.LVL31:
+ 262              	.LBB4:
+ 259:..\FreeRTOS/heap_2.c **** 			xFreeBytesRemaining += pxLink->xBlockSize;
+ 263              		.loc 1 259 0
+ 264 000e 55F8044C 		ldr	r4, [r5, #-4]
+ 265              	.LVL32:
+ 266 0012 0A4A     		ldr	r2, .L26
+ 267 0014 00E0     		b	.L22
+ 268              	.LVL33:
+ 269              	.L23:
+ 270 0016 1A46     		mov	r2, r3
+ 271              	.LVL34:
+ 272              	.L22:
+ 259:..\FreeRTOS/heap_2.c **** 			xFreeBytesRemaining += pxLink->xBlockSize;
+ 273              		.loc 1 259 0 is_stmt 0 discriminator 1
+ 274 0018 1368     		ldr	r3, [r2]
+ 275 001a 5968     		ldr	r1, [r3, #4]
+ 276 001c A142     		cmp	r1, r4
+ 277 001e FAD3     		bcc	.L23
+ 259:..\FreeRTOS/heap_2.c **** 			xFreeBytesRemaining += pxLink->xBlockSize;
+ 278              		.loc 1 259 0 discriminator 4
+ 279 0020 45F8083C 		str	r3, [r5, #-8]
+ 280 0024 1660     		str	r6, [r2]
+ 281              	.LBE4:
+ 260:..\FreeRTOS/heap_2.c **** 			traceFREE( pv, pxLink->xBlockSize );
+ 282              		.loc 1 260 0 is_stmt 1 discriminator 4
+ 283 0026 55F8041C 		ldr	r1, [r5, #-4]
+ 284 002a 054A     		ldr	r2, .L26+4
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 12
+
+
+ 285              	.LVL35:
+ 286 002c 1368     		ldr	r3, [r2]
+ 287 002e 0B44     		add	r3, r3, r1
+ 288 0030 1360     		str	r3, [r2]
+ 263:..\FreeRTOS/heap_2.c **** 	}
+ 289              		.loc 1 263 0 discriminator 4
+ 290 0032 FFF7FEFF 		bl	xTaskResumeAll
+ 291              	.LVL36:
+ 292 0036 70BD     		pop	{r4, r5, r6, pc}
+ 293              	.LVL37:
+ 294              	.L25:
+ 295              		.cfi_def_cfa_offset 0
+ 296              		.cfi_restore 4
+ 297              		.cfi_restore 5
+ 298              		.cfi_restore 6
+ 299              		.cfi_restore 14
+ 300 0038 7047     		bx	lr
+ 301              	.L27:
+ 302 003a 00BF     		.align	2
+ 303              	.L26:
+ 304 003c 00800000 		.word	.LANCHOR1+2360
+ 305 0040 00000000 		.word	.LANCHOR2
+ 306              		.cfi_endproc
+ 307              	.LFE65:
+ 308              		.size	vPortFree, .-vPortFree
+ 309              		.section	.text.xPortGetFreeHeapSize,"ax",%progbits
+ 310              		.align	2
+ 311              		.global	xPortGetFreeHeapSize
+ 312              		.thumb
+ 313              		.thumb_func
+ 314              		.type	xPortGetFreeHeapSize, %function
+ 315              	xPortGetFreeHeapSize:
+ 316              	.LFB66:
+ 269:..\FreeRTOS/heap_2.c **** 	return xFreeBytesRemaining;
+ 317              		.loc 1 269 0
+ 318              		.cfi_startproc
+ 319              		@ args = 0, pretend = 0, frame = 0
+ 320              		@ frame_needed = 0, uses_anonymous_args = 0
+ 321              		@ link register save eliminated.
+ 271:..\FreeRTOS/heap_2.c **** /*-----------------------------------------------------------*/
+ 322              		.loc 1 271 0
+ 323 0000 014B     		ldr	r3, .L29
+ 324 0002 1868     		ldr	r0, [r3]
+ 325 0004 7047     		bx	lr
+ 326              	.L30:
+ 327 0006 00BF     		.align	2
+ 328              	.L29:
+ 329 0008 00000000 		.word	.LANCHOR2
+ 330              		.cfi_endproc
+ 331              	.LFE66:
+ 332              		.size	xPortGetFreeHeapSize, .-xPortGetFreeHeapSize
+ 333              		.section	.text.vPortInitialiseBlocks,"ax",%progbits
+ 334              		.align	2
+ 335              		.global	vPortInitialiseBlocks
+ 336              		.thumb
+ 337              		.thumb_func
+ 338              		.type	vPortInitialiseBlocks, %function
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 13
+
+
+ 339              	vPortInitialiseBlocks:
+ 340              	.LFB67:
+ 275:..\FreeRTOS/heap_2.c **** 	/* This just exists to keep the linker quiet. */
+ 341              		.loc 1 275 0
+ 342              		.cfi_startproc
+ 343              		@ args = 0, pretend = 0, frame = 0
+ 344              		@ frame_needed = 0, uses_anonymous_args = 0
+ 345              		@ link register save eliminated.
+ 346 0000 7047     		bx	lr
+ 347              		.cfi_endproc
+ 348              	.LFE67:
+ 349              		.size	vPortInitialiseBlocks, .-vPortInitialiseBlocks
+ 350 0002 00BF     		.data
+ 351              		.align	2
+ 352              		.set	.LANCHOR2,. + 0
+ 353              		.type	xFreeBytesRemaining, %object
+ 354              		.size	xFreeBytesRemaining, 4
+ 355              	xFreeBytesRemaining:
+ 356 0000 F87F0000 		.word	32760
+ 357              		.bss
+ 358              		.align	2
+ 359              		.set	.LANCHOR0,. + 0
+ 360              		.set	.LANCHOR1,. + 30408
+ 361              		.type	ucHeap, %object
+ 362              		.size	ucHeap, 32768
+ 363              	ucHeap:
+ 364 0000 00000000 		.space	32768
+ 364      00000000 
+ 364      00000000 
+ 364      00000000 
+ 364      00000000 
+ 365              		.type	xStart, %object
+ 366              		.size	xStart, 8
+ 367              	xStart:
+ 368 8000 00000000 		.space	8
+ 368      00000000 
+ 369              		.type	xEnd, %object
+ 370              		.size	xEnd, 8
+ 371              	xEnd:
+ 372 8008 00000000 		.space	8
+ 372      00000000 
+ 373              		.type	xHeapHasBeenInitialised.6522, %object
+ 374              		.size	xHeapHasBeenInitialised.6522, 4
+ 375              	xHeapHasBeenInitialised.6522:
+ 376 8010 00000000 		.space	4
+ 377              		.text
+ 378              	.Letext0:
+ 379              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 380              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 381              		.file 4 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 382              		.file 5 "..\\FreeRTOS\\portmacro.h"
+ 383              		.file 6 "..\\FreeRTOS\\task.h"
+ 384              		.file 7 "Generated_Source\\PSoC5/core_cm3.h"
+ 385              		.section	.debug_info,"",%progbits
+ 386              	.Ldebug_info0:
+ 387 0000 80030000 		.4byte	0x380
+ 388 0004 0400     		.2byte	0x4
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 14
+
+
+ 389 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 390 000a 04       		.byte	0x4
+ 391 000b 01       		.uleb128 0x1
+ 392 000c 66010000 		.4byte	.LASF43
+ 393 0010 01       		.byte	0x1
+ 394 0011 03010000 		.4byte	.LASF44
+ 395 0015 EC020000 		.4byte	.LASF45
+ 396 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 397 001d 00000000 		.4byte	0
+ 398 0021 00000000 		.4byte	.Ldebug_line0
+ 399 0025 02       		.uleb128 0x2
+ 400 0026 0A000000 		.4byte	.LASF2
+ 401 002a 02       		.byte	0x2
+ 402 002b D4       		.byte	0xd4
+ 403 002c 30000000 		.4byte	0x30
+ 404 0030 03       		.uleb128 0x3
+ 405 0031 04       		.byte	0x4
+ 406 0032 07       		.byte	0x7
+ 407 0033 11020000 		.4byte	.LASF0
+ 408 0037 04       		.uleb128 0x4
+ 409 0038 04       		.byte	0x4
+ 410 0039 05       		.byte	0x5
+ 411 003a 696E7400 		.ascii	"int\000"
+ 412 003e 03       		.uleb128 0x3
+ 413 003f 01       		.byte	0x1
+ 414 0040 06       		.byte	0x6
+ 415 0041 55030000 		.4byte	.LASF1
+ 416 0045 02       		.uleb128 0x2
+ 417 0046 00000000 		.4byte	.LASF3
+ 418 004a 03       		.byte	0x3
+ 419 004b 1D       		.byte	0x1d
+ 420 004c 50000000 		.4byte	0x50
+ 421 0050 03       		.uleb128 0x3
+ 422 0051 01       		.byte	0x1
+ 423 0052 08       		.byte	0x8
+ 424 0053 A0000000 		.4byte	.LASF4
+ 425 0057 03       		.uleb128 0x3
+ 426 0058 02       		.byte	0x2
+ 427 0059 05       		.byte	0x5
+ 428 005a C5020000 		.4byte	.LASF5
+ 429 005e 02       		.uleb128 0x2
+ 430 005f 1D010000 		.4byte	.LASF6
+ 431 0063 03       		.byte	0x3
+ 432 0064 2B       		.byte	0x2b
+ 433 0065 69000000 		.4byte	0x69
+ 434 0069 03       		.uleb128 0x3
+ 435 006a 02       		.byte	0x2
+ 436 006b 07       		.byte	0x7
+ 437 006c CB000000 		.4byte	.LASF7
+ 438 0070 02       		.uleb128 0x2
+ 439 0071 21000000 		.4byte	.LASF8
+ 440 0075 03       		.byte	0x3
+ 441 0076 3F       		.byte	0x3f
+ 442 0077 7B000000 		.4byte	0x7b
+ 443 007b 03       		.uleb128 0x3
+ 444 007c 04       		.byte	0x4
+ 445 007d 05       		.byte	0x5
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 15
+
+
+ 446 007e 47000000 		.4byte	.LASF9
+ 447 0082 02       		.uleb128 0x2
+ 448 0083 42010000 		.4byte	.LASF10
+ 449 0087 03       		.byte	0x3
+ 450 0088 41       		.byte	0x41
+ 451 0089 8D000000 		.4byte	0x8d
+ 452 008d 03       		.uleb128 0x3
+ 453 008e 04       		.byte	0x4
+ 454 008f 07       		.byte	0x7
+ 455 0090 B9000000 		.4byte	.LASF11
+ 456 0094 03       		.uleb128 0x3
+ 457 0095 08       		.byte	0x8
+ 458 0096 05       		.byte	0x5
+ 459 0097 77020000 		.4byte	.LASF12
+ 460 009b 03       		.uleb128 0x3
+ 461 009c 08       		.byte	0x8
+ 462 009d 07       		.byte	0x7
+ 463 009e 1E020000 		.4byte	.LASF13
+ 464 00a2 03       		.uleb128 0x3
+ 465 00a3 04       		.byte	0x4
+ 466 00a4 07       		.byte	0x7
+ 467 00a5 6E020000 		.4byte	.LASF14
+ 468 00a9 05       		.uleb128 0x5
+ 469 00aa 04       		.byte	0x4
+ 470 00ab 03       		.uleb128 0x3
+ 471 00ac 01       		.byte	0x1
+ 472 00ad 08       		.byte	0x8
+ 473 00ae 91020000 		.4byte	.LASF15
+ 474 00b2 02       		.uleb128 0x2
+ 475 00b3 35020000 		.4byte	.LASF16
+ 476 00b7 04       		.byte	0x4
+ 477 00b8 15       		.byte	0x15
+ 478 00b9 45000000 		.4byte	0x45
+ 479 00bd 02       		.uleb128 0x2
+ 480 00be CF020000 		.4byte	.LASF17
+ 481 00c2 04       		.byte	0x4
+ 482 00c3 21       		.byte	0x21
+ 483 00c4 5E000000 		.4byte	0x5e
+ 484 00c8 02       		.uleb128 0x2
+ 485 00c9 5A020000 		.4byte	.LASF18
+ 486 00cd 04       		.byte	0x4
+ 487 00ce 2C       		.byte	0x2c
+ 488 00cf 70000000 		.4byte	0x70
+ 489 00d3 02       		.uleb128 0x2
+ 490 00d4 40030000 		.4byte	.LASF19
+ 491 00d8 04       		.byte	0x4
+ 492 00d9 2D       		.byte	0x2d
+ 493 00da 82000000 		.4byte	0x82
+ 494 00de 03       		.uleb128 0x3
+ 495 00df 04       		.byte	0x4
+ 496 00e0 04       		.byte	0x4
+ 497 00e1 9A000000 		.4byte	.LASF20
+ 498 00e5 03       		.uleb128 0x3
+ 499 00e6 08       		.byte	0x8
+ 500 00e7 04       		.byte	0x4
+ 501 00e8 5F000000 		.4byte	.LASF21
+ 502 00ec 02       		.uleb128 0x2
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 16
+
+
+ 503 00ed 71030000 		.4byte	.LASF22
+ 504 00f1 05       		.byte	0x5
+ 505 00f2 62       		.byte	0x62
+ 506 00f3 7B000000 		.4byte	0x7b
+ 507 00f7 06       		.uleb128 0x6
+ 508 00f8 04       		.byte	0x4
+ 509 00f9 B2000000 		.4byte	0xb2
+ 510 00fd 07       		.uleb128 0x7
+ 511 00fe 3A000000 		.4byte	.LASF46
+ 512 0102 08       		.byte	0x8
+ 513 0103 01       		.byte	0x1
+ 514 0104 68       		.byte	0x68
+ 515 0105 22010000 		.4byte	0x122
+ 516 0109 08       		.uleb128 0x8
+ 517 010a 61030000 		.4byte	.LASF23
+ 518 010e 01       		.byte	0x1
+ 519 010f 6A       		.byte	0x6a
+ 520 0110 22010000 		.4byte	0x122
+ 521 0114 00       		.byte	0
+ 522 0115 08       		.uleb128 0x8
+ 523 0116 AE000000 		.4byte	.LASF24
+ 524 011a 01       		.byte	0x1
+ 525 011b 6B       		.byte	0x6b
+ 526 011c 25000000 		.4byte	0x25
+ 527 0120 04       		.byte	0x4
+ 528 0121 00       		.byte	0
+ 529 0122 06       		.uleb128 0x6
+ 530 0123 04       		.byte	0x4
+ 531 0124 FD000000 		.4byte	0xfd
+ 532 0128 02       		.uleb128 0x2
+ 533 0129 62020000 		.4byte	.LASF25
+ 534 012d 01       		.byte	0x1
+ 535 012e 6C       		.byte	0x6c
+ 536 012f FD000000 		.4byte	0xfd
+ 537 0133 09       		.uleb128 0x9
+ 538 0134 49030000 		.4byte	.LASF47
+ 539 0138 01       		.byte	0x1
+ 540 0139 1801     		.2byte	0x118
+ 541 013b 00000000 		.4byte	.LFB68
+ 542 013f 30000000 		.4byte	.LFE68-.LFB68
+ 543 0143 01       		.uleb128 0x1
+ 544 0144 9C       		.byte	0x9c
+ 545 0145 66010000 		.4byte	0x166
+ 546 0149 0A       		.uleb128 0xa
+ 547 014a 82000000 		.4byte	.LASF26
+ 548 014e 01       		.byte	0x1
+ 549 014f 1A01     		.2byte	0x11a
+ 550 0151 66010000 		.4byte	0x166
+ 551 0155 01       		.uleb128 0x1
+ 552 0156 52       		.byte	0x52
+ 553 0157 0A       		.uleb128 0xa
+ 554 0158 AB020000 		.4byte	.LASF27
+ 555 015c 01       		.byte	0x1
+ 556 015d 1B01     		.2byte	0x11b
+ 557 015f F7000000 		.4byte	0xf7
+ 558 0163 01       		.uleb128 0x1
+ 559 0164 52       		.byte	0x52
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 17
+
+
+ 560 0165 00       		.byte	0
+ 561 0166 06       		.uleb128 0x6
+ 562 0167 04       		.byte	0x4
+ 563 0168 28010000 		.4byte	0x128
+ 564 016c 0B       		.uleb128 0xb
+ 565 016d 75000000 		.4byte	.LASF48
+ 566 0171 01       		.byte	0x1
+ 567 0172 95       		.byte	0x95
+ 568 0173 A9000000 		.4byte	0xa9
+ 569 0177 00000000 		.4byte	.LFB64
+ 570 017b B4000000 		.4byte	.LFE64-.LFB64
+ 571 017f 01       		.uleb128 0x1
+ 572 0180 9C       		.byte	0x9c
+ 573 0181 47020000 		.4byte	0x247
+ 574 0185 0C       		.uleb128 0xc
+ 575 0186 85020000 		.4byte	.LASF34
+ 576 018a 01       		.byte	0x1
+ 577 018b 95       		.byte	0x95
+ 578 018c 25000000 		.4byte	0x25
+ 579 0190 00000000 		.4byte	.LLST0
+ 580 0194 0D       		.uleb128 0xd
+ 581 0195 66000000 		.4byte	.LASF28
+ 582 0199 01       		.byte	0x1
+ 583 019a 97       		.byte	0x97
+ 584 019b 66010000 		.4byte	0x166
+ 585 019f 50000000 		.4byte	.LLST1
+ 586 01a3 0D       		.uleb128 0xd
+ 587 01a4 28010000 		.4byte	.LASF29
+ 588 01a8 01       		.byte	0x1
+ 589 01a9 97       		.byte	0x97
+ 590 01aa 66010000 		.4byte	0x166
+ 591 01ae 6E000000 		.4byte	.LLST2
+ 592 01b2 0D       		.uleb128 0xd
+ 593 01b3 2B000000 		.4byte	.LASF30
+ 594 01b7 01       		.byte	0x1
+ 595 01b8 97       		.byte	0x97
+ 596 01b9 66010000 		.4byte	0x166
+ 597 01bd A7000000 		.4byte	.LLST3
+ 598 01c1 0E       		.uleb128 0xe
+ 599 01c2 DE000000 		.4byte	.LASF31
+ 600 01c6 01       		.byte	0x1
+ 601 01c7 98       		.byte	0x98
+ 602 01c8 EC000000 		.4byte	0xec
+ 603 01cc 05       		.uleb128 0x5
+ 604 01cd 03       		.byte	0x3
+ 605 01ce 10800000 		.4byte	xHeapHasBeenInitialised.6522
+ 606 01d2 0D       		.uleb128 0xd
+ 607 01d3 4D010000 		.4byte	.LASF32
+ 608 01d7 01       		.byte	0x1
+ 609 01d8 99       		.byte	0x99
+ 610 01d9 A9000000 		.4byte	0xa9
+ 611 01dd BA000000 		.4byte	.LLST4
+ 612 01e1 0F       		.uleb128 0xf
+ 613 01e2 6E000000 		.4byte	.LBB2
+ 614 01e6 14000000 		.4byte	.LBE2-.LBB2
+ 615 01ea 0D020000 		.4byte	0x20d
+ 616 01ee 0D       		.uleb128 0xd
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 18
+
+
+ 617 01ef BA020000 		.4byte	.LASF33
+ 618 01f3 01       		.byte	0x1
+ 619 01f4 D8       		.byte	0xd8
+ 620 01f5 66010000 		.4byte	0x166
+ 621 01f9 FB000000 		.4byte	.LLST5
+ 622 01fd 0D       		.uleb128 0xd
+ 623 01fe AE000000 		.4byte	.LASF24
+ 624 0202 01       		.byte	0x1
+ 625 0203 D8       		.byte	0xd8
+ 626 0204 25000000 		.4byte	0x25
+ 627 0208 1E010000 		.4byte	.LLST6
+ 628 020c 00       		.byte	0
+ 629 020d 0F       		.uleb128 0xf
+ 630 020e 9A000000 		.4byte	.LBB3
+ 631 0212 04000000 		.4byte	.LBE3-.LBB3
+ 632 0216 2B020000 		.4byte	0x22b
+ 633 021a 10       		.uleb128 0x10
+ 634 021b 3D020000 		.4byte	.LASF41
+ 635 021f 01       		.byte	0x1
+ 636 0220 E7       		.byte	0xe7
+ 637 0221 11       		.uleb128 0x11
+ 638 0222 9E000000 		.4byte	.LVL27
+ 639 0226 68030000 		.4byte	0x368
+ 640 022a 00       		.byte	0
+ 641 022b 11       		.uleb128 0x11
+ 642 022c 08000000 		.4byte	.LVL4
+ 643 0230 6F030000 		.4byte	0x36f
+ 644 0234 11       		.uleb128 0x11
+ 645 0235 14000000 		.4byte	.LVL5
+ 646 0239 33010000 		.4byte	0x133
+ 647 023d 11       		.uleb128 0x11
+ 648 023e 98000000 		.4byte	.LVL26
+ 649 0242 77030000 		.4byte	0x377
+ 650 0246 00       		.byte	0
+ 651 0247 12       		.uleb128 0x12
+ 652 0248 38010000 		.4byte	.LASF49
+ 653 024c 01       		.byte	0x1
+ 654 024d F1       		.byte	0xf1
+ 655 024e 00000000 		.4byte	.LFB65
+ 656 0252 44000000 		.4byte	.LFE65-.LFB65
+ 657 0256 01       		.uleb128 0x1
+ 658 0257 9C       		.byte	0x9c
+ 659 0258 C9020000 		.4byte	0x2c9
+ 660 025c 13       		.uleb128 0x13
+ 661 025d 707600   		.ascii	"pv\000"
+ 662 0260 01       		.byte	0x1
+ 663 0261 F1       		.byte	0xf1
+ 664 0262 A9000000 		.4byte	0xa9
+ 665 0266 31010000 		.4byte	.LLST7
+ 666 026a 14       		.uleb128 0x14
+ 667 026b 70756300 		.ascii	"puc\000"
+ 668 026f 01       		.byte	0x1
+ 669 0270 F3       		.byte	0xf3
+ 670 0271 F7000000 		.4byte	0xf7
+ 671 0275 5A010000 		.4byte	.LLST8
+ 672 0279 0D       		.uleb128 0xd
+ 673 027a 6E000000 		.4byte	.LASF35
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 19
+
+
+ 674 027e 01       		.byte	0x1
+ 675 027f F4       		.byte	0xf4
+ 676 0280 66010000 		.4byte	0x166
+ 677 0284 83010000 		.4byte	.LLST9
+ 678 0288 0F       		.uleb128 0xf
+ 679 0289 0E000000 		.4byte	.LBB4
+ 680 028d 18000000 		.4byte	.LBE4-.LBB4
+ 681 0291 B6020000 		.4byte	0x2b6
+ 682 0295 15       		.uleb128 0x15
+ 683 0296 BA020000 		.4byte	.LASF33
+ 684 029a 01       		.byte	0x1
+ 685 029b 0301     		.2byte	0x103
+ 686 029d 66010000 		.4byte	0x166
+ 687 02a1 96010000 		.4byte	.LLST10
+ 688 02a5 15       		.uleb128 0x15
+ 689 02a6 AE000000 		.4byte	.LASF24
+ 690 02aa 01       		.byte	0x1
+ 691 02ab 0301     		.2byte	0x103
+ 692 02ad 25000000 		.4byte	0x25
+ 693 02b1 B9010000 		.4byte	.LLST11
+ 694 02b5 00       		.byte	0
+ 695 02b6 11       		.uleb128 0x11
+ 696 02b7 0E000000 		.4byte	.LVL31
+ 697 02bb 6F030000 		.4byte	0x36f
+ 698 02bf 11       		.uleb128 0x11
+ 699 02c0 36000000 		.4byte	.LVL36
+ 700 02c4 77030000 		.4byte	0x377
+ 701 02c8 00       		.byte	0
+ 702 02c9 16       		.uleb128 0x16
+ 703 02ca 96020000 		.4byte	.LASF50
+ 704 02ce 01       		.byte	0x1
+ 705 02cf 0C01     		.2byte	0x10c
+ 706 02d1 25000000 		.4byte	0x25
+ 707 02d5 00000000 		.4byte	.LFB66
+ 708 02d9 0C000000 		.4byte	.LFE66-.LFB66
+ 709 02dd 01       		.uleb128 0x1
+ 710 02de 9C       		.byte	0x9c
+ 711 02df 17       		.uleb128 0x17
+ 712 02e0 FB010000 		.4byte	.LASF51
+ 713 02e4 01       		.byte	0x1
+ 714 02e5 1201     		.2byte	0x112
+ 715 02e7 00000000 		.4byte	.LFB67
+ 716 02eb 02000000 		.4byte	.LFE67-.LFB67
+ 717 02ef 01       		.uleb128 0x1
+ 718 02f0 9C       		.byte	0x9c
+ 719 02f1 18       		.uleb128 0x18
+ 720 02f2 B2000000 		.4byte	0xb2
+ 721 02f6 02030000 		.4byte	0x302
+ 722 02fa 19       		.uleb128 0x19
+ 723 02fb A2000000 		.4byte	0xa2
+ 724 02ff FF7F     		.2byte	0x7fff
+ 725 0301 00       		.byte	0
+ 726 0302 0E       		.uleb128 0xe
+ 727 0303 93000000 		.4byte	.LASF36
+ 728 0307 01       		.byte	0x1
+ 729 0308 64       		.byte	0x64
+ 730 0309 F1020000 		.4byte	0x2f1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 20
+
+
+ 731 030d 05       		.uleb128 0x5
+ 732 030e 03       		.byte	0x3
+ 733 030f 00000000 		.4byte	ucHeap
+ 734 0313 1A       		.uleb128 0x1a
+ 735 0314 56010000 		.4byte	.LASF37
+ 736 0318 01       		.byte	0x1
+ 737 0319 6F       		.byte	0x6f
+ 738 031a 1F030000 		.4byte	0x31f
+ 739 031e 08       		.byte	0x8
+ 740 031f 1B       		.uleb128 0x1b
+ 741 0320 BD000000 		.4byte	0xbd
+ 742 0324 0E       		.uleb128 0xe
+ 743 0325 F4010000 		.4byte	.LASF38
+ 744 0329 01       		.byte	0x1
+ 745 032a 73       		.byte	0x73
+ 746 032b 28010000 		.4byte	0x128
+ 747 032f 05       		.uleb128 0x5
+ 748 0330 03       		.byte	0x3
+ 749 0331 00800000 		.4byte	xStart
+ 750 0335 0E       		.uleb128 0xe
+ 751 0336 18010000 		.4byte	.LASF39
+ 752 033a 01       		.byte	0x1
+ 753 033b 73       		.byte	0x73
+ 754 033c 28010000 		.4byte	0x128
+ 755 0340 05       		.uleb128 0x5
+ 756 0341 03       		.byte	0x3
+ 757 0342 08800000 		.4byte	xEnd
+ 758 0346 0E       		.uleb128 0xe
+ 759 0347 D8020000 		.4byte	.LASF40
+ 760 034b 01       		.byte	0x1
+ 761 034c 77       		.byte	0x77
+ 762 034d 25000000 		.4byte	0x25
+ 763 0351 05       		.uleb128 0x5
+ 764 0352 03       		.byte	0x3
+ 765 0353 00000000 		.4byte	xFreeBytesRemaining
+ 766 0357 1C       		.uleb128 0x1c
+ 767 0358 F6000000 		.4byte	.LASF52
+ 768 035c 07       		.byte	0x7
+ 769 035d 5506     		.2byte	0x655
+ 770 035f 63030000 		.4byte	0x363
+ 771 0363 1D       		.uleb128 0x1d
+ 772 0364 C8000000 		.4byte	0xc8
+ 773 0368 10       		.uleb128 0x10
+ 774 0369 3D020000 		.4byte	.LASF41
+ 775 036d 01       		.byte	0x1
+ 776 036e E7       		.byte	0xe7
+ 777 036f 1E       		.uleb128 0x1e
+ 778 0370 11000000 		.4byte	.LASF42
+ 779 0374 06       		.byte	0x6
+ 780 0375 E603     		.2byte	0x3e6
+ 781 0377 1F       		.uleb128 0x1f
+ 782 0378 50000000 		.4byte	.LASF53
+ 783 037c 06       		.byte	0x6
+ 784 037d 1C04     		.2byte	0x41c
+ 785 037f EC000000 		.4byte	0xec
+ 786 0383 00       		.byte	0
+ 787              		.section	.debug_abbrev,"",%progbits
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 21
+
+
+ 788              	.Ldebug_abbrev0:
+ 789 0000 01       		.uleb128 0x1
+ 790 0001 11       		.uleb128 0x11
+ 791 0002 01       		.byte	0x1
+ 792 0003 25       		.uleb128 0x25
+ 793 0004 0E       		.uleb128 0xe
+ 794 0005 13       		.uleb128 0x13
+ 795 0006 0B       		.uleb128 0xb
+ 796 0007 03       		.uleb128 0x3
+ 797 0008 0E       		.uleb128 0xe
+ 798 0009 1B       		.uleb128 0x1b
+ 799 000a 0E       		.uleb128 0xe
+ 800 000b 55       		.uleb128 0x55
+ 801 000c 17       		.uleb128 0x17
+ 802 000d 11       		.uleb128 0x11
+ 803 000e 01       		.uleb128 0x1
+ 804 000f 10       		.uleb128 0x10
+ 805 0010 17       		.uleb128 0x17
+ 806 0011 00       		.byte	0
+ 807 0012 00       		.byte	0
+ 808 0013 02       		.uleb128 0x2
+ 809 0014 16       		.uleb128 0x16
+ 810 0015 00       		.byte	0
+ 811 0016 03       		.uleb128 0x3
+ 812 0017 0E       		.uleb128 0xe
+ 813 0018 3A       		.uleb128 0x3a
+ 814 0019 0B       		.uleb128 0xb
+ 815 001a 3B       		.uleb128 0x3b
+ 816 001b 0B       		.uleb128 0xb
+ 817 001c 49       		.uleb128 0x49
+ 818 001d 13       		.uleb128 0x13
+ 819 001e 00       		.byte	0
+ 820 001f 00       		.byte	0
+ 821 0020 03       		.uleb128 0x3
+ 822 0021 24       		.uleb128 0x24
+ 823 0022 00       		.byte	0
+ 824 0023 0B       		.uleb128 0xb
+ 825 0024 0B       		.uleb128 0xb
+ 826 0025 3E       		.uleb128 0x3e
+ 827 0026 0B       		.uleb128 0xb
+ 828 0027 03       		.uleb128 0x3
+ 829 0028 0E       		.uleb128 0xe
+ 830 0029 00       		.byte	0
+ 831 002a 00       		.byte	0
+ 832 002b 04       		.uleb128 0x4
+ 833 002c 24       		.uleb128 0x24
+ 834 002d 00       		.byte	0
+ 835 002e 0B       		.uleb128 0xb
+ 836 002f 0B       		.uleb128 0xb
+ 837 0030 3E       		.uleb128 0x3e
+ 838 0031 0B       		.uleb128 0xb
+ 839 0032 03       		.uleb128 0x3
+ 840 0033 08       		.uleb128 0x8
+ 841 0034 00       		.byte	0
+ 842 0035 00       		.byte	0
+ 843 0036 05       		.uleb128 0x5
+ 844 0037 0F       		.uleb128 0xf
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 22
+
+
+ 845 0038 00       		.byte	0
+ 846 0039 0B       		.uleb128 0xb
+ 847 003a 0B       		.uleb128 0xb
+ 848 003b 00       		.byte	0
+ 849 003c 00       		.byte	0
+ 850 003d 06       		.uleb128 0x6
+ 851 003e 0F       		.uleb128 0xf
+ 852 003f 00       		.byte	0
+ 853 0040 0B       		.uleb128 0xb
+ 854 0041 0B       		.uleb128 0xb
+ 855 0042 49       		.uleb128 0x49
+ 856 0043 13       		.uleb128 0x13
+ 857 0044 00       		.byte	0
+ 858 0045 00       		.byte	0
+ 859 0046 07       		.uleb128 0x7
+ 860 0047 13       		.uleb128 0x13
+ 861 0048 01       		.byte	0x1
+ 862 0049 03       		.uleb128 0x3
+ 863 004a 0E       		.uleb128 0xe
+ 864 004b 0B       		.uleb128 0xb
+ 865 004c 0B       		.uleb128 0xb
+ 866 004d 3A       		.uleb128 0x3a
+ 867 004e 0B       		.uleb128 0xb
+ 868 004f 3B       		.uleb128 0x3b
+ 869 0050 0B       		.uleb128 0xb
+ 870 0051 01       		.uleb128 0x1
+ 871 0052 13       		.uleb128 0x13
+ 872 0053 00       		.byte	0
+ 873 0054 00       		.byte	0
+ 874 0055 08       		.uleb128 0x8
+ 875 0056 0D       		.uleb128 0xd
+ 876 0057 00       		.byte	0
+ 877 0058 03       		.uleb128 0x3
+ 878 0059 0E       		.uleb128 0xe
+ 879 005a 3A       		.uleb128 0x3a
+ 880 005b 0B       		.uleb128 0xb
+ 881 005c 3B       		.uleb128 0x3b
+ 882 005d 0B       		.uleb128 0xb
+ 883 005e 49       		.uleb128 0x49
+ 884 005f 13       		.uleb128 0x13
+ 885 0060 38       		.uleb128 0x38
+ 886 0061 0B       		.uleb128 0xb
+ 887 0062 00       		.byte	0
+ 888 0063 00       		.byte	0
+ 889 0064 09       		.uleb128 0x9
+ 890 0065 2E       		.uleb128 0x2e
+ 891 0066 01       		.byte	0x1
+ 892 0067 03       		.uleb128 0x3
+ 893 0068 0E       		.uleb128 0xe
+ 894 0069 3A       		.uleb128 0x3a
+ 895 006a 0B       		.uleb128 0xb
+ 896 006b 3B       		.uleb128 0x3b
+ 897 006c 05       		.uleb128 0x5
+ 898 006d 27       		.uleb128 0x27
+ 899 006e 19       		.uleb128 0x19
+ 900 006f 11       		.uleb128 0x11
+ 901 0070 01       		.uleb128 0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 23
+
+
+ 902 0071 12       		.uleb128 0x12
+ 903 0072 06       		.uleb128 0x6
+ 904 0073 40       		.uleb128 0x40
+ 905 0074 18       		.uleb128 0x18
+ 906 0075 9742     		.uleb128 0x2117
+ 907 0077 19       		.uleb128 0x19
+ 908 0078 01       		.uleb128 0x1
+ 909 0079 13       		.uleb128 0x13
+ 910 007a 00       		.byte	0
+ 911 007b 00       		.byte	0
+ 912 007c 0A       		.uleb128 0xa
+ 913 007d 34       		.uleb128 0x34
+ 914 007e 00       		.byte	0
+ 915 007f 03       		.uleb128 0x3
+ 916 0080 0E       		.uleb128 0xe
+ 917 0081 3A       		.uleb128 0x3a
+ 918 0082 0B       		.uleb128 0xb
+ 919 0083 3B       		.uleb128 0x3b
+ 920 0084 05       		.uleb128 0x5
+ 921 0085 49       		.uleb128 0x49
+ 922 0086 13       		.uleb128 0x13
+ 923 0087 02       		.uleb128 0x2
+ 924 0088 18       		.uleb128 0x18
+ 925 0089 00       		.byte	0
+ 926 008a 00       		.byte	0
+ 927 008b 0B       		.uleb128 0xb
+ 928 008c 2E       		.uleb128 0x2e
+ 929 008d 01       		.byte	0x1
+ 930 008e 3F       		.uleb128 0x3f
+ 931 008f 19       		.uleb128 0x19
+ 932 0090 03       		.uleb128 0x3
+ 933 0091 0E       		.uleb128 0xe
+ 934 0092 3A       		.uleb128 0x3a
+ 935 0093 0B       		.uleb128 0xb
+ 936 0094 3B       		.uleb128 0x3b
+ 937 0095 0B       		.uleb128 0xb
+ 938 0096 27       		.uleb128 0x27
+ 939 0097 19       		.uleb128 0x19
+ 940 0098 49       		.uleb128 0x49
+ 941 0099 13       		.uleb128 0x13
+ 942 009a 11       		.uleb128 0x11
+ 943 009b 01       		.uleb128 0x1
+ 944 009c 12       		.uleb128 0x12
+ 945 009d 06       		.uleb128 0x6
+ 946 009e 40       		.uleb128 0x40
+ 947 009f 18       		.uleb128 0x18
+ 948 00a0 9742     		.uleb128 0x2117
+ 949 00a2 19       		.uleb128 0x19
+ 950 00a3 01       		.uleb128 0x1
+ 951 00a4 13       		.uleb128 0x13
+ 952 00a5 00       		.byte	0
+ 953 00a6 00       		.byte	0
+ 954 00a7 0C       		.uleb128 0xc
+ 955 00a8 05       		.uleb128 0x5
+ 956 00a9 00       		.byte	0
+ 957 00aa 03       		.uleb128 0x3
+ 958 00ab 0E       		.uleb128 0xe
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 24
+
+
+ 959 00ac 3A       		.uleb128 0x3a
+ 960 00ad 0B       		.uleb128 0xb
+ 961 00ae 3B       		.uleb128 0x3b
+ 962 00af 0B       		.uleb128 0xb
+ 963 00b0 49       		.uleb128 0x49
+ 964 00b1 13       		.uleb128 0x13
+ 965 00b2 02       		.uleb128 0x2
+ 966 00b3 17       		.uleb128 0x17
+ 967 00b4 00       		.byte	0
+ 968 00b5 00       		.byte	0
+ 969 00b6 0D       		.uleb128 0xd
+ 970 00b7 34       		.uleb128 0x34
+ 971 00b8 00       		.byte	0
+ 972 00b9 03       		.uleb128 0x3
+ 973 00ba 0E       		.uleb128 0xe
+ 974 00bb 3A       		.uleb128 0x3a
+ 975 00bc 0B       		.uleb128 0xb
+ 976 00bd 3B       		.uleb128 0x3b
+ 977 00be 0B       		.uleb128 0xb
+ 978 00bf 49       		.uleb128 0x49
+ 979 00c0 13       		.uleb128 0x13
+ 980 00c1 02       		.uleb128 0x2
+ 981 00c2 17       		.uleb128 0x17
+ 982 00c3 00       		.byte	0
+ 983 00c4 00       		.byte	0
+ 984 00c5 0E       		.uleb128 0xe
+ 985 00c6 34       		.uleb128 0x34
+ 986 00c7 00       		.byte	0
+ 987 00c8 03       		.uleb128 0x3
+ 988 00c9 0E       		.uleb128 0xe
+ 989 00ca 3A       		.uleb128 0x3a
+ 990 00cb 0B       		.uleb128 0xb
+ 991 00cc 3B       		.uleb128 0x3b
+ 992 00cd 0B       		.uleb128 0xb
+ 993 00ce 49       		.uleb128 0x49
+ 994 00cf 13       		.uleb128 0x13
+ 995 00d0 02       		.uleb128 0x2
+ 996 00d1 18       		.uleb128 0x18
+ 997 00d2 00       		.byte	0
+ 998 00d3 00       		.byte	0
+ 999 00d4 0F       		.uleb128 0xf
+ 1000 00d5 0B       		.uleb128 0xb
+ 1001 00d6 01       		.byte	0x1
+ 1002 00d7 11       		.uleb128 0x11
+ 1003 00d8 01       		.uleb128 0x1
+ 1004 00d9 12       		.uleb128 0x12
+ 1005 00da 06       		.uleb128 0x6
+ 1006 00db 01       		.uleb128 0x1
+ 1007 00dc 13       		.uleb128 0x13
+ 1008 00dd 00       		.byte	0
+ 1009 00de 00       		.byte	0
+ 1010 00df 10       		.uleb128 0x10
+ 1011 00e0 2E       		.uleb128 0x2e
+ 1012 00e1 00       		.byte	0
+ 1013 00e2 3F       		.uleb128 0x3f
+ 1014 00e3 19       		.uleb128 0x19
+ 1015 00e4 03       		.uleb128 0x3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 25
+
+
+ 1016 00e5 0E       		.uleb128 0xe
+ 1017 00e6 3A       		.uleb128 0x3a
+ 1018 00e7 0B       		.uleb128 0xb
+ 1019 00e8 3B       		.uleb128 0x3b
+ 1020 00e9 0B       		.uleb128 0xb
+ 1021 00ea 27       		.uleb128 0x27
+ 1022 00eb 19       		.uleb128 0x19
+ 1023 00ec 3C       		.uleb128 0x3c
+ 1024 00ed 19       		.uleb128 0x19
+ 1025 00ee 00       		.byte	0
+ 1026 00ef 00       		.byte	0
+ 1027 00f0 11       		.uleb128 0x11
+ 1028 00f1 898201   		.uleb128 0x4109
+ 1029 00f4 00       		.byte	0
+ 1030 00f5 11       		.uleb128 0x11
+ 1031 00f6 01       		.uleb128 0x1
+ 1032 00f7 31       		.uleb128 0x31
+ 1033 00f8 13       		.uleb128 0x13
+ 1034 00f9 00       		.byte	0
+ 1035 00fa 00       		.byte	0
+ 1036 00fb 12       		.uleb128 0x12
+ 1037 00fc 2E       		.uleb128 0x2e
+ 1038 00fd 01       		.byte	0x1
+ 1039 00fe 3F       		.uleb128 0x3f
+ 1040 00ff 19       		.uleb128 0x19
+ 1041 0100 03       		.uleb128 0x3
+ 1042 0101 0E       		.uleb128 0xe
+ 1043 0102 3A       		.uleb128 0x3a
+ 1044 0103 0B       		.uleb128 0xb
+ 1045 0104 3B       		.uleb128 0x3b
+ 1046 0105 0B       		.uleb128 0xb
+ 1047 0106 27       		.uleb128 0x27
+ 1048 0107 19       		.uleb128 0x19
+ 1049 0108 11       		.uleb128 0x11
+ 1050 0109 01       		.uleb128 0x1
+ 1051 010a 12       		.uleb128 0x12
+ 1052 010b 06       		.uleb128 0x6
+ 1053 010c 40       		.uleb128 0x40
+ 1054 010d 18       		.uleb128 0x18
+ 1055 010e 9742     		.uleb128 0x2117
+ 1056 0110 19       		.uleb128 0x19
+ 1057 0111 01       		.uleb128 0x1
+ 1058 0112 13       		.uleb128 0x13
+ 1059 0113 00       		.byte	0
+ 1060 0114 00       		.byte	0
+ 1061 0115 13       		.uleb128 0x13
+ 1062 0116 05       		.uleb128 0x5
+ 1063 0117 00       		.byte	0
+ 1064 0118 03       		.uleb128 0x3
+ 1065 0119 08       		.uleb128 0x8
+ 1066 011a 3A       		.uleb128 0x3a
+ 1067 011b 0B       		.uleb128 0xb
+ 1068 011c 3B       		.uleb128 0x3b
+ 1069 011d 0B       		.uleb128 0xb
+ 1070 011e 49       		.uleb128 0x49
+ 1071 011f 13       		.uleb128 0x13
+ 1072 0120 02       		.uleb128 0x2
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 26
+
+
+ 1073 0121 17       		.uleb128 0x17
+ 1074 0122 00       		.byte	0
+ 1075 0123 00       		.byte	0
+ 1076 0124 14       		.uleb128 0x14
+ 1077 0125 34       		.uleb128 0x34
+ 1078 0126 00       		.byte	0
+ 1079 0127 03       		.uleb128 0x3
+ 1080 0128 08       		.uleb128 0x8
+ 1081 0129 3A       		.uleb128 0x3a
+ 1082 012a 0B       		.uleb128 0xb
+ 1083 012b 3B       		.uleb128 0x3b
+ 1084 012c 0B       		.uleb128 0xb
+ 1085 012d 49       		.uleb128 0x49
+ 1086 012e 13       		.uleb128 0x13
+ 1087 012f 02       		.uleb128 0x2
+ 1088 0130 17       		.uleb128 0x17
+ 1089 0131 00       		.byte	0
+ 1090 0132 00       		.byte	0
+ 1091 0133 15       		.uleb128 0x15
+ 1092 0134 34       		.uleb128 0x34
+ 1093 0135 00       		.byte	0
+ 1094 0136 03       		.uleb128 0x3
+ 1095 0137 0E       		.uleb128 0xe
+ 1096 0138 3A       		.uleb128 0x3a
+ 1097 0139 0B       		.uleb128 0xb
+ 1098 013a 3B       		.uleb128 0x3b
+ 1099 013b 05       		.uleb128 0x5
+ 1100 013c 49       		.uleb128 0x49
+ 1101 013d 13       		.uleb128 0x13
+ 1102 013e 02       		.uleb128 0x2
+ 1103 013f 17       		.uleb128 0x17
+ 1104 0140 00       		.byte	0
+ 1105 0141 00       		.byte	0
+ 1106 0142 16       		.uleb128 0x16
+ 1107 0143 2E       		.uleb128 0x2e
+ 1108 0144 00       		.byte	0
+ 1109 0145 3F       		.uleb128 0x3f
+ 1110 0146 19       		.uleb128 0x19
+ 1111 0147 03       		.uleb128 0x3
+ 1112 0148 0E       		.uleb128 0xe
+ 1113 0149 3A       		.uleb128 0x3a
+ 1114 014a 0B       		.uleb128 0xb
+ 1115 014b 3B       		.uleb128 0x3b
+ 1116 014c 05       		.uleb128 0x5
+ 1117 014d 27       		.uleb128 0x27
+ 1118 014e 19       		.uleb128 0x19
+ 1119 014f 49       		.uleb128 0x49
+ 1120 0150 13       		.uleb128 0x13
+ 1121 0151 11       		.uleb128 0x11
+ 1122 0152 01       		.uleb128 0x1
+ 1123 0153 12       		.uleb128 0x12
+ 1124 0154 06       		.uleb128 0x6
+ 1125 0155 40       		.uleb128 0x40
+ 1126 0156 18       		.uleb128 0x18
+ 1127 0157 9742     		.uleb128 0x2117
+ 1128 0159 19       		.uleb128 0x19
+ 1129 015a 00       		.byte	0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 27
+
+
+ 1130 015b 00       		.byte	0
+ 1131 015c 17       		.uleb128 0x17
+ 1132 015d 2E       		.uleb128 0x2e
+ 1133 015e 00       		.byte	0
+ 1134 015f 3F       		.uleb128 0x3f
+ 1135 0160 19       		.uleb128 0x19
+ 1136 0161 03       		.uleb128 0x3
+ 1137 0162 0E       		.uleb128 0xe
+ 1138 0163 3A       		.uleb128 0x3a
+ 1139 0164 0B       		.uleb128 0xb
+ 1140 0165 3B       		.uleb128 0x3b
+ 1141 0166 05       		.uleb128 0x5
+ 1142 0167 27       		.uleb128 0x27
+ 1143 0168 19       		.uleb128 0x19
+ 1144 0169 11       		.uleb128 0x11
+ 1145 016a 01       		.uleb128 0x1
+ 1146 016b 12       		.uleb128 0x12
+ 1147 016c 06       		.uleb128 0x6
+ 1148 016d 40       		.uleb128 0x40
+ 1149 016e 18       		.uleb128 0x18
+ 1150 016f 9742     		.uleb128 0x2117
+ 1151 0171 19       		.uleb128 0x19
+ 1152 0172 00       		.byte	0
+ 1153 0173 00       		.byte	0
+ 1154 0174 18       		.uleb128 0x18
+ 1155 0175 01       		.uleb128 0x1
+ 1156 0176 01       		.byte	0x1
+ 1157 0177 49       		.uleb128 0x49
+ 1158 0178 13       		.uleb128 0x13
+ 1159 0179 01       		.uleb128 0x1
+ 1160 017a 13       		.uleb128 0x13
+ 1161 017b 00       		.byte	0
+ 1162 017c 00       		.byte	0
+ 1163 017d 19       		.uleb128 0x19
+ 1164 017e 21       		.uleb128 0x21
+ 1165 017f 00       		.byte	0
+ 1166 0180 49       		.uleb128 0x49
+ 1167 0181 13       		.uleb128 0x13
+ 1168 0182 2F       		.uleb128 0x2f
+ 1169 0183 05       		.uleb128 0x5
+ 1170 0184 00       		.byte	0
+ 1171 0185 00       		.byte	0
+ 1172 0186 1A       		.uleb128 0x1a
+ 1173 0187 34       		.uleb128 0x34
+ 1174 0188 00       		.byte	0
+ 1175 0189 03       		.uleb128 0x3
+ 1176 018a 0E       		.uleb128 0xe
+ 1177 018b 3A       		.uleb128 0x3a
+ 1178 018c 0B       		.uleb128 0xb
+ 1179 018d 3B       		.uleb128 0x3b
+ 1180 018e 0B       		.uleb128 0xb
+ 1181 018f 49       		.uleb128 0x49
+ 1182 0190 13       		.uleb128 0x13
+ 1183 0191 1C       		.uleb128 0x1c
+ 1184 0192 0B       		.uleb128 0xb
+ 1185 0193 00       		.byte	0
+ 1186 0194 00       		.byte	0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 28
+
+
+ 1187 0195 1B       		.uleb128 0x1b
+ 1188 0196 26       		.uleb128 0x26
+ 1189 0197 00       		.byte	0
+ 1190 0198 49       		.uleb128 0x49
+ 1191 0199 13       		.uleb128 0x13
+ 1192 019a 00       		.byte	0
+ 1193 019b 00       		.byte	0
+ 1194 019c 1C       		.uleb128 0x1c
+ 1195 019d 34       		.uleb128 0x34
+ 1196 019e 00       		.byte	0
+ 1197 019f 03       		.uleb128 0x3
+ 1198 01a0 0E       		.uleb128 0xe
+ 1199 01a1 3A       		.uleb128 0x3a
+ 1200 01a2 0B       		.uleb128 0xb
+ 1201 01a3 3B       		.uleb128 0x3b
+ 1202 01a4 05       		.uleb128 0x5
+ 1203 01a5 49       		.uleb128 0x49
+ 1204 01a6 13       		.uleb128 0x13
+ 1205 01a7 3F       		.uleb128 0x3f
+ 1206 01a8 19       		.uleb128 0x19
+ 1207 01a9 3C       		.uleb128 0x3c
+ 1208 01aa 19       		.uleb128 0x19
+ 1209 01ab 00       		.byte	0
+ 1210 01ac 00       		.byte	0
+ 1211 01ad 1D       		.uleb128 0x1d
+ 1212 01ae 35       		.uleb128 0x35
+ 1213 01af 00       		.byte	0
+ 1214 01b0 49       		.uleb128 0x49
+ 1215 01b1 13       		.uleb128 0x13
+ 1216 01b2 00       		.byte	0
+ 1217 01b3 00       		.byte	0
+ 1218 01b4 1E       		.uleb128 0x1e
+ 1219 01b5 2E       		.uleb128 0x2e
+ 1220 01b6 00       		.byte	0
+ 1221 01b7 3F       		.uleb128 0x3f
+ 1222 01b8 19       		.uleb128 0x19
+ 1223 01b9 03       		.uleb128 0x3
+ 1224 01ba 0E       		.uleb128 0xe
+ 1225 01bb 3A       		.uleb128 0x3a
+ 1226 01bc 0B       		.uleb128 0xb
+ 1227 01bd 3B       		.uleb128 0x3b
+ 1228 01be 05       		.uleb128 0x5
+ 1229 01bf 27       		.uleb128 0x27
+ 1230 01c0 19       		.uleb128 0x19
+ 1231 01c1 3C       		.uleb128 0x3c
+ 1232 01c2 19       		.uleb128 0x19
+ 1233 01c3 00       		.byte	0
+ 1234 01c4 00       		.byte	0
+ 1235 01c5 1F       		.uleb128 0x1f
+ 1236 01c6 2E       		.uleb128 0x2e
+ 1237 01c7 00       		.byte	0
+ 1238 01c8 3F       		.uleb128 0x3f
+ 1239 01c9 19       		.uleb128 0x19
+ 1240 01ca 03       		.uleb128 0x3
+ 1241 01cb 0E       		.uleb128 0xe
+ 1242 01cc 3A       		.uleb128 0x3a
+ 1243 01cd 0B       		.uleb128 0xb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 29
+
+
+ 1244 01ce 3B       		.uleb128 0x3b
+ 1245 01cf 05       		.uleb128 0x5
+ 1246 01d0 27       		.uleb128 0x27
+ 1247 01d1 19       		.uleb128 0x19
+ 1248 01d2 49       		.uleb128 0x49
+ 1249 01d3 13       		.uleb128 0x13
+ 1250 01d4 3C       		.uleb128 0x3c
+ 1251 01d5 19       		.uleb128 0x19
+ 1252 01d6 00       		.byte	0
+ 1253 01d7 00       		.byte	0
+ 1254 01d8 00       		.byte	0
+ 1255              		.section	.debug_loc,"",%progbits
+ 1256              	.Ldebug_loc0:
+ 1257              	.LLST0:
+ 1258 0000 00000000 		.4byte	.LVL2
+ 1259 0004 07000000 		.4byte	.LVL4-1
+ 1260 0008 0100     		.2byte	0x1
+ 1261 000a 50       		.byte	0x50
+ 1262 000b 07000000 		.4byte	.LVL4-1
+ 1263 000f 2A000000 		.4byte	.LVL7
+ 1264 0013 0100     		.2byte	0x1
+ 1265 0015 54       		.byte	0x54
+ 1266 0016 2A000000 		.4byte	.LVL7
+ 1267 001a 2C000000 		.4byte	.LVL8
+ 1268 001e 0600     		.2byte	0x6
+ 1269 0020 F3       		.byte	0xf3
+ 1270 0021 01       		.uleb128 0x1
+ 1271 0022 50       		.byte	0x50
+ 1272 0023 23       		.byte	0x23
+ 1273 0024 08       		.uleb128 0x8
+ 1274 0025 9F       		.byte	0x9f
+ 1275 0026 2C000000 		.4byte	.LVL8
+ 1276 002a 70000000 		.4byte	.LVL16
+ 1277 002e 0100     		.2byte	0x1
+ 1278 0030 54       		.byte	0x54
+ 1279 0031 70000000 		.4byte	.LVL16
+ 1280 0035 80000000 		.4byte	.LVL20
+ 1281 0039 0200     		.2byte	0x2
+ 1282 003b 73       		.byte	0x73
+ 1283 003c 04       		.sleb128 4
+ 1284 003d 8E000000 		.4byte	.LVL23
+ 1285 0041 94000000 		.4byte	.LVL25
+ 1286 0045 0100     		.2byte	0x1
+ 1287 0047 54       		.byte	0x54
+ 1288 0048 00000000 		.4byte	0
+ 1289 004c 00000000 		.4byte	0
+ 1290              	.LLST1:
+ 1291 0050 3C000000 		.4byte	.LVL10
+ 1292 0054 88000000 		.4byte	.LVL22
+ 1293 0058 0100     		.2byte	0x1
+ 1294 005a 53       		.byte	0x53
+ 1295 005b 92000000 		.4byte	.LVL24
+ 1296 005f 94000000 		.4byte	.LVL25
+ 1297 0063 0100     		.2byte	0x1
+ 1298 0065 53       		.byte	0x53
+ 1299 0066 00000000 		.4byte	0
+ 1300 006a 00000000 		.4byte	0
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 30
+
+
+ 1301              	.LLST2:
+ 1302 006e 36000000 		.4byte	.LVL9
+ 1303 0072 42000000 		.4byte	.LVL11
+ 1304 0076 0600     		.2byte	0x6
+ 1305 0078 03       		.byte	0x3
+ 1306 0079 00800000 		.4byte	xStart
+ 1307 007d 9F       		.byte	0x9f
+ 1308 007e 42000000 		.4byte	.LVL11
+ 1309 0082 44000000 		.4byte	.LVL12
+ 1310 0086 0100     		.2byte	0x1
+ 1311 0088 51       		.byte	0x51
+ 1312 0089 46000000 		.4byte	.LVL13
+ 1313 008d 72000000 		.4byte	.LVL17
+ 1314 0091 0100     		.2byte	0x1
+ 1315 0093 51       		.byte	0x51
+ 1316 0094 92000000 		.4byte	.LVL24
+ 1317 0098 94000000 		.4byte	.LVL25
+ 1318 009c 0100     		.2byte	0x1
+ 1319 009e 51       		.byte	0x51
+ 1320 009f 00000000 		.4byte	0
+ 1321 00a3 00000000 		.4byte	0
+ 1322              	.LLST3:
+ 1323 00a7 6A000000 		.4byte	.LVL15
+ 1324 00ab 82000000 		.4byte	.LVL21
+ 1325 00af 0100     		.2byte	0x1
+ 1326 00b1 56       		.byte	0x56
+ 1327 00b2 00000000 		.4byte	0
+ 1328 00b6 00000000 		.4byte	0
+ 1329              	.LLST4:
+ 1330 00ba 04000000 		.4byte	.LVL3
+ 1331 00be 5C000000 		.4byte	.LVL14
+ 1332 00c2 0200     		.2byte	0x2
+ 1333 00c4 30       		.byte	0x30
+ 1334 00c5 9F       		.byte	0x9f
+ 1335 00c6 5C000000 		.4byte	.LVL14
+ 1336 00ca 8E000000 		.4byte	.LVL23
+ 1337 00ce 0100     		.2byte	0x1
+ 1338 00d0 55       		.byte	0x55
+ 1339 00d1 8E000000 		.4byte	.LVL23
+ 1340 00d5 94000000 		.4byte	.LVL25
+ 1341 00d9 0200     		.2byte	0x2
+ 1342 00db 30       		.byte	0x30
+ 1343 00dc 9F       		.byte	0x9f
+ 1344 00dd 94000000 		.4byte	.LVL25
+ 1345 00e1 A2000000 		.4byte	.LVL28
+ 1346 00e5 0100     		.2byte	0x1
+ 1347 00e7 55       		.byte	0x55
+ 1348 00e8 A2000000 		.4byte	.LVL28
+ 1349 00ec B4000000 		.4byte	.LFE64
+ 1350 00f0 0100     		.2byte	0x1
+ 1351 00f2 50       		.byte	0x50
+ 1352 00f3 00000000 		.4byte	0
+ 1353 00f7 00000000 		.4byte	0
+ 1354              	.LLST5:
+ 1355 00fb 70000000 		.4byte	.LVL16
+ 1356 00ff 74000000 		.4byte	.LVL18
+ 1357 0103 0600     		.2byte	0x6
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 31
+
+
+ 1358 0105 03       		.byte	0x3
+ 1359 0106 00800000 		.4byte	xStart
+ 1360 010a 9F       		.byte	0x9f
+ 1361 010b 74000000 		.4byte	.LVL18
+ 1362 010f 82000000 		.4byte	.LVL21
+ 1363 0113 0100     		.2byte	0x1
+ 1364 0115 51       		.byte	0x51
+ 1365 0116 00000000 		.4byte	0
+ 1366 011a 00000000 		.4byte	0
+ 1367              	.LLST6:
+ 1368 011e 70000000 		.4byte	.LVL16
+ 1369 0122 82000000 		.4byte	.LVL21
+ 1370 0126 0100     		.2byte	0x1
+ 1371 0128 54       		.byte	0x54
+ 1372 0129 00000000 		.4byte	0
+ 1373 012d 00000000 		.4byte	0
+ 1374              	.LLST7:
+ 1375 0131 00000000 		.4byte	.LVL29
+ 1376 0135 0D000000 		.4byte	.LVL31-1
+ 1377 0139 0100     		.2byte	0x1
+ 1378 013b 50       		.byte	0x50
+ 1379 013c 0D000000 		.4byte	.LVL31-1
+ 1380 0140 38000000 		.4byte	.LVL37
+ 1381 0144 0100     		.2byte	0x1
+ 1382 0146 55       		.byte	0x55
+ 1383 0147 38000000 		.4byte	.LVL37
+ 1384 014b 44000000 		.4byte	.LFE65
+ 1385 014f 0100     		.2byte	0x1
+ 1386 0151 50       		.byte	0x50
+ 1387 0152 00000000 		.4byte	0
+ 1388 0156 00000000 		.4byte	0
+ 1389              	.LLST8:
+ 1390 015a 00000000 		.4byte	.LVL29
+ 1391 015e 0A000000 		.4byte	.LVL30
+ 1392 0162 0100     		.2byte	0x1
+ 1393 0164 50       		.byte	0x50
+ 1394 0165 0A000000 		.4byte	.LVL30
+ 1395 0169 38000000 		.4byte	.LVL37
+ 1396 016d 0100     		.2byte	0x1
+ 1397 016f 56       		.byte	0x56
+ 1398 0170 38000000 		.4byte	.LVL37
+ 1399 0174 44000000 		.4byte	.LFE65
+ 1400 0178 0100     		.2byte	0x1
+ 1401 017a 50       		.byte	0x50
+ 1402 017b 00000000 		.4byte	0
+ 1403 017f 00000000 		.4byte	0
+ 1404              	.LLST9:
+ 1405 0183 0A000000 		.4byte	.LVL30
+ 1406 0187 38000000 		.4byte	.LVL37
+ 1407 018b 0100     		.2byte	0x1
+ 1408 018d 56       		.byte	0x56
+ 1409 018e 00000000 		.4byte	0
+ 1410 0192 00000000 		.4byte	0
+ 1411              	.LLST10:
+ 1412 0196 12000000 		.4byte	.LVL32
+ 1413 019a 16000000 		.4byte	.LVL33
+ 1414 019e 0600     		.2byte	0x6
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 32
+
+
+ 1415 01a0 03       		.byte	0x3
+ 1416 01a1 00800000 		.4byte	xStart
+ 1417 01a5 9F       		.byte	0x9f
+ 1418 01a6 16000000 		.4byte	.LVL33
+ 1419 01aa 2C000000 		.4byte	.LVL35
+ 1420 01ae 0100     		.2byte	0x1
+ 1421 01b0 52       		.byte	0x52
+ 1422 01b1 00000000 		.4byte	0
+ 1423 01b5 00000000 		.4byte	0
+ 1424              	.LLST11:
+ 1425 01b9 12000000 		.4byte	.LVL32
+ 1426 01bd 38000000 		.4byte	.LVL37
+ 1427 01c1 0100     		.2byte	0x1
+ 1428 01c3 54       		.byte	0x54
+ 1429 01c4 00000000 		.4byte	0
+ 1430 01c8 00000000 		.4byte	0
+ 1431              		.section	.debug_aranges,"",%progbits
+ 1432 0000 3C000000 		.4byte	0x3c
+ 1433 0004 0200     		.2byte	0x2
+ 1434 0006 00000000 		.4byte	.Ldebug_info0
+ 1435 000a 04       		.byte	0x4
+ 1436 000b 00       		.byte	0
+ 1437 000c 0000     		.2byte	0
+ 1438 000e 0000     		.2byte	0
+ 1439 0010 00000000 		.4byte	.LFB68
+ 1440 0014 30000000 		.4byte	.LFE68-.LFB68
+ 1441 0018 00000000 		.4byte	.LFB64
+ 1442 001c B4000000 		.4byte	.LFE64-.LFB64
+ 1443 0020 00000000 		.4byte	.LFB65
+ 1444 0024 44000000 		.4byte	.LFE65-.LFB65
+ 1445 0028 00000000 		.4byte	.LFB66
+ 1446 002c 0C000000 		.4byte	.LFE66-.LFB66
+ 1447 0030 00000000 		.4byte	.LFB67
+ 1448 0034 02000000 		.4byte	.LFE67-.LFB67
+ 1449 0038 00000000 		.4byte	0
+ 1450 003c 00000000 		.4byte	0
+ 1451              		.section	.debug_ranges,"",%progbits
+ 1452              	.Ldebug_ranges0:
+ 1453 0000 00000000 		.4byte	.LFB68
+ 1454 0004 30000000 		.4byte	.LFE68
+ 1455 0008 00000000 		.4byte	.LFB64
+ 1456 000c B4000000 		.4byte	.LFE64
+ 1457 0010 00000000 		.4byte	.LFB65
+ 1458 0014 44000000 		.4byte	.LFE65
+ 1459 0018 00000000 		.4byte	.LFB66
+ 1460 001c 0C000000 		.4byte	.LFE66
+ 1461 0020 00000000 		.4byte	.LFB67
+ 1462 0024 02000000 		.4byte	.LFE67
+ 1463 0028 00000000 		.4byte	0
+ 1464 002c 00000000 		.4byte	0
+ 1465              		.section	.debug_line,"",%progbits
+ 1466              	.Ldebug_line0:
+ 1467 0000 92020000 		.section	.debug_str,"MS",%progbits,1
+ 1467      0200E301 
+ 1467      00000201 
+ 1467      FB0E0D00 
+ 1467      01010101 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 33
+
+
+ 1468              	.LASF3:
+ 1469 0000 5F5F7569 		.ascii	"__uint8_t\000"
+ 1469      6E74385F 
+ 1469      7400
+ 1470              	.LASF2:
+ 1471 000a 73697A65 		.ascii	"size_t\000"
+ 1471      5F7400
+ 1472              	.LASF42:
+ 1473 0011 76546173 		.ascii	"vTaskSuspendAll\000"
+ 1473      6B537573 
+ 1473      70656E64 
+ 1473      416C6C00 
+ 1474              	.LASF8:
+ 1475 0021 5F5F696E 		.ascii	"__int32_t\000"
+ 1475      7433325F 
+ 1475      7400
+ 1476              	.LASF30:
+ 1477 002b 70784E65 		.ascii	"pxNewBlockLink\000"
+ 1477      77426C6F 
+ 1477      636B4C69 
+ 1477      6E6B00
+ 1478              	.LASF46:
+ 1479 003a 415F424C 		.ascii	"A_BLOCK_LINK\000"
+ 1479      4F434B5F 
+ 1479      4C494E4B 
+ 1479      00
+ 1480              	.LASF9:
+ 1481 0047 6C6F6E67 		.ascii	"long int\000"
+ 1481      20696E74 
+ 1481      00
+ 1482              	.LASF53:
+ 1483 0050 78546173 		.ascii	"xTaskResumeAll\000"
+ 1483      6B526573 
+ 1483      756D6541 
+ 1483      6C6C00
+ 1484              	.LASF21:
+ 1485 005f 646F7562 		.ascii	"double\000"
+ 1485      6C6500
+ 1486              	.LASF28:
+ 1487 0066 7078426C 		.ascii	"pxBlock\000"
+ 1487      6F636B00 
+ 1488              	.LASF35:
+ 1489 006e 70784C69 		.ascii	"pxLink\000"
+ 1489      6E6B00
+ 1490              	.LASF48:
+ 1491 0075 7076506F 		.ascii	"pvPortMalloc\000"
+ 1491      72744D61 
+ 1491      6C6C6F63 
+ 1491      00
+ 1492              	.LASF26:
+ 1493 0082 70784669 		.ascii	"pxFirstFreeBlock\000"
+ 1493      72737446 
+ 1493      72656542 
+ 1493      6C6F636B 
+ 1493      00
+ 1494              	.LASF36:
+ 1495 0093 75634865 		.ascii	"ucHeap\000"
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 34
+
+
+ 1495      617000
+ 1496              	.LASF20:
+ 1497 009a 666C6F61 		.ascii	"float\000"
+ 1497      7400
+ 1498              	.LASF4:
+ 1499 00a0 756E7369 		.ascii	"unsigned char\000"
+ 1499      676E6564 
+ 1499      20636861 
+ 1499      7200
+ 1500              	.LASF24:
+ 1501 00ae 78426C6F 		.ascii	"xBlockSize\000"
+ 1501      636B5369 
+ 1501      7A6500
+ 1502              	.LASF11:
+ 1503 00b9 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1503      20756E73 
+ 1503      69676E65 
+ 1503      6420696E 
+ 1503      7400
+ 1504              	.LASF7:
+ 1505 00cb 73686F72 		.ascii	"short unsigned int\000"
+ 1505      7420756E 
+ 1505      7369676E 
+ 1505      65642069 
+ 1505      6E7400
+ 1506              	.LASF31:
+ 1507 00de 78486561 		.ascii	"xHeapHasBeenInitialised\000"
+ 1507      70486173 
+ 1507      4265656E 
+ 1507      496E6974 
+ 1507      69616C69 
+ 1508              	.LASF52:
+ 1509 00f6 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1509      52784275 
+ 1509      66666572 
+ 1509      00
+ 1510              	.LASF44:
+ 1511 0103 2E2E5C46 		.ascii	"..\\FreeRTOS\\heap_2.c\000"
+ 1511      72656552 
+ 1511      544F535C 
+ 1511      68656170 
+ 1511      5F322E63 
+ 1512              	.LASF39:
+ 1513 0118 78456E64 		.ascii	"xEnd\000"
+ 1513      00
+ 1514              	.LASF6:
+ 1515 011d 5F5F7569 		.ascii	"__uint16_t\000"
+ 1515      6E743136 
+ 1515      5F7400
+ 1516              	.LASF29:
+ 1517 0128 70785072 		.ascii	"pxPreviousBlock\000"
+ 1517      6576696F 
+ 1517      7573426C 
+ 1517      6F636B00 
+ 1518              	.LASF49:
+ 1519 0138 76506F72 		.ascii	"vPortFree\000"
+ 1519      74467265 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 35
+
+
+ 1519      6500
+ 1520              	.LASF10:
+ 1521 0142 5F5F7569 		.ascii	"__uint32_t\000"
+ 1521      6E743332 
+ 1521      5F7400
+ 1522              	.LASF32:
+ 1523 014d 70765265 		.ascii	"pvReturn\000"
+ 1523      7475726E 
+ 1523      00
+ 1524              	.LASF37:
+ 1525 0156 68656170 		.ascii	"heapSTRUCT_SIZE\000"
+ 1525      53545255 
+ 1525      43545F53 
+ 1525      495A4500 
+ 1526              	.LASF43:
+ 1527 0166 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1527      4320342E 
+ 1527      392E3320 
+ 1527      32303135 
+ 1527      30333033 
+ 1528 0199 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1528      20726576 
+ 1528      6973696F 
+ 1528      6E203232 
+ 1528      31323230 
+ 1529 01cc 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1529      66756E63 
+ 1529      74696F6E 
+ 1529      2D736563 
+ 1529      74696F6E 
+ 1530              	.LASF38:
+ 1531 01f4 78537461 		.ascii	"xStart\000"
+ 1531      727400
+ 1532              	.LASF51:
+ 1533 01fb 76506F72 		.ascii	"vPortInitialiseBlocks\000"
+ 1533      74496E69 
+ 1533      7469616C 
+ 1533      69736542 
+ 1533      6C6F636B 
+ 1534              	.LASF0:
+ 1535 0211 756E7369 		.ascii	"unsigned int\000"
+ 1535      676E6564 
+ 1535      20696E74 
+ 1535      00
+ 1536              	.LASF13:
+ 1537 021e 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1537      206C6F6E 
+ 1537      6720756E 
+ 1537      7369676E 
+ 1537      65642069 
+ 1538              	.LASF16:
+ 1539 0235 75696E74 		.ascii	"uint8_t\000"
+ 1539      385F7400 
+ 1540              	.LASF41:
+ 1541 023d 76417070 		.ascii	"vApplicationMallocFailedHook\000"
+ 1541      6C696361 
+ 1541      74696F6E 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 36
+
+
+ 1541      4D616C6C 
+ 1541      6F634661 
+ 1542              	.LASF18:
+ 1543 025a 696E7433 		.ascii	"int32_t\000"
+ 1543      325F7400 
+ 1544              	.LASF25:
+ 1545 0262 426C6F63 		.ascii	"BlockLink_t\000"
+ 1545      6B4C696E 
+ 1545      6B5F7400 
+ 1546              	.LASF14:
+ 1547 026e 73697A65 		.ascii	"sizetype\000"
+ 1547      74797065 
+ 1547      00
+ 1548              	.LASF12:
+ 1549 0277 6C6F6E67 		.ascii	"long long int\000"
+ 1549      206C6F6E 
+ 1549      6720696E 
+ 1549      7400
+ 1550              	.LASF34:
+ 1551 0285 7857616E 		.ascii	"xWantedSize\000"
+ 1551      74656453 
+ 1551      697A6500 
+ 1552              	.LASF15:
+ 1553 0291 63686172 		.ascii	"char\000"
+ 1553      00
+ 1554              	.LASF50:
+ 1555 0296 78506F72 		.ascii	"xPortGetFreeHeapSize\000"
+ 1555      74476574 
+ 1555      46726565 
+ 1555      48656170 
+ 1555      53697A65 
+ 1556              	.LASF27:
+ 1557 02ab 70756341 		.ascii	"pucAlignedHeap\000"
+ 1557      6C69676E 
+ 1557      65644865 
+ 1557      617000
+ 1558              	.LASF33:
+ 1559 02ba 70784974 		.ascii	"pxIterator\000"
+ 1559      65726174 
+ 1559      6F7200
+ 1560              	.LASF5:
+ 1561 02c5 73686F72 		.ascii	"short int\000"
+ 1561      7420696E 
+ 1561      7400
+ 1562              	.LASF17:
+ 1563 02cf 75696E74 		.ascii	"uint16_t\000"
+ 1563      31365F74 
+ 1563      00
+ 1564              	.LASF40:
+ 1565 02d8 78467265 		.ascii	"xFreeBytesRemaining\000"
+ 1565      65427974 
+ 1565      65735265 
+ 1565      6D61696E 
+ 1565      696E6700 
+ 1566              	.LASF45:
+ 1567 02ec 453A5C50 		.ascii	"E:\\PSoC_Creator\\CY8CKIT-059\\CY8CKIT-059_JJY_Race"
+ 1567      536F435F 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\ccqo1BCW.s 			page 37
+
+
+ 1567      43726561 
+ 1567      746F725C 
+ 1567      43593843 
+ 1568 031c 69766572 		.ascii	"iver\\CY8CKIT-059_JJY_Raceiver.cydsn\000"
+ 1568      5C435938 
+ 1568      434B4954 
+ 1568      2D303539 
+ 1568      5F4A4A59 
+ 1569              	.LASF19:
+ 1570 0340 75696E74 		.ascii	"uint32_t\000"
+ 1570      33325F74 
+ 1570      00
+ 1571              	.LASF47:
+ 1572 0349 70727648 		.ascii	"prvHeapInit\000"
+ 1572      65617049 
+ 1572      6E697400 
+ 1573              	.LASF1:
+ 1574 0355 7369676E 		.ascii	"signed char\000"
+ 1574      65642063 
+ 1574      68617200 
+ 1575              	.LASF23:
+ 1576 0361 70784E65 		.ascii	"pxNextFreeBlock\000"
+ 1576      78744672 
+ 1576      6565426C 
+ 1576      6F636B00 
+ 1577              	.LASF22:
+ 1578 0371 42617365 		.ascii	"BaseType_t\000"
+ 1578      54797065 
+ 1578      5F7400
+ 1579              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

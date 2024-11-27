@@ -1,0 +1,1693 @@
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"com.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.section	.text.COM_printf,"ax",%progbits
+  19              		.align	2
+  20              		.global	COM_printf
+  21              		.thumb
+  22              		.thumb_func
+  23              		.type	COM_printf, %function
+  24              	COM_printf:
+  25              	.LFB64:
+  26              		.file 1 "..\\API\\com.c"
+   1:..\API/com.c  **** //=========================================================
+   2:..\API/com.c  **** // PSoC5LP Project
+   3:..\API/com.c  **** //=========================================================
+   4:..\API/com.c  **** // File Name : com.c
+   5:..\API/com.c  **** // Function  : COM Port Control Routime
+   6:..\API/com.c  **** //---------------------------------------------------------
+   7:..\API/com.c  **** // Rev.01 2013.02.04 Munetomo Maruyama
+   8:..\API/com.c  **** //---------------------------------------------------------
+   9:..\API/com.c  **** // Copyright (C) 2012-2013 Munetomo Maruyama
+  10:..\API/com.c  **** //=========================================================
+  11:..\API/com.c  **** // ---- License Information -------------------------------
+  12:..\API/com.c  **** // Anyone can FREELY use this code fully or partially
+  13:..\API/com.c  **** // under conditions shown below.
+  14:..\API/com.c  **** // 1. You may use this code only for individual purpose,
+  15:..\API/com.c  **** //    and educational purpose.
+  16:..\API/com.c  **** //    Do not use this code for business even if partially.
+  17:..\API/com.c  **** // 2. You can copy, modify and distribute this code.
+  18:..\API/com.c  **** // 3. You should remain this header text in your codes
+  19:..\API/com.c  **** //   including Copyright credit and License Information.
+  20:..\API/com.c  **** // 4. Your codes should inherit this license information.
+  21:..\API/com.c  **** //=========================================================
+  22:..\API/com.c  **** // ---- Patent Notice -------------------------------------
+  23:..\API/com.c  **** // I have not cared whether this system (hw + sw) causes
+  24:..\API/com.c  **** // infringement on the patent, copyright, trademark,
+  25:..\API/com.c  **** // or trade secret rights of others. You have all
+  26:..\API/com.c  **** // responsibilities for determining if your designs
+  27:..\API/com.c  **** // and products infringe on the intellectual property
+  28:..\API/com.c  **** // rights of others, when you use technical information
+  29:..\API/com.c  **** // included in this system for your business.
+  30:..\API/com.c  **** //=========================================================
+  31:..\API/com.c  **** // ---- Disclaimers ---------------------------------------
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 2
+
+
+  32:..\API/com.c  **** // The function and reliability of this system are not
+  33:..\API/com.c  **** // guaranteed. They may cause any damages to loss of
+  34:..\API/com.c  **** // properties, data, money, profits, life, or business.
+  35:..\API/com.c  **** // By adopting this system even partially, you assume
+  36:..\API/com.c  **** // all responsibility for its use.
+  37:..\API/com.c  **** //=========================================================
+  38:..\API/com.c  **** 
+  39:..\API/com.c  **** #include <project.h>
+  40:..\API/com.c  **** #include <stdarg.h>
+  41:..\API/com.c  **** #include "com.h"
+  42:..\API/com.c  **** #include "utility.h"
+  43:..\API/com.c  **** 
+  44:..\API/com.c  **** //----------------
+  45:..\API/com.c  **** // Defines
+  46:..\API/com.c  **** //----------------
+  47:..\API/com.c  **** #define USBUART_TIMEOUT 2000000 // Timeout for USB Connection (adjustment might be required)
+  48:..\API/com.c  **** 
+  49:..\API/com.c  **** //----------------
+  50:..\API/com.c  **** // Globals
+  51:..\API/com.c  **** //----------------
+  52:..\API/com.c  **** volatile uint32 gUSBUART_Ready;
+  53:..\API/com.c  **** 
+  54:..\API/com.c  **** //=====================
+  55:..\API/com.c  **** // Initialize COM
+  56:..\API/com.c  **** //=====================
+  57:..\API/com.c  **** void Init_COM(void)
+  58:..\API/com.c  **** {
+  59:..\API/com.c  ****     uint32 i;
+  60:..\API/com.c  **** 
+  61:..\API/com.c  ****     // 2016.5.11 koseki
+  62:..\API/com.c  ****     //USBUART_1_Start(0, USBUART_1_3V_OPERATION);
+  63:..\API/com.c  ****     USBUART_1_Start(0, USBUART_1_DWR_VDDD_OPERATION);
+  64:..\API/com.c  **** 
+  65:..\API/com.c  ****     //while(!USBUART_1_bGetConfiguration());
+  66:..\API/com.c  ****     for (i = 0; i < USBUART_TIMEOUT; i++)
+  67:..\API/com.c  ****     {
+  68:..\API/com.c  ****         gUSBUART_Ready = USBUART_1_bGetConfiguration();
+  69:..\API/com.c  ****         if (gUSBUART_Ready) break;
+  70:..\API/com.c  ****     }
+  71:..\API/com.c  ****     
+  72:..\API/com.c  ****     // Initiaize UABUART
+  73:..\API/com.c  ****     if (gUSBUART_Ready)
+  74:..\API/com.c  ****         USBUART_1_CDC_Init();
+  75:..\API/com.c  ****     else
+  76:..\API/com.c  ****         USBUART_1_Stop();
+  77:..\API/com.c  ****     
+  78:..\API/com.c  ****     // Dummy Tx to establish Terminal on PC
+  79:..\API/com.c  ****     COM_printf("This is a Dummy Tx.\r\n");
+  80:..\API/com.c  **** }
+  81:..\API/com.c  **** 
+  82:..\API/com.c  **** //=====================
+  83:..\API/com.c  **** // COM printf
+  84:..\API/com.c  **** //=====================
+  85:..\API/com.c  **** void COM_printf(const char *format, ...)
+  86:..\API/com.c  **** {
+  27              		.loc 1 86 0
+  28              		.cfi_startproc
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 3
+
+
+  29              		@ args = 4, pretend = 16, frame = 264
+  30              		@ frame_needed = 0, uses_anonymous_args = 1
+  31              	.LVL0:
+  32 0000 0FB4     		push	{r0, r1, r2, r3}
+  33              		.cfi_def_cfa_offset 16
+  34              		.cfi_offset 0, -16
+  35              		.cfi_offset 1, -12
+  36              		.cfi_offset 2, -8
+  37              		.cfi_offset 3, -4
+  38 0002 30B5     		push	{r4, r5, lr}
+  39              		.cfi_def_cfa_offset 28
+  40              		.cfi_offset 4, -28
+  41              		.cfi_offset 5, -24
+  42              		.cfi_offset 14, -20
+  43 0004 C3B0     		sub	sp, sp, #268
+  44              		.cfi_def_cfa_offset 296
+  87:..\API/com.c  ****     va_list ap;
+  88:..\API/com.c  ****     uint8 buf[256];
+  89:..\API/com.c  ****     uint8 *pStr;
+  90:..\API/com.c  ****     
+  91:..\API/com.c  ****     if (gUSBUART_Ready == 0) return;
+  45              		.loc 1 91 0
+  46 0006 0F4B     		ldr	r3, .L7
+  47 0008 1B68     		ldr	r3, [r3]
+  48 000a ABB1     		cbz	r3, .L1
+  92:..\API/com.c  **** 
+  93:..\API/com.c  ****     va_start(ap, format);
+  49              		.loc 1 93 0
+  50 000c 47AB     		add	r3, sp, #284
+  51 000e 4193     		str	r3, [sp, #260]
+  94:..\API/com.c  ****     xvsnprintf(buf, 256, format, ap);
+  52              		.loc 1 94 0
+  53 0010 01A8     		add	r0, sp, #4
+  54 0012 4FF48071 		mov	r1, #256
+  55 0016 469A     		ldr	r2, [sp, #280]
+  56 0018 FFF7FEFF 		bl	xvsnprintf
+  57              	.LVL1:
+  95:..\API/com.c  ****     va_end(ap);
+  96:..\API/com.c  **** 
+  97:..\API/com.c  ****     pStr = buf;
+  58              		.loc 1 97 0
+  59 001c 01AC     		add	r4, sp, #4
+  60              	.LVL2:
+  98:..\API/com.c  ****     while(*pStr != '\0')
+  61              		.loc 1 98 0
+  62 001e 08E0     		b	.L3
+  63              	.L4:
+  99:..\API/com.c  ****     {
+ 100:..\API/com.c  ****         while (USBUART_1_CDCIsReady() == 0);
+  64              		.loc 1 100 0 discriminator 1
+  65 0020 FFF7FEFF 		bl	USBUART_1_CDCIsReady
+  66              	.LVL3:
+  67 0024 0028     		cmp	r0, #0
+  68 0026 FBD0     		beq	.L4
+ 101:..\API/com.c  ****         USBUART_1_PutChar(*pStr++);
+  69              		.loc 1 101 0
+  70 0028 651C     		adds	r5, r4, #1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 4
+
+
+  71              	.LVL4:
+  72 002a 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+  73 002c FFF7FEFF 		bl	USBUART_1_PutChar
+  74              	.LVL5:
+  75 0030 2C46     		mov	r4, r5
+  76              	.LVL6:
+  77              	.L3:
+  98:..\API/com.c  ****     while(*pStr != '\0')
+  78              		.loc 1 98 0
+  79 0032 2378     		ldrb	r3, [r4]	@ zero_extendqisi2
+  80 0034 002B     		cmp	r3, #0
+  81 0036 F3D1     		bne	.L4
+  82              	.LVL7:
+  83              	.L1:
+ 102:..\API/com.c  ****     }
+ 103:..\API/com.c  **** }
+  84              		.loc 1 103 0
+  85 0038 43B0     		add	sp, sp, #268
+  86              		.cfi_def_cfa_offset 28
+  87              		@ sp needed
+  88 003a BDE83040 		pop	{r4, r5, lr}
+  89              		.cfi_restore 14
+  90              		.cfi_restore 5
+  91              		.cfi_restore 4
+  92              		.cfi_def_cfa_offset 16
+  93 003e 04B0     		add	sp, sp, #16
+  94              		.cfi_restore 3
+  95              		.cfi_restore 2
+  96              		.cfi_restore 1
+  97              		.cfi_restore 0
+  98              		.cfi_def_cfa_offset 0
+  99 0040 7047     		bx	lr
+ 100              	.L8:
+ 101 0042 00BF     		.align	2
+ 102              	.L7:
+ 103 0044 00000000 		.word	gUSBUART_Ready
+ 104              		.cfi_endproc
+ 105              	.LFE64:
+ 106              		.size	COM_printf, .-COM_printf
+ 107              		.section	.text.Init_COM,"ax",%progbits
+ 108              		.align	2
+ 109              		.global	Init_COM
+ 110              		.thumb
+ 111              		.thumb_func
+ 112              		.type	Init_COM, %function
+ 113              	Init_COM:
+ 114              	.LFB63:
+  58:..\API/com.c  ****     uint32 i;
+ 115              		.loc 1 58 0
+ 116              		.cfi_startproc
+ 117              		@ args = 0, pretend = 0, frame = 0
+ 118              		@ frame_needed = 0, uses_anonymous_args = 0
+ 119 0000 10B5     		push	{r4, lr}
+ 120              		.cfi_def_cfa_offset 8
+ 121              		.cfi_offset 4, -8
+ 122              		.cfi_offset 14, -4
+  63:..\API/com.c  **** 
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 5
+
+
+ 123              		.loc 1 63 0
+ 124 0002 0020     		movs	r0, #0
+ 125 0004 0221     		movs	r1, #2
+ 126 0006 FFF7FEFF 		bl	USBUART_1_Start
+ 127              	.LVL8:
+  66:..\API/com.c  ****     {
+ 128              		.loc 1 66 0
+ 129 000a 0024     		movs	r4, #0
+ 130 000c 06E0     		b	.L10
+ 131              	.LVL9:
+ 132              	.L12:
+  68:..\API/com.c  ****         if (gUSBUART_Ready) break;
+ 133              		.loc 1 68 0
+ 134 000e FFF7FEFF 		bl	USBUART_1_GetConfiguration
+ 135              	.LVL10:
+ 136 0012 0A4B     		ldr	r3, .L16
+ 137 0014 1860     		str	r0, [r3]
+  69:..\API/com.c  ****     }
+ 138              		.loc 1 69 0
+ 139 0016 1B68     		ldr	r3, [r3]
+ 140 0018 1BB9     		cbnz	r3, .L11
+  66:..\API/com.c  ****     {
+ 141              		.loc 1 66 0 discriminator 2
+ 142 001a 0134     		adds	r4, r4, #1
+ 143              	.LVL11:
+ 144              	.L10:
+  66:..\API/com.c  ****     {
+ 145              		.loc 1 66 0 is_stmt 0 discriminator 1
+ 146 001c 084B     		ldr	r3, .L16+4
+ 147 001e 9C42     		cmp	r4, r3
+ 148 0020 F5D9     		bls	.L12
+ 149              	.L11:
+  73:..\API/com.c  ****         USBUART_1_CDC_Init();
+ 150              		.loc 1 73 0 is_stmt 1
+ 151 0022 064B     		ldr	r3, .L16
+ 152 0024 1B68     		ldr	r3, [r3]
+ 153 0026 13B1     		cbz	r3, .L13
+  74:..\API/com.c  ****     else
+ 154              		.loc 1 74 0
+ 155 0028 FFF7FEFF 		bl	USBUART_1_CDC_Init
+ 156              	.LVL12:
+ 157 002c 01E0     		b	.L14
+ 158              	.L13:
+  76:..\API/com.c  ****     
+ 159              		.loc 1 76 0
+ 160 002e FFF7FEFF 		bl	USBUART_1_Stop
+ 161              	.LVL13:
+ 162              	.L14:
+  79:..\API/com.c  **** }
+ 163              		.loc 1 79 0
+ 164 0032 0448     		ldr	r0, .L16+8
+ 165 0034 FFF7FEFF 		bl	COM_printf
+ 166              	.LVL14:
+ 167 0038 10BD     		pop	{r4, pc}
+ 168              	.LVL15:
+ 169              	.L17:
+ 170 003a 00BF     		.align	2
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 6
+
+
+ 171              	.L16:
+ 172 003c 00000000 		.word	gUSBUART_Ready
+ 173 0040 7F841E00 		.word	1999999
+ 174 0044 00000000 		.word	.LC0
+ 175              		.cfi_endproc
+ 176              	.LFE63:
+ 177              		.size	Init_COM, .-Init_COM
+ 178              		.section	.text.COM_Wait_PC_Term,"ax",%progbits
+ 179              		.align	2
+ 180              		.global	COM_Wait_PC_Term
+ 181              		.thumb
+ 182              		.thumb_func
+ 183              		.type	COM_Wait_PC_Term, %function
+ 184              	COM_Wait_PC_Term:
+ 185              	.LFB65:
+ 104:..\API/com.c  **** 
+ 105:..\API/com.c  **** //===========================
+ 106:..\API/com.c  **** // Wait for setup PC Terminal
+ 107:..\API/com.c  **** //===========================
+ 108:..\API/com.c  **** void COM_Wait_PC_Term(void)
+ 109:..\API/com.c  **** {
+ 186              		.loc 1 109 0
+ 187              		.cfi_startproc
+ 188              		@ args = 0, pretend = 0, frame = 8
+ 189              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110:..\API/com.c  ****     uint32 i;
+ 111:..\API/com.c  ****     uint8  len;
+ 112:..\API/com.c  ****     uint8  dummy;
+ 113:..\API/com.c  ****     //
+ 114:..\API/com.c  ****     if (gUSBUART_Ready == 0) return;
+ 190              		.loc 1 114 0
+ 191 0000 0E4B     		ldr	r3, .L27
+ 192 0002 1B68     		ldr	r3, [r3]
+ 193 0004 CBB1     		cbz	r3, .L26
+ 109:..\API/com.c  ****     uint32 i;
+ 194              		.loc 1 109 0
+ 195 0006 30B5     		push	{r4, r5, lr}
+ 196              		.cfi_def_cfa_offset 12
+ 197              		.cfi_offset 4, -12
+ 198              		.cfi_offset 5, -8
+ 199              		.cfi_offset 14, -4
+ 200 0008 83B0     		sub	sp, sp, #12
+ 201              		.cfi_def_cfa_offset 24
+ 202              	.L21:
+ 115:..\API/com.c  ****     //
+ 116:..\API/com.c  ****     while(1)
+ 117:..\API/com.c  ****     {
+ 118:..\API/com.c  ****         COM_printf("Push any Key to Start...\r");
+ 203              		.loc 1 118 0
+ 204 000a 0D48     		ldr	r0, .L27+4
+ 205 000c FFF7FEFF 		bl	COM_printf
+ 206              	.LVL16:
+ 119:..\API/com.c  ****         len = USBUART_1_DataIsReady();
+ 207              		.loc 1 119 0
+ 208 0010 FFF7FEFF 		bl	USBUART_1_DataIsReady
+ 209              	.LVL17:
+ 120:..\API/com.c  ****         if (len > 0) break;
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 7
+
+
+ 210              		.loc 1 120 0
+ 211 0014 0546     		mov	r5, r0
+ 212 0016 0028     		cmp	r0, #0
+ 213 0018 F7D0     		beq	.L21
+ 214 001a 06E0     		b	.L24
+ 215              	.LVL18:
+ 216              	.L22:
+ 121:..\API/com.c  ****     }
+ 122:..\API/com.c  ****     for (i = 0; i < len; i++) USBUART_1_GetData(&dummy, 1);
+ 217              		.loc 1 122 0 discriminator 3
+ 218 001c 0DF10700 		add	r0, sp, #7
+ 219 0020 0121     		movs	r1, #1
+ 220 0022 FFF7FEFF 		bl	USBUART_1_GetData
+ 221              	.LVL19:
+ 222 0026 0134     		adds	r4, r4, #1
+ 223              	.LVL20:
+ 224 0028 00E0     		b	.L20
+ 225              	.LVL21:
+ 226              	.L24:
+ 227 002a 0024     		movs	r4, #0
+ 228              	.LVL22:
+ 229              	.L20:
+ 230              		.loc 1 122 0 is_stmt 0 discriminator 1
+ 231 002c A542     		cmp	r5, r4
+ 232 002e F5D8     		bhi	.L22
+ 123:..\API/com.c  ****     COM_printf("\r\nOK!\r\n");
+ 233              		.loc 1 123 0 is_stmt 1
+ 234 0030 0448     		ldr	r0, .L27+8
+ 235 0032 FFF7FEFF 		bl	COM_printf
+ 236              	.LVL23:
+ 124:..\API/com.c  **** }
+ 237              		.loc 1 124 0
+ 238 0036 03B0     		add	sp, sp, #12
+ 239              		.cfi_def_cfa_offset 12
+ 240              		@ sp needed
+ 241 0038 30BD     		pop	{r4, r5, pc}
+ 242              	.LVL24:
+ 243              	.L26:
+ 244              		.cfi_def_cfa_offset 0
+ 245              		.cfi_restore 4
+ 246              		.cfi_restore 5
+ 247              		.cfi_restore 14
+ 248 003a 7047     		bx	lr
+ 249              	.L28:
+ 250              		.align	2
+ 251              	.L27:
+ 252 003c 00000000 		.word	gUSBUART_Ready
+ 253 0040 18000000 		.word	.LC1
+ 254 0044 34000000 		.word	.LC2
+ 255              		.cfi_endproc
+ 256              	.LFE65:
+ 257              		.size	COM_Wait_PC_Term, .-COM_Wait_PC_Term
+ 258              		.comm	gUSBUART_Ready,4,4
+ 259              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 260              		.align	2
+ 261              	.LC0:
+ 262 0000 54686973 		.ascii	"This is a Dummy Tx.\015\012\000"
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 8
+
+
+ 262      20697320 
+ 262      61204475 
+ 262      6D6D7920 
+ 262      54782E0D 
+ 263 0016 0000     		.space	2
+ 264              	.LC1:
+ 265 0018 50757368 		.ascii	"Push any Key to Start...\015\000"
+ 265      20616E79 
+ 265      204B6579 
+ 265      20746F20 
+ 265      53746172 
+ 266 0032 0000     		.space	2
+ 267              	.LC2:
+ 268 0034 0D0A4F4B 		.ascii	"\015\012OK!\015\012\000"
+ 268      210D0A00 
+ 269              		.text
+ 270              	.Letext0:
+ 271              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 272              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 273              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 274              		.file 5 "c:\\program files (x86)\\cypress\\psoc creator\\3.3\\psoc creator\\import\\gnu\\arm\\4.9.
+ 275              		.file 6 "Generated_Source\\PSoC5/core_cm3.h"
+ 276              		.file 7 "Generated_Source\\PSoC5/USBUART_1_cdc.h"
+ 277              		.file 8 "Generated_Source\\PSoC5/USBUART_1.h"
+ 278              		.file 9 "<built-in>"
+ 279              		.file 10 "..\\API\\utility.h"
+ 280              		.section	.debug_info,"",%progbits
+ 281              	.Ldebug_info0:
+ 282 0000 58030000 		.4byte	0x358
+ 283 0004 0400     		.2byte	0x4
+ 284 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 285 000a 04       		.byte	0x4
+ 286 000b 01       		.uleb128 0x1
+ 287 000c F8000000 		.4byte	.LASF35
+ 288 0010 01       		.byte	0x1
+ 289 0011 19000000 		.4byte	.LASF36
+ 290 0015 5E020000 		.4byte	.LASF37
+ 291 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 292 001d 00000000 		.4byte	0
+ 293 0021 00000000 		.4byte	.Ldebug_line0
+ 294 0025 02       		.uleb128 0x2
+ 295 0026 01       		.byte	0x1
+ 296 0027 06       		.byte	0x6
+ 297 0028 A8020000 		.4byte	.LASF0
+ 298 002c 02       		.uleb128 0x2
+ 299 002d 01       		.byte	0x1
+ 300 002e 08       		.byte	0x8
+ 301 002f 8F000000 		.4byte	.LASF1
+ 302 0033 02       		.uleb128 0x2
+ 303 0034 02       		.byte	0x2
+ 304 0035 05       		.byte	0x5
+ 305 0036 D9000000 		.4byte	.LASF2
+ 306 003a 02       		.uleb128 0x2
+ 307 003b 02       		.byte	0x2
+ 308 003c 07       		.byte	0x7
+ 309 003d 5C000000 		.4byte	.LASF3
+ 310 0041 03       		.uleb128 0x3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 9
+
+
+ 311 0042 52000000 		.4byte	.LASF9
+ 312 0046 02       		.byte	0x2
+ 313 0047 3F       		.byte	0x3f
+ 314 0048 4C000000 		.4byte	0x4c
+ 315 004c 02       		.uleb128 0x2
+ 316 004d 04       		.byte	0x4
+ 317 004e 05       		.byte	0x5
+ 318 004f 55020000 		.4byte	.LASF4
+ 319 0053 02       		.uleb128 0x2
+ 320 0054 04       		.byte	0x4
+ 321 0055 07       		.byte	0x7
+ 322 0056 A3000000 		.4byte	.LASF5
+ 323 005a 02       		.uleb128 0x2
+ 324 005b 08       		.byte	0x8
+ 325 005c 05       		.byte	0x5
+ 326 005d 00000000 		.4byte	.LASF6
+ 327 0061 02       		.uleb128 0x2
+ 328 0062 08       		.byte	0x8
+ 329 0063 07       		.byte	0x7
+ 330 0064 A2010000 		.4byte	.LASF7
+ 331 0068 04       		.uleb128 0x4
+ 332 0069 04       		.byte	0x4
+ 333 006a 05       		.byte	0x5
+ 334 006b 696E7400 		.ascii	"int\000"
+ 335 006f 02       		.uleb128 0x2
+ 336 0070 04       		.byte	0x4
+ 337 0071 07       		.byte	0x7
+ 338 0072 86010000 		.4byte	.LASF8
+ 339 0076 03       		.uleb128 0x3
+ 340 0077 D0010000 		.4byte	.LASF10
+ 341 007b 03       		.byte	0x3
+ 342 007c 2C       		.byte	0x2c
+ 343 007d 41000000 		.4byte	0x41
+ 344 0081 05       		.uleb128 0x5
+ 345 0082 14020000 		.4byte	.LASF11
+ 346 0086 04       		.byte	0x4
+ 347 0087 3801     		.2byte	0x138
+ 348 0089 2C000000 		.4byte	0x2c
+ 349 008d 05       		.uleb128 0x5
+ 350 008e E3000000 		.4byte	.LASF12
+ 351 0092 04       		.byte	0x4
+ 352 0093 3901     		.2byte	0x139
+ 353 0095 3A000000 		.4byte	0x3a
+ 354 0099 05       		.uleb128 0x5
+ 355 009a F1000000 		.4byte	.LASF13
+ 356 009e 04       		.byte	0x4
+ 357 009f 3A01     		.2byte	0x13a
+ 358 00a1 53000000 		.4byte	0x53
+ 359 00a5 02       		.uleb128 0x2
+ 360 00a6 04       		.byte	0x4
+ 361 00a7 04       		.byte	0x4
+ 362 00a8 7A000000 		.4byte	.LASF14
+ 363 00ac 02       		.uleb128 0x2
+ 364 00ad 08       		.byte	0x8
+ 365 00ae 04       		.byte	0x4
+ 366 00af D2000000 		.4byte	.LASF15
+ 367 00b3 05       		.uleb128 0x5
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 10
+
+
+ 368 00b4 9D000000 		.4byte	.LASF16
+ 369 00b8 04       		.byte	0x4
+ 370 00b9 4901     		.2byte	0x149
+ 371 00bb BF000000 		.4byte	0xbf
+ 372 00bf 02       		.uleb128 0x2
+ 373 00c0 01       		.byte	0x1
+ 374 00c1 08       		.byte	0x8
+ 375 00c2 FD010000 		.4byte	.LASF17
+ 376 00c6 06       		.uleb128 0x6
+ 377 00c7 99000000 		.4byte	0x99
+ 378 00cb 02       		.uleb128 0x2
+ 379 00cc 04       		.byte	0x4
+ 380 00cd 07       		.byte	0x7
+ 381 00ce D8010000 		.4byte	.LASF18
+ 382 00d2 07       		.uleb128 0x7
+ 383 00d3 04       		.byte	0x4
+ 384 00d4 08       		.uleb128 0x8
+ 385 00d5 04       		.byte	0x4
+ 386 00d6 DA000000 		.4byte	0xda
+ 387 00da 09       		.uleb128 0x9
+ 388 00db BF000000 		.4byte	0xbf
+ 389 00df 03       		.uleb128 0x3
+ 390 00e0 80000000 		.4byte	.LASF19
+ 391 00e4 05       		.byte	0x5
+ 392 00e5 28       		.byte	0x28
+ 393 00e6 EA000000 		.4byte	0xea
+ 394 00ea 0A       		.uleb128 0xa
+ 395 00eb E1010000 		.4byte	.LASF38
+ 396 00ef 04       		.byte	0x4
+ 397 00f0 09       		.byte	0x9
+ 398 00f1 00       		.byte	0
+ 399 00f2 01010000 		.4byte	0x101
+ 400 00f6 0B       		.uleb128 0xb
+ 401 00f7 B9010000 		.4byte	.LASF39
+ 402 00fb D2000000 		.4byte	0xd2
+ 403 00ff 00       		.byte	0
+ 404 0100 00       		.byte	0
+ 405 0101 03       		.uleb128 0x3
+ 406 0102 CA000000 		.4byte	.LASF20
+ 407 0106 05       		.byte	0x5
+ 408 0107 62       		.byte	0x62
+ 409 0108 DF000000 		.4byte	0xdf
+ 410 010c 0C       		.uleb128 0xc
+ 411 010d 6F000000 		.4byte	.LASF22
+ 412 0111 01       		.byte	0x1
+ 413 0112 55       		.byte	0x55
+ 414 0113 00000000 		.4byte	.LFB64
+ 415 0117 48000000 		.4byte	.LFE64-.LFB64
+ 416 011b 01       		.uleb128 0x1
+ 417 011c 9C       		.byte	0x9c
+ 418 011d 97010000 		.4byte	0x197
+ 419 0121 0D       		.uleb128 0xd
+ 420 0122 EA000000 		.4byte	.LASF40
+ 421 0126 01       		.byte	0x1
+ 422 0127 55       		.byte	0x55
+ 423 0128 D4000000 		.4byte	0xd4
+ 424 012c 02       		.uleb128 0x2
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 11
+
+
+ 425 012d 91       		.byte	0x91
+ 426 012e 70       		.sleb128 -16
+ 427 012f 0E       		.uleb128 0xe
+ 428 0130 0F       		.uleb128 0xf
+ 429 0131 617000   		.ascii	"ap\000"
+ 430 0134 01       		.byte	0x1
+ 431 0135 57       		.byte	0x57
+ 432 0136 01010000 		.4byte	0x101
+ 433 013a 02       		.uleb128 0x2
+ 434 013b 91       		.byte	0x91
+ 435 013c 5C       		.sleb128 -36
+ 436 013d 0F       		.uleb128 0xf
+ 437 013e 62756600 		.ascii	"buf\000"
+ 438 0142 01       		.byte	0x1
+ 439 0143 58       		.byte	0x58
+ 440 0144 97010000 		.4byte	0x197
+ 441 0148 03       		.uleb128 0x3
+ 442 0149 91       		.byte	0x91
+ 443 014a DC7D     		.sleb128 -292
+ 444 014c 10       		.uleb128 0x10
+ 445 014d BE010000 		.4byte	.LASF21
+ 446 0151 01       		.byte	0x1
+ 447 0152 59       		.byte	0x59
+ 448 0153 A7010000 		.4byte	0x1a7
+ 449 0157 00000000 		.4byte	.LLST0
+ 450 015b 11       		.uleb128 0x11
+ 451 015c 1C000000 		.4byte	.LVL1
+ 452 0160 C4020000 		.4byte	0x2c4
+ 453 0164 84010000 		.4byte	0x184
+ 454 0168 12       		.uleb128 0x12
+ 455 0169 01       		.uleb128 0x1
+ 456 016a 53       		.byte	0x53
+ 457 016b 02       		.uleb128 0x2
+ 458 016c 91       		.byte	0x91
+ 459 016d 54       		.sleb128 -44
+ 460 016e 12       		.uleb128 0x12
+ 461 016f 01       		.uleb128 0x1
+ 462 0170 52       		.byte	0x52
+ 463 0171 03       		.uleb128 0x3
+ 464 0172 91       		.byte	0x91
+ 465 0173 50       		.sleb128 -48
+ 466 0174 06       		.byte	0x6
+ 467 0175 12       		.uleb128 0x12
+ 468 0176 01       		.uleb128 0x1
+ 469 0177 51       		.byte	0x51
+ 470 0178 03       		.uleb128 0x3
+ 471 0179 0A       		.byte	0xa
+ 472 017a 0001     		.2byte	0x100
+ 473 017c 12       		.uleb128 0x12
+ 474 017d 01       		.uleb128 0x1
+ 475 017e 50       		.byte	0x50
+ 476 017f 03       		.uleb128 0x3
+ 477 0180 91       		.byte	0x91
+ 478 0181 BC7D     		.sleb128 -324
+ 479 0183 00       		.byte	0
+ 480 0184 13       		.uleb128 0x13
+ 481 0185 24000000 		.4byte	.LVL3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 12
+
+
+ 482 0189 E8020000 		.4byte	0x2e8
+ 483 018d 13       		.uleb128 0x13
+ 484 018e 30000000 		.4byte	.LVL5
+ 485 0192 F3020000 		.4byte	0x2f3
+ 486 0196 00       		.byte	0
+ 487 0197 14       		.uleb128 0x14
+ 488 0198 81000000 		.4byte	0x81
+ 489 019c A7010000 		.4byte	0x1a7
+ 490 01a0 15       		.uleb128 0x15
+ 491 01a1 CB000000 		.4byte	0xcb
+ 492 01a5 FF       		.byte	0xff
+ 493 01a6 00       		.byte	0
+ 494 01a7 08       		.uleb128 0x8
+ 495 01a8 04       		.byte	0x4
+ 496 01a9 81000000 		.4byte	0x81
+ 497 01ad 0C       		.uleb128 0xc
+ 498 01ae B4020000 		.4byte	.LASF23
+ 499 01b2 01       		.byte	0x1
+ 500 01b3 39       		.byte	0x39
+ 501 01b4 00000000 		.4byte	.LFB63
+ 502 01b8 48000000 		.4byte	.LFE63-.LFB63
+ 503 01bc 01       		.uleb128 0x1
+ 504 01bd 9C       		.byte	0x9c
+ 505 01be 16020000 		.4byte	0x216
+ 506 01c2 16       		.uleb128 0x16
+ 507 01c3 6900     		.ascii	"i\000"
+ 508 01c5 01       		.byte	0x1
+ 509 01c6 3B       		.byte	0x3b
+ 510 01c7 99000000 		.4byte	0x99
+ 511 01cb 37000000 		.4byte	.LLST1
+ 512 01cf 11       		.uleb128 0x11
+ 513 01d0 0A000000 		.4byte	.LVL8
+ 514 01d4 04030000 		.4byte	0x304
+ 515 01d8 E7010000 		.4byte	0x1e7
+ 516 01dc 12       		.uleb128 0x12
+ 517 01dd 01       		.uleb128 0x1
+ 518 01de 51       		.byte	0x51
+ 519 01df 01       		.uleb128 0x1
+ 520 01e0 32       		.byte	0x32
+ 521 01e1 12       		.uleb128 0x12
+ 522 01e2 01       		.uleb128 0x1
+ 523 01e3 50       		.byte	0x50
+ 524 01e4 01       		.uleb128 0x1
+ 525 01e5 30       		.byte	0x30
+ 526 01e6 00       		.byte	0
+ 527 01e7 13       		.uleb128 0x13
+ 528 01e8 12000000 		.4byte	.LVL10
+ 529 01ec 1B030000 		.4byte	0x31b
+ 530 01f0 13       		.uleb128 0x13
+ 531 01f1 2C000000 		.4byte	.LVL12
+ 532 01f5 27030000 		.4byte	0x327
+ 533 01f9 13       		.uleb128 0x13
+ 534 01fa 32000000 		.4byte	.LVL13
+ 535 01fe 32030000 		.4byte	0x332
+ 536 0202 17       		.uleb128 0x17
+ 537 0203 38000000 		.4byte	.LVL14
+ 538 0207 0C010000 		.4byte	0x10c
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 13
+
+
+ 539 020b 12       		.uleb128 0x12
+ 540 020c 01       		.uleb128 0x1
+ 541 020d 50       		.byte	0x50
+ 542 020e 05       		.uleb128 0x5
+ 543 020f 03       		.byte	0x3
+ 544 0210 00000000 		.4byte	.LC0
+ 545 0214 00       		.byte	0
+ 546 0215 00       		.byte	0
+ 547 0216 0C       		.uleb128 0xc
+ 548 0217 41000000 		.4byte	.LASF24
+ 549 021b 01       		.byte	0x1
+ 550 021c 6C       		.byte	0x6c
+ 551 021d 00000000 		.4byte	.LFB65
+ 552 0221 48000000 		.4byte	.LFE65-.LFB65
+ 553 0225 01       		.uleb128 0x1
+ 554 0226 9C       		.byte	0x9c
+ 555 0227 A2020000 		.4byte	0x2a2
+ 556 022b 16       		.uleb128 0x16
+ 557 022c 6900     		.ascii	"i\000"
+ 558 022e 01       		.byte	0x1
+ 559 022f 6E       		.byte	0x6e
+ 560 0230 99000000 		.4byte	0x99
+ 561 0234 56000000 		.4byte	.LLST2
+ 562 0238 16       		.uleb128 0x16
+ 563 0239 6C656E00 		.ascii	"len\000"
+ 564 023d 01       		.byte	0x1
+ 565 023e 6F       		.byte	0x6f
+ 566 023f 81000000 		.4byte	0x81
+ 567 0243 74000000 		.4byte	.LLST3
+ 568 0247 18       		.uleb128 0x18
+ 569 0248 B5000000 		.4byte	.LASF25
+ 570 024c 01       		.byte	0x1
+ 571 024d 70       		.byte	0x70
+ 572 024e 81000000 		.4byte	0x81
+ 573 0252 02       		.uleb128 0x2
+ 574 0253 91       		.byte	0x91
+ 575 0254 6F       		.sleb128 -17
+ 576 0255 11       		.uleb128 0x11
+ 577 0256 10000000 		.4byte	.LVL16
+ 578 025a 0C010000 		.4byte	0x10c
+ 579 025e 6C020000 		.4byte	0x26c
+ 580 0262 12       		.uleb128 0x12
+ 581 0263 01       		.uleb128 0x1
+ 582 0264 50       		.byte	0x50
+ 583 0265 05       		.uleb128 0x5
+ 584 0266 03       		.byte	0x3
+ 585 0267 18000000 		.4byte	.LC1
+ 586 026b 00       		.byte	0
+ 587 026c 13       		.uleb128 0x13
+ 588 026d 14000000 		.4byte	.LVL17
+ 589 0271 3A030000 		.4byte	0x33a
+ 590 0275 11       		.uleb128 0x11
+ 591 0276 26000000 		.4byte	.LVL19
+ 592 027a 45030000 		.4byte	0x345
+ 593 027e 8E020000 		.4byte	0x28e
+ 594 0282 12       		.uleb128 0x12
+ 595 0283 01       		.uleb128 0x1
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 14
+
+
+ 596 0284 51       		.byte	0x51
+ 597 0285 01       		.uleb128 0x1
+ 598 0286 31       		.byte	0x31
+ 599 0287 12       		.uleb128 0x12
+ 600 0288 01       		.uleb128 0x1
+ 601 0289 50       		.byte	0x50
+ 602 028a 02       		.uleb128 0x2
+ 603 028b 91       		.byte	0x91
+ 604 028c 6F       		.sleb128 -17
+ 605 028d 00       		.byte	0
+ 606 028e 17       		.uleb128 0x17
+ 607 028f 36000000 		.4byte	.LVL23
+ 608 0293 0C010000 		.4byte	0x10c
+ 609 0297 12       		.uleb128 0x12
+ 610 0298 01       		.uleb128 0x1
+ 611 0299 50       		.byte	0x50
+ 612 029a 05       		.uleb128 0x5
+ 613 029b 03       		.byte	0x3
+ 614 029c 34000000 		.4byte	.LC2
+ 615 02a0 00       		.byte	0
+ 616 02a1 00       		.byte	0
+ 617 02a2 19       		.uleb128 0x19
+ 618 02a3 C3010000 		.4byte	.LASF26
+ 619 02a7 06       		.byte	0x6
+ 620 02a8 5506     		.2byte	0x655
+ 621 02aa AE020000 		.4byte	0x2ae
+ 622 02ae 06       		.uleb128 0x6
+ 623 02af 76000000 		.4byte	0x76
+ 624 02b3 1A       		.uleb128 0x1a
+ 625 02b4 BB000000 		.4byte	.LASF27
+ 626 02b8 01       		.byte	0x1
+ 627 02b9 34       		.byte	0x34
+ 628 02ba C6000000 		.4byte	0xc6
+ 629 02be 05       		.uleb128 0x5
+ 630 02bf 03       		.byte	0x3
+ 631 02c0 00000000 		.4byte	gUSBUART_Ready
+ 632 02c4 1B       		.uleb128 0x1b
+ 633 02c5 0E000000 		.4byte	.LASF41
+ 634 02c9 0A       		.byte	0xa
+ 635 02ca 38       		.byte	0x38
+ 636 02cb A7010000 		.4byte	0x1a7
+ 637 02cf E8020000 		.4byte	0x2e8
+ 638 02d3 1C       		.uleb128 0x1c
+ 639 02d4 A7010000 		.4byte	0x1a7
+ 640 02d8 1C       		.uleb128 0x1c
+ 641 02d9 99000000 		.4byte	0x99
+ 642 02dd 1C       		.uleb128 0x1c
+ 643 02de D4000000 		.4byte	0xd4
+ 644 02e2 1C       		.uleb128 0x1c
+ 645 02e3 01010000 		.4byte	0x101
+ 646 02e7 00       		.byte	0
+ 647 02e8 1D       		.uleb128 0x1d
+ 648 02e9 40020000 		.4byte	.LASF30
+ 649 02ed 07       		.byte	0x7
+ 650 02ee 28       		.byte	0x28
+ 651 02ef 81000000 		.4byte	0x81
+ 652 02f3 1E       		.uleb128 0x1e
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 15
+
+
+ 653 02f4 02020000 		.4byte	.LASF28
+ 654 02f8 07       		.byte	0x7
+ 655 02f9 25       		.byte	0x25
+ 656 02fa 04030000 		.4byte	0x304
+ 657 02fe 1C       		.uleb128 0x1c
+ 658 02ff B3000000 		.4byte	0xb3
+ 659 0303 00       		.byte	0
+ 660 0304 1F       		.uleb128 0x1f
+ 661 0305 30020000 		.4byte	.LASF29
+ 662 0309 08       		.byte	0x8
+ 663 030a 2A01     		.2byte	0x12a
+ 664 030c 1B030000 		.4byte	0x31b
+ 665 0310 1C       		.uleb128 0x1c
+ 666 0311 81000000 		.4byte	0x81
+ 667 0315 1C       		.uleb128 0x1c
+ 668 0316 81000000 		.4byte	0x81
+ 669 031a 00       		.byte	0
+ 670 031b 20       		.uleb128 0x20
+ 671 031c 26000000 		.4byte	.LASF31
+ 672 0320 08       		.byte	0x8
+ 673 0321 2D01     		.2byte	0x12d
+ 674 0323 81000000 		.4byte	0x81
+ 675 0327 1D       		.uleb128 0x1d
+ 676 0328 BD020000 		.4byte	.LASF32
+ 677 032c 07       		.byte	0x7
+ 678 032d 22       		.byte	0x22
+ 679 032e 81000000 		.4byte	0x81
+ 680 0332 21       		.uleb128 0x21
+ 681 0333 93010000 		.4byte	.LASF42
+ 682 0337 08       		.byte	0x8
+ 683 0338 2C01     		.2byte	0x12c
+ 684 033a 1D       		.uleb128 0x1d
+ 685 033b 1A020000 		.4byte	.LASF33
+ 686 033f 07       		.byte	0x7
+ 687 0340 29       		.byte	0x29
+ 688 0341 81000000 		.4byte	0x81
+ 689 0345 22       		.uleb128 0x22
+ 690 0346 EB010000 		.4byte	.LASF34
+ 691 034a 07       		.byte	0x7
+ 692 034b 2A       		.byte	0x2a
+ 693 034c 8D000000 		.4byte	0x8d
+ 694 0350 1C       		.uleb128 0x1c
+ 695 0351 A7010000 		.4byte	0x1a7
+ 696 0355 1C       		.uleb128 0x1c
+ 697 0356 8D000000 		.4byte	0x8d
+ 698 035a 00       		.byte	0
+ 699 035b 00       		.byte	0
+ 700              		.section	.debug_abbrev,"",%progbits
+ 701              	.Ldebug_abbrev0:
+ 702 0000 01       		.uleb128 0x1
+ 703 0001 11       		.uleb128 0x11
+ 704 0002 01       		.byte	0x1
+ 705 0003 25       		.uleb128 0x25
+ 706 0004 0E       		.uleb128 0xe
+ 707 0005 13       		.uleb128 0x13
+ 708 0006 0B       		.uleb128 0xb
+ 709 0007 03       		.uleb128 0x3
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 16
+
+
+ 710 0008 0E       		.uleb128 0xe
+ 711 0009 1B       		.uleb128 0x1b
+ 712 000a 0E       		.uleb128 0xe
+ 713 000b 55       		.uleb128 0x55
+ 714 000c 17       		.uleb128 0x17
+ 715 000d 11       		.uleb128 0x11
+ 716 000e 01       		.uleb128 0x1
+ 717 000f 10       		.uleb128 0x10
+ 718 0010 17       		.uleb128 0x17
+ 719 0011 00       		.byte	0
+ 720 0012 00       		.byte	0
+ 721 0013 02       		.uleb128 0x2
+ 722 0014 24       		.uleb128 0x24
+ 723 0015 00       		.byte	0
+ 724 0016 0B       		.uleb128 0xb
+ 725 0017 0B       		.uleb128 0xb
+ 726 0018 3E       		.uleb128 0x3e
+ 727 0019 0B       		.uleb128 0xb
+ 728 001a 03       		.uleb128 0x3
+ 729 001b 0E       		.uleb128 0xe
+ 730 001c 00       		.byte	0
+ 731 001d 00       		.byte	0
+ 732 001e 03       		.uleb128 0x3
+ 733 001f 16       		.uleb128 0x16
+ 734 0020 00       		.byte	0
+ 735 0021 03       		.uleb128 0x3
+ 736 0022 0E       		.uleb128 0xe
+ 737 0023 3A       		.uleb128 0x3a
+ 738 0024 0B       		.uleb128 0xb
+ 739 0025 3B       		.uleb128 0x3b
+ 740 0026 0B       		.uleb128 0xb
+ 741 0027 49       		.uleb128 0x49
+ 742 0028 13       		.uleb128 0x13
+ 743 0029 00       		.byte	0
+ 744 002a 00       		.byte	0
+ 745 002b 04       		.uleb128 0x4
+ 746 002c 24       		.uleb128 0x24
+ 747 002d 00       		.byte	0
+ 748 002e 0B       		.uleb128 0xb
+ 749 002f 0B       		.uleb128 0xb
+ 750 0030 3E       		.uleb128 0x3e
+ 751 0031 0B       		.uleb128 0xb
+ 752 0032 03       		.uleb128 0x3
+ 753 0033 08       		.uleb128 0x8
+ 754 0034 00       		.byte	0
+ 755 0035 00       		.byte	0
+ 756 0036 05       		.uleb128 0x5
+ 757 0037 16       		.uleb128 0x16
+ 758 0038 00       		.byte	0
+ 759 0039 03       		.uleb128 0x3
+ 760 003a 0E       		.uleb128 0xe
+ 761 003b 3A       		.uleb128 0x3a
+ 762 003c 0B       		.uleb128 0xb
+ 763 003d 3B       		.uleb128 0x3b
+ 764 003e 05       		.uleb128 0x5
+ 765 003f 49       		.uleb128 0x49
+ 766 0040 13       		.uleb128 0x13
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 17
+
+
+ 767 0041 00       		.byte	0
+ 768 0042 00       		.byte	0
+ 769 0043 06       		.uleb128 0x6
+ 770 0044 35       		.uleb128 0x35
+ 771 0045 00       		.byte	0
+ 772 0046 49       		.uleb128 0x49
+ 773 0047 13       		.uleb128 0x13
+ 774 0048 00       		.byte	0
+ 775 0049 00       		.byte	0
+ 776 004a 07       		.uleb128 0x7
+ 777 004b 0F       		.uleb128 0xf
+ 778 004c 00       		.byte	0
+ 779 004d 0B       		.uleb128 0xb
+ 780 004e 0B       		.uleb128 0xb
+ 781 004f 00       		.byte	0
+ 782 0050 00       		.byte	0
+ 783 0051 08       		.uleb128 0x8
+ 784 0052 0F       		.uleb128 0xf
+ 785 0053 00       		.byte	0
+ 786 0054 0B       		.uleb128 0xb
+ 787 0055 0B       		.uleb128 0xb
+ 788 0056 49       		.uleb128 0x49
+ 789 0057 13       		.uleb128 0x13
+ 790 0058 00       		.byte	0
+ 791 0059 00       		.byte	0
+ 792 005a 09       		.uleb128 0x9
+ 793 005b 26       		.uleb128 0x26
+ 794 005c 00       		.byte	0
+ 795 005d 49       		.uleb128 0x49
+ 796 005e 13       		.uleb128 0x13
+ 797 005f 00       		.byte	0
+ 798 0060 00       		.byte	0
+ 799 0061 0A       		.uleb128 0xa
+ 800 0062 13       		.uleb128 0x13
+ 801 0063 01       		.byte	0x1
+ 802 0064 03       		.uleb128 0x3
+ 803 0065 0E       		.uleb128 0xe
+ 804 0066 0B       		.uleb128 0xb
+ 805 0067 0B       		.uleb128 0xb
+ 806 0068 3A       		.uleb128 0x3a
+ 807 0069 0B       		.uleb128 0xb
+ 808 006a 3B       		.uleb128 0x3b
+ 809 006b 0B       		.uleb128 0xb
+ 810 006c 01       		.uleb128 0x1
+ 811 006d 13       		.uleb128 0x13
+ 812 006e 00       		.byte	0
+ 813 006f 00       		.byte	0
+ 814 0070 0B       		.uleb128 0xb
+ 815 0071 0D       		.uleb128 0xd
+ 816 0072 00       		.byte	0
+ 817 0073 03       		.uleb128 0x3
+ 818 0074 0E       		.uleb128 0xe
+ 819 0075 49       		.uleb128 0x49
+ 820 0076 13       		.uleb128 0x13
+ 821 0077 38       		.uleb128 0x38
+ 822 0078 0B       		.uleb128 0xb
+ 823 0079 34       		.uleb128 0x34
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 18
+
+
+ 824 007a 19       		.uleb128 0x19
+ 825 007b 00       		.byte	0
+ 826 007c 00       		.byte	0
+ 827 007d 0C       		.uleb128 0xc
+ 828 007e 2E       		.uleb128 0x2e
+ 829 007f 01       		.byte	0x1
+ 830 0080 3F       		.uleb128 0x3f
+ 831 0081 19       		.uleb128 0x19
+ 832 0082 03       		.uleb128 0x3
+ 833 0083 0E       		.uleb128 0xe
+ 834 0084 3A       		.uleb128 0x3a
+ 835 0085 0B       		.uleb128 0xb
+ 836 0086 3B       		.uleb128 0x3b
+ 837 0087 0B       		.uleb128 0xb
+ 838 0088 27       		.uleb128 0x27
+ 839 0089 19       		.uleb128 0x19
+ 840 008a 11       		.uleb128 0x11
+ 841 008b 01       		.uleb128 0x1
+ 842 008c 12       		.uleb128 0x12
+ 843 008d 06       		.uleb128 0x6
+ 844 008e 40       		.uleb128 0x40
+ 845 008f 18       		.uleb128 0x18
+ 846 0090 9742     		.uleb128 0x2117
+ 847 0092 19       		.uleb128 0x19
+ 848 0093 01       		.uleb128 0x1
+ 849 0094 13       		.uleb128 0x13
+ 850 0095 00       		.byte	0
+ 851 0096 00       		.byte	0
+ 852 0097 0D       		.uleb128 0xd
+ 853 0098 05       		.uleb128 0x5
+ 854 0099 00       		.byte	0
+ 855 009a 03       		.uleb128 0x3
+ 856 009b 0E       		.uleb128 0xe
+ 857 009c 3A       		.uleb128 0x3a
+ 858 009d 0B       		.uleb128 0xb
+ 859 009e 3B       		.uleb128 0x3b
+ 860 009f 0B       		.uleb128 0xb
+ 861 00a0 49       		.uleb128 0x49
+ 862 00a1 13       		.uleb128 0x13
+ 863 00a2 02       		.uleb128 0x2
+ 864 00a3 18       		.uleb128 0x18
+ 865 00a4 00       		.byte	0
+ 866 00a5 00       		.byte	0
+ 867 00a6 0E       		.uleb128 0xe
+ 868 00a7 18       		.uleb128 0x18
+ 869 00a8 00       		.byte	0
+ 870 00a9 00       		.byte	0
+ 871 00aa 00       		.byte	0
+ 872 00ab 0F       		.uleb128 0xf
+ 873 00ac 34       		.uleb128 0x34
+ 874 00ad 00       		.byte	0
+ 875 00ae 03       		.uleb128 0x3
+ 876 00af 08       		.uleb128 0x8
+ 877 00b0 3A       		.uleb128 0x3a
+ 878 00b1 0B       		.uleb128 0xb
+ 879 00b2 3B       		.uleb128 0x3b
+ 880 00b3 0B       		.uleb128 0xb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 19
+
+
+ 881 00b4 49       		.uleb128 0x49
+ 882 00b5 13       		.uleb128 0x13
+ 883 00b6 02       		.uleb128 0x2
+ 884 00b7 18       		.uleb128 0x18
+ 885 00b8 00       		.byte	0
+ 886 00b9 00       		.byte	0
+ 887 00ba 10       		.uleb128 0x10
+ 888 00bb 34       		.uleb128 0x34
+ 889 00bc 00       		.byte	0
+ 890 00bd 03       		.uleb128 0x3
+ 891 00be 0E       		.uleb128 0xe
+ 892 00bf 3A       		.uleb128 0x3a
+ 893 00c0 0B       		.uleb128 0xb
+ 894 00c1 3B       		.uleb128 0x3b
+ 895 00c2 0B       		.uleb128 0xb
+ 896 00c3 49       		.uleb128 0x49
+ 897 00c4 13       		.uleb128 0x13
+ 898 00c5 02       		.uleb128 0x2
+ 899 00c6 17       		.uleb128 0x17
+ 900 00c7 00       		.byte	0
+ 901 00c8 00       		.byte	0
+ 902 00c9 11       		.uleb128 0x11
+ 903 00ca 898201   		.uleb128 0x4109
+ 904 00cd 01       		.byte	0x1
+ 905 00ce 11       		.uleb128 0x11
+ 906 00cf 01       		.uleb128 0x1
+ 907 00d0 31       		.uleb128 0x31
+ 908 00d1 13       		.uleb128 0x13
+ 909 00d2 01       		.uleb128 0x1
+ 910 00d3 13       		.uleb128 0x13
+ 911 00d4 00       		.byte	0
+ 912 00d5 00       		.byte	0
+ 913 00d6 12       		.uleb128 0x12
+ 914 00d7 8A8201   		.uleb128 0x410a
+ 915 00da 00       		.byte	0
+ 916 00db 02       		.uleb128 0x2
+ 917 00dc 18       		.uleb128 0x18
+ 918 00dd 9142     		.uleb128 0x2111
+ 919 00df 18       		.uleb128 0x18
+ 920 00e0 00       		.byte	0
+ 921 00e1 00       		.byte	0
+ 922 00e2 13       		.uleb128 0x13
+ 923 00e3 898201   		.uleb128 0x4109
+ 924 00e6 00       		.byte	0
+ 925 00e7 11       		.uleb128 0x11
+ 926 00e8 01       		.uleb128 0x1
+ 927 00e9 31       		.uleb128 0x31
+ 928 00ea 13       		.uleb128 0x13
+ 929 00eb 00       		.byte	0
+ 930 00ec 00       		.byte	0
+ 931 00ed 14       		.uleb128 0x14
+ 932 00ee 01       		.uleb128 0x1
+ 933 00ef 01       		.byte	0x1
+ 934 00f0 49       		.uleb128 0x49
+ 935 00f1 13       		.uleb128 0x13
+ 936 00f2 01       		.uleb128 0x1
+ 937 00f3 13       		.uleb128 0x13
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 20
+
+
+ 938 00f4 00       		.byte	0
+ 939 00f5 00       		.byte	0
+ 940 00f6 15       		.uleb128 0x15
+ 941 00f7 21       		.uleb128 0x21
+ 942 00f8 00       		.byte	0
+ 943 00f9 49       		.uleb128 0x49
+ 944 00fa 13       		.uleb128 0x13
+ 945 00fb 2F       		.uleb128 0x2f
+ 946 00fc 0B       		.uleb128 0xb
+ 947 00fd 00       		.byte	0
+ 948 00fe 00       		.byte	0
+ 949 00ff 16       		.uleb128 0x16
+ 950 0100 34       		.uleb128 0x34
+ 951 0101 00       		.byte	0
+ 952 0102 03       		.uleb128 0x3
+ 953 0103 08       		.uleb128 0x8
+ 954 0104 3A       		.uleb128 0x3a
+ 955 0105 0B       		.uleb128 0xb
+ 956 0106 3B       		.uleb128 0x3b
+ 957 0107 0B       		.uleb128 0xb
+ 958 0108 49       		.uleb128 0x49
+ 959 0109 13       		.uleb128 0x13
+ 960 010a 02       		.uleb128 0x2
+ 961 010b 17       		.uleb128 0x17
+ 962 010c 00       		.byte	0
+ 963 010d 00       		.byte	0
+ 964 010e 17       		.uleb128 0x17
+ 965 010f 898201   		.uleb128 0x4109
+ 966 0112 01       		.byte	0x1
+ 967 0113 11       		.uleb128 0x11
+ 968 0114 01       		.uleb128 0x1
+ 969 0115 31       		.uleb128 0x31
+ 970 0116 13       		.uleb128 0x13
+ 971 0117 00       		.byte	0
+ 972 0118 00       		.byte	0
+ 973 0119 18       		.uleb128 0x18
+ 974 011a 34       		.uleb128 0x34
+ 975 011b 00       		.byte	0
+ 976 011c 03       		.uleb128 0x3
+ 977 011d 0E       		.uleb128 0xe
+ 978 011e 3A       		.uleb128 0x3a
+ 979 011f 0B       		.uleb128 0xb
+ 980 0120 3B       		.uleb128 0x3b
+ 981 0121 0B       		.uleb128 0xb
+ 982 0122 49       		.uleb128 0x49
+ 983 0123 13       		.uleb128 0x13
+ 984 0124 02       		.uleb128 0x2
+ 985 0125 18       		.uleb128 0x18
+ 986 0126 00       		.byte	0
+ 987 0127 00       		.byte	0
+ 988 0128 19       		.uleb128 0x19
+ 989 0129 34       		.uleb128 0x34
+ 990 012a 00       		.byte	0
+ 991 012b 03       		.uleb128 0x3
+ 992 012c 0E       		.uleb128 0xe
+ 993 012d 3A       		.uleb128 0x3a
+ 994 012e 0B       		.uleb128 0xb
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 21
+
+
+ 995 012f 3B       		.uleb128 0x3b
+ 996 0130 05       		.uleb128 0x5
+ 997 0131 49       		.uleb128 0x49
+ 998 0132 13       		.uleb128 0x13
+ 999 0133 3F       		.uleb128 0x3f
+ 1000 0134 19       		.uleb128 0x19
+ 1001 0135 3C       		.uleb128 0x3c
+ 1002 0136 19       		.uleb128 0x19
+ 1003 0137 00       		.byte	0
+ 1004 0138 00       		.byte	0
+ 1005 0139 1A       		.uleb128 0x1a
+ 1006 013a 34       		.uleb128 0x34
+ 1007 013b 00       		.byte	0
+ 1008 013c 03       		.uleb128 0x3
+ 1009 013d 0E       		.uleb128 0xe
+ 1010 013e 3A       		.uleb128 0x3a
+ 1011 013f 0B       		.uleb128 0xb
+ 1012 0140 3B       		.uleb128 0x3b
+ 1013 0141 0B       		.uleb128 0xb
+ 1014 0142 49       		.uleb128 0x49
+ 1015 0143 13       		.uleb128 0x13
+ 1016 0144 3F       		.uleb128 0x3f
+ 1017 0145 19       		.uleb128 0x19
+ 1018 0146 02       		.uleb128 0x2
+ 1019 0147 18       		.uleb128 0x18
+ 1020 0148 00       		.byte	0
+ 1021 0149 00       		.byte	0
+ 1022 014a 1B       		.uleb128 0x1b
+ 1023 014b 2E       		.uleb128 0x2e
+ 1024 014c 01       		.byte	0x1
+ 1025 014d 3F       		.uleb128 0x3f
+ 1026 014e 19       		.uleb128 0x19
+ 1027 014f 03       		.uleb128 0x3
+ 1028 0150 0E       		.uleb128 0xe
+ 1029 0151 3A       		.uleb128 0x3a
+ 1030 0152 0B       		.uleb128 0xb
+ 1031 0153 3B       		.uleb128 0x3b
+ 1032 0154 0B       		.uleb128 0xb
+ 1033 0155 27       		.uleb128 0x27
+ 1034 0156 19       		.uleb128 0x19
+ 1035 0157 49       		.uleb128 0x49
+ 1036 0158 13       		.uleb128 0x13
+ 1037 0159 3C       		.uleb128 0x3c
+ 1038 015a 19       		.uleb128 0x19
+ 1039 015b 01       		.uleb128 0x1
+ 1040 015c 13       		.uleb128 0x13
+ 1041 015d 00       		.byte	0
+ 1042 015e 00       		.byte	0
+ 1043 015f 1C       		.uleb128 0x1c
+ 1044 0160 05       		.uleb128 0x5
+ 1045 0161 00       		.byte	0
+ 1046 0162 49       		.uleb128 0x49
+ 1047 0163 13       		.uleb128 0x13
+ 1048 0164 00       		.byte	0
+ 1049 0165 00       		.byte	0
+ 1050 0166 1D       		.uleb128 0x1d
+ 1051 0167 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 22
+
+
+ 1052 0168 00       		.byte	0
+ 1053 0169 3F       		.uleb128 0x3f
+ 1054 016a 19       		.uleb128 0x19
+ 1055 016b 03       		.uleb128 0x3
+ 1056 016c 0E       		.uleb128 0xe
+ 1057 016d 3A       		.uleb128 0x3a
+ 1058 016e 0B       		.uleb128 0xb
+ 1059 016f 3B       		.uleb128 0x3b
+ 1060 0170 0B       		.uleb128 0xb
+ 1061 0171 27       		.uleb128 0x27
+ 1062 0172 19       		.uleb128 0x19
+ 1063 0173 49       		.uleb128 0x49
+ 1064 0174 13       		.uleb128 0x13
+ 1065 0175 3C       		.uleb128 0x3c
+ 1066 0176 19       		.uleb128 0x19
+ 1067 0177 00       		.byte	0
+ 1068 0178 00       		.byte	0
+ 1069 0179 1E       		.uleb128 0x1e
+ 1070 017a 2E       		.uleb128 0x2e
+ 1071 017b 01       		.byte	0x1
+ 1072 017c 3F       		.uleb128 0x3f
+ 1073 017d 19       		.uleb128 0x19
+ 1074 017e 03       		.uleb128 0x3
+ 1075 017f 0E       		.uleb128 0xe
+ 1076 0180 3A       		.uleb128 0x3a
+ 1077 0181 0B       		.uleb128 0xb
+ 1078 0182 3B       		.uleb128 0x3b
+ 1079 0183 0B       		.uleb128 0xb
+ 1080 0184 27       		.uleb128 0x27
+ 1081 0185 19       		.uleb128 0x19
+ 1082 0186 3C       		.uleb128 0x3c
+ 1083 0187 19       		.uleb128 0x19
+ 1084 0188 01       		.uleb128 0x1
+ 1085 0189 13       		.uleb128 0x13
+ 1086 018a 00       		.byte	0
+ 1087 018b 00       		.byte	0
+ 1088 018c 1F       		.uleb128 0x1f
+ 1089 018d 2E       		.uleb128 0x2e
+ 1090 018e 01       		.byte	0x1
+ 1091 018f 3F       		.uleb128 0x3f
+ 1092 0190 19       		.uleb128 0x19
+ 1093 0191 03       		.uleb128 0x3
+ 1094 0192 0E       		.uleb128 0xe
+ 1095 0193 3A       		.uleb128 0x3a
+ 1096 0194 0B       		.uleb128 0xb
+ 1097 0195 3B       		.uleb128 0x3b
+ 1098 0196 05       		.uleb128 0x5
+ 1099 0197 27       		.uleb128 0x27
+ 1100 0198 19       		.uleb128 0x19
+ 1101 0199 3C       		.uleb128 0x3c
+ 1102 019a 19       		.uleb128 0x19
+ 1103 019b 01       		.uleb128 0x1
+ 1104 019c 13       		.uleb128 0x13
+ 1105 019d 00       		.byte	0
+ 1106 019e 00       		.byte	0
+ 1107 019f 20       		.uleb128 0x20
+ 1108 01a0 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 23
+
+
+ 1109 01a1 00       		.byte	0
+ 1110 01a2 3F       		.uleb128 0x3f
+ 1111 01a3 19       		.uleb128 0x19
+ 1112 01a4 03       		.uleb128 0x3
+ 1113 01a5 0E       		.uleb128 0xe
+ 1114 01a6 3A       		.uleb128 0x3a
+ 1115 01a7 0B       		.uleb128 0xb
+ 1116 01a8 3B       		.uleb128 0x3b
+ 1117 01a9 05       		.uleb128 0x5
+ 1118 01aa 27       		.uleb128 0x27
+ 1119 01ab 19       		.uleb128 0x19
+ 1120 01ac 49       		.uleb128 0x49
+ 1121 01ad 13       		.uleb128 0x13
+ 1122 01ae 3C       		.uleb128 0x3c
+ 1123 01af 19       		.uleb128 0x19
+ 1124 01b0 00       		.byte	0
+ 1125 01b1 00       		.byte	0
+ 1126 01b2 21       		.uleb128 0x21
+ 1127 01b3 2E       		.uleb128 0x2e
+ 1128 01b4 00       		.byte	0
+ 1129 01b5 3F       		.uleb128 0x3f
+ 1130 01b6 19       		.uleb128 0x19
+ 1131 01b7 03       		.uleb128 0x3
+ 1132 01b8 0E       		.uleb128 0xe
+ 1133 01b9 3A       		.uleb128 0x3a
+ 1134 01ba 0B       		.uleb128 0xb
+ 1135 01bb 3B       		.uleb128 0x3b
+ 1136 01bc 05       		.uleb128 0x5
+ 1137 01bd 27       		.uleb128 0x27
+ 1138 01be 19       		.uleb128 0x19
+ 1139 01bf 3C       		.uleb128 0x3c
+ 1140 01c0 19       		.uleb128 0x19
+ 1141 01c1 00       		.byte	0
+ 1142 01c2 00       		.byte	0
+ 1143 01c3 22       		.uleb128 0x22
+ 1144 01c4 2E       		.uleb128 0x2e
+ 1145 01c5 01       		.byte	0x1
+ 1146 01c6 3F       		.uleb128 0x3f
+ 1147 01c7 19       		.uleb128 0x19
+ 1148 01c8 03       		.uleb128 0x3
+ 1149 01c9 0E       		.uleb128 0xe
+ 1150 01ca 3A       		.uleb128 0x3a
+ 1151 01cb 0B       		.uleb128 0xb
+ 1152 01cc 3B       		.uleb128 0x3b
+ 1153 01cd 0B       		.uleb128 0xb
+ 1154 01ce 27       		.uleb128 0x27
+ 1155 01cf 19       		.uleb128 0x19
+ 1156 01d0 49       		.uleb128 0x49
+ 1157 01d1 13       		.uleb128 0x13
+ 1158 01d2 3C       		.uleb128 0x3c
+ 1159 01d3 19       		.uleb128 0x19
+ 1160 01d4 00       		.byte	0
+ 1161 01d5 00       		.byte	0
+ 1162 01d6 00       		.byte	0
+ 1163              		.section	.debug_loc,"",%progbits
+ 1164              	.Ldebug_loc0:
+ 1165              	.LLST0:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 24
+
+
+ 1166 0000 1C000000 		.4byte	.LVL1
+ 1167 0004 1E000000 		.4byte	.LVL2
+ 1168 0008 0400     		.2byte	0x4
+ 1169 000a 91       		.byte	0x91
+ 1170 000b BC7D     		.sleb128 -324
+ 1171 000d 9F       		.byte	0x9f
+ 1172 000e 1E000000 		.4byte	.LVL2
+ 1173 0012 2A000000 		.4byte	.LVL4
+ 1174 0016 0100     		.2byte	0x1
+ 1175 0018 54       		.byte	0x54
+ 1176 0019 2A000000 		.4byte	.LVL4
+ 1177 001d 32000000 		.4byte	.LVL6
+ 1178 0021 0100     		.2byte	0x1
+ 1179 0023 55       		.byte	0x55
+ 1180 0024 32000000 		.4byte	.LVL6
+ 1181 0028 38000000 		.4byte	.LVL7
+ 1182 002c 0100     		.2byte	0x1
+ 1183 002e 54       		.byte	0x54
+ 1184 002f 00000000 		.4byte	0
+ 1185 0033 00000000 		.4byte	0
+ 1186              	.LLST1:
+ 1187 0037 0A000000 		.4byte	.LVL8
+ 1188 003b 0E000000 		.4byte	.LVL9
+ 1189 003f 0200     		.2byte	0x2
+ 1190 0041 30       		.byte	0x30
+ 1191 0042 9F       		.byte	0x9f
+ 1192 0043 0E000000 		.4byte	.LVL9
+ 1193 0047 3A000000 		.4byte	.LVL15
+ 1194 004b 0100     		.2byte	0x1
+ 1195 004d 54       		.byte	0x54
+ 1196 004e 00000000 		.4byte	0
+ 1197 0052 00000000 		.4byte	0
+ 1198              	.LLST2:
+ 1199 0056 1C000000 		.4byte	.LVL18
+ 1200 005a 2A000000 		.4byte	.LVL21
+ 1201 005e 0100     		.2byte	0x1
+ 1202 0060 54       		.byte	0x54
+ 1203 0061 2C000000 		.4byte	.LVL22
+ 1204 0065 3A000000 		.4byte	.LVL24
+ 1205 0069 0100     		.2byte	0x1
+ 1206 006b 54       		.byte	0x54
+ 1207 006c 00000000 		.4byte	0
+ 1208 0070 00000000 		.4byte	0
+ 1209              	.LLST3:
+ 1210 0074 14000000 		.4byte	.LVL17
+ 1211 0078 1C000000 		.4byte	.LVL18
+ 1212 007c 0100     		.2byte	0x1
+ 1213 007e 50       		.byte	0x50
+ 1214 007f 2A000000 		.4byte	.LVL21
+ 1215 0083 2C000000 		.4byte	.LVL22
+ 1216 0087 0100     		.2byte	0x1
+ 1217 0089 50       		.byte	0x50
+ 1218 008a 00000000 		.4byte	0
+ 1219 008e 00000000 		.4byte	0
+ 1220              		.section	.debug_aranges,"",%progbits
+ 1221 0000 2C000000 		.4byte	0x2c
+ 1222 0004 0200     		.2byte	0x2
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 25
+
+
+ 1223 0006 00000000 		.4byte	.Ldebug_info0
+ 1224 000a 04       		.byte	0x4
+ 1225 000b 00       		.byte	0
+ 1226 000c 0000     		.2byte	0
+ 1227 000e 0000     		.2byte	0
+ 1228 0010 00000000 		.4byte	.LFB64
+ 1229 0014 48000000 		.4byte	.LFE64-.LFB64
+ 1230 0018 00000000 		.4byte	.LFB63
+ 1231 001c 48000000 		.4byte	.LFE63-.LFB63
+ 1232 0020 00000000 		.4byte	.LFB65
+ 1233 0024 48000000 		.4byte	.LFE65-.LFB65
+ 1234 0028 00000000 		.4byte	0
+ 1235 002c 00000000 		.4byte	0
+ 1236              		.section	.debug_ranges,"",%progbits
+ 1237              	.Ldebug_ranges0:
+ 1238 0000 00000000 		.4byte	.LFB64
+ 1239 0004 48000000 		.4byte	.LFE64
+ 1240 0008 00000000 		.4byte	.LFB63
+ 1241 000c 48000000 		.4byte	.LFE63
+ 1242 0010 00000000 		.4byte	.LFB65
+ 1243 0014 48000000 		.4byte	.LFE65
+ 1244 0018 00000000 		.4byte	0
+ 1245 001c 00000000 		.4byte	0
+ 1246              		.section	.debug_line,"",%progbits
+ 1247              	.Ldebug_line0:
+ 1248 0000 77020000 		.section	.debug_str,"MS",%progbits,1
+ 1248      02000C02 
+ 1248      00000201 
+ 1248      FB0E0D00 
+ 1248      01010101 
+ 1249              	.LASF6:
+ 1250 0000 6C6F6E67 		.ascii	"long long int\000"
+ 1250      206C6F6E 
+ 1250      6720696E 
+ 1250      7400
+ 1251              	.LASF41:
+ 1252 000e 7876736E 		.ascii	"xvsnprintf\000"
+ 1252      7072696E 
+ 1252      746600
+ 1253              	.LASF36:
+ 1254 0019 2E2E5C41 		.ascii	"..\\API\\com.c\000"
+ 1254      50495C63 
+ 1254      6F6D2E63 
+ 1254      00
+ 1255              	.LASF31:
+ 1256 0026 55534255 		.ascii	"USBUART_1_GetConfiguration\000"
+ 1256      4152545F 
+ 1256      315F4765 
+ 1256      74436F6E 
+ 1256      66696775 
+ 1257              	.LASF24:
+ 1258 0041 434F4D5F 		.ascii	"COM_Wait_PC_Term\000"
+ 1258      57616974 
+ 1258      5F50435F 
+ 1258      5465726D 
+ 1258      00
+ 1259              	.LASF9:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 26
+
+
+ 1260 0052 5F5F696E 		.ascii	"__int32_t\000"
+ 1260      7433325F 
+ 1260      7400
+ 1261              	.LASF3:
+ 1262 005c 73686F72 		.ascii	"short unsigned int\000"
+ 1262      7420756E 
+ 1262      7369676E 
+ 1262      65642069 
+ 1262      6E7400
+ 1263              	.LASF22:
+ 1264 006f 434F4D5F 		.ascii	"COM_printf\000"
+ 1264      7072696E 
+ 1264      746600
+ 1265              	.LASF14:
+ 1266 007a 666C6F61 		.ascii	"float\000"
+ 1266      7400
+ 1267              	.LASF19:
+ 1268 0080 5F5F676E 		.ascii	"__gnuc_va_list\000"
+ 1268      75635F76 
+ 1268      615F6C69 
+ 1268      737400
+ 1269              	.LASF1:
+ 1270 008f 756E7369 		.ascii	"unsigned char\000"
+ 1270      676E6564 
+ 1270      20636861 
+ 1270      7200
+ 1271              	.LASF16:
+ 1272 009d 63686172 		.ascii	"char8\000"
+ 1272      3800
+ 1273              	.LASF5:
+ 1274 00a3 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1274      20756E73 
+ 1274      69676E65 
+ 1274      6420696E 
+ 1274      7400
+ 1275              	.LASF25:
+ 1276 00b5 64756D6D 		.ascii	"dummy\000"
+ 1276      7900
+ 1277              	.LASF27:
+ 1278 00bb 67555342 		.ascii	"gUSBUART_Ready\000"
+ 1278      55415254 
+ 1278      5F526561 
+ 1278      647900
+ 1279              	.LASF20:
+ 1280 00ca 76615F6C 		.ascii	"va_list\000"
+ 1280      69737400 
+ 1281              	.LASF15:
+ 1282 00d2 646F7562 		.ascii	"double\000"
+ 1282      6C6500
+ 1283              	.LASF2:
+ 1284 00d9 73686F72 		.ascii	"short int\000"
+ 1284      7420696E 
+ 1284      7400
+ 1285              	.LASF12:
+ 1286 00e3 75696E74 		.ascii	"uint16\000"
+ 1286      313600
+ 1287              	.LASF40:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 27
+
+
+ 1288 00ea 666F726D 		.ascii	"format\000"
+ 1288      617400
+ 1289              	.LASF13:
+ 1290 00f1 75696E74 		.ascii	"uint32\000"
+ 1290      333200
+ 1291              	.LASF35:
+ 1292 00f8 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1292      4320342E 
+ 1292      392E3320 
+ 1292      32303135 
+ 1292      30333033 
+ 1293 012b 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1293      20726576 
+ 1293      6973696F 
+ 1293      6E203232 
+ 1293      31323230 
+ 1294 015e 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1294      66756E63 
+ 1294      74696F6E 
+ 1294      2D736563 
+ 1294      74696F6E 
+ 1295              	.LASF8:
+ 1296 0186 756E7369 		.ascii	"unsigned int\000"
+ 1296      676E6564 
+ 1296      20696E74 
+ 1296      00
+ 1297              	.LASF42:
+ 1298 0193 55534255 		.ascii	"USBUART_1_Stop\000"
+ 1298      4152545F 
+ 1298      315F5374 
+ 1298      6F7000
+ 1299              	.LASF7:
+ 1300 01a2 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1300      206C6F6E 
+ 1300      6720756E 
+ 1300      7369676E 
+ 1300      65642069 
+ 1301              	.LASF39:
+ 1302 01b9 5F5F6170 		.ascii	"__ap\000"
+ 1302      00
+ 1303              	.LASF21:
+ 1304 01be 70537472 		.ascii	"pStr\000"
+ 1304      00
+ 1305              	.LASF26:
+ 1306 01c3 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1306      52784275 
+ 1306      66666572 
+ 1306      00
+ 1307              	.LASF10:
+ 1308 01d0 696E7433 		.ascii	"int32_t\000"
+ 1308      325F7400 
+ 1309              	.LASF18:
+ 1310 01d8 73697A65 		.ascii	"sizetype\000"
+ 1310      74797065 
+ 1310      00
+ 1311              	.LASF38:
+ 1312 01e1 5F5F7661 		.ascii	"__va_list\000"
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 28
+
+
+ 1312      5F6C6973 
+ 1312      7400
+ 1313              	.LASF34:
+ 1314 01eb 55534255 		.ascii	"USBUART_1_GetData\000"
+ 1314      4152545F 
+ 1314      315F4765 
+ 1314      74446174 
+ 1314      6100
+ 1315              	.LASF17:
+ 1316 01fd 63686172 		.ascii	"char\000"
+ 1316      00
+ 1317              	.LASF28:
+ 1318 0202 55534255 		.ascii	"USBUART_1_PutChar\000"
+ 1318      4152545F 
+ 1318      315F5075 
+ 1318      74436861 
+ 1318      7200
+ 1319              	.LASF11:
+ 1320 0214 75696E74 		.ascii	"uint8\000"
+ 1320      3800
+ 1321              	.LASF33:
+ 1322 021a 55534255 		.ascii	"USBUART_1_DataIsReady\000"
+ 1322      4152545F 
+ 1322      315F4461 
+ 1322      74614973 
+ 1322      52656164 
+ 1323              	.LASF29:
+ 1324 0230 55534255 		.ascii	"USBUART_1_Start\000"
+ 1324      4152545F 
+ 1324      315F5374 
+ 1324      61727400 
+ 1325              	.LASF30:
+ 1326 0240 55534255 		.ascii	"USBUART_1_CDCIsReady\000"
+ 1326      4152545F 
+ 1326      315F4344 
+ 1326      43497352 
+ 1326      65616479 
+ 1327              	.LASF4:
+ 1328 0255 6C6F6E67 		.ascii	"long int\000"
+ 1328      20696E74 
+ 1328      00
+ 1329              	.LASF37:
+ 1330 025e 4A3A5C50 		.ascii	"J:\\PSoC_Creator\\CY8CKIT-059\\CY8CKIT-059_DDS_USB\\"
+ 1330      536F435F 
+ 1330      43726561 
+ 1330      746F725C 
+ 1330      43593843 
+ 1331 028e 43593843 		.ascii	"CY8CKIT-059_DDS_USB.cydsn\000"
+ 1331      4B49542D 
+ 1331      3035395F 
+ 1331      4444535F 
+ 1331      5553422E 
+ 1332              	.LASF0:
+ 1333 02a8 7369676E 		.ascii	"signed char\000"
+ 1333      65642063 
+ 1333      68617200 
+ 1334              	.LASF23:
+ARM GAS  C:\Users\koseki\AppData\Local\Temp\cclZqJ4D.s 			page 29
+
+
+ 1335 02b4 496E6974 		.ascii	"Init_COM\000"
+ 1335      5F434F4D 
+ 1335      00
+ 1336              	.LASF32:
+ 1337 02bd 55534255 		.ascii	"USBUART_1_CDC_Init\000"
+ 1337      4152545F 
+ 1337      315F4344 
+ 1337      435F496E 
+ 1337      697400
+ 1338              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br
